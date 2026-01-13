@@ -8,10 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .tab-active { border-bottom: 2px solid #0891b2; color: #0e7490; font-weight: 600; }
-        .tab-inactive { color: #64748b; }
-        .tab-inactive:hover { color: #334155; }
+        /* ... existing styles ... */
         
         .chart-container {
             position: relative;
@@ -26,6 +23,23 @@
             .chart-container {
                 height: 300px;
             }
+        }
+
+        /* NEW: Map Specific Container */
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background-color: #f0f9ff; /* Lightest Cyan/Water */
+            border-radius: 1rem;
+            border: 1px solid #cffafe;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        canvas#routeMapCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
         }
 
         .timeline-line {
@@ -90,6 +104,17 @@
                     <p class="text-slate-600 mb-6">
                         To maximize scenery and minimize backtracking, we recommend driving onto PEI via the <span class="font-bold text-cyan-700">Confederation Bridge</span> and leaving via the <span class="font-bold text-cyan-700">Wood Islands Ferry</span> into Nova Scotia.
                     </p>
+
+                    <!-- NEW: Schematic Map Canvas -->
+                    <div class="map-wrapper">
+                        <canvas id="routeMapCanvas"></canvas>
+                        <!-- Legend Overlay -->
+                        <div class="absolute bottom-4 left-4 bg-white/90 p-3 rounded-lg shadow-sm border border-slate-200 text-xs pointer-events-none">
+                            <div class="flex items-center mb-1"><span class="w-3 h-3 rounded-full bg-slate-800 mr-2"></span> Stops</div>
+                            <div class="flex items-center mb-1"><span class="w-8 h-1 bg-cyan-600 mr-2"></span> Drive</div>
+                            <div class="flex items-center"><span class="w-8 h-1 border-b-2 border-dashed border-cyan-600 mr-2"></span> Ferry/Bridge</div>
+                        </div>
+                    </div>
                     
                     <!-- Interactive Timeline -->
                     <div class="relative py-8">
@@ -347,6 +372,7 @@
     <script>
         // --- DATA & STATE ---
         const attractionsData = [
+            // ... existing data ...
             {
                 title: "Green Gables Heritage Place",
                 category: "pei",
@@ -400,6 +426,128 @@
 
         let budgetChartInstance = null;
 
+        // --- MAP LOGIC (NEW) ---
+        function initMap() {
+            const canvas = document.getElementById('routeMapCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Map Points (Normalized 0-1 coordinates)
+            // Layout: Ottawa (Left), PEI (Top Right), NS (Bottom Right)
+            const locations = {
+                ottawa: { x: 0.1, y: 0.6, label: "Ottawa" },
+                qc: { x: 0.35, y: 0.5, label: "Quebec City" },
+                edmundston: { x: 0.5, y: 0.55, label: "Edmundston" },
+                moncton: { x: 0.65, y: 0.65, label: "Moncton" },
+                pei: { x: 0.75, y: 0.35, label: "PEI" },
+                ferry: { x: 0.82, y: 0.45, label: "Ferry" }, // Virtual point for curve
+                halifax: { x: 0.85, y: 0.75, label: "Halifax" }
+            };
+
+            function resize() {
+                // Set actual canvas size to match display size for sharpness
+                const rect = canvas.parentElement.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                draw();
+            }
+
+            function draw() {
+                const w = canvas.width;
+                const h = canvas.height;
+                
+                // Clear
+                ctx.fillStyle = '#ecfeff'; // Watery background
+                ctx.fillRect(0, 0, w, h);
+
+                // Helper to get pixel coords
+                const getXY = (loc) => ({ x: loc.x * w, y: loc.y * h });
+
+                // Draw Land Masses (Abstract blobs)
+                ctx.fillStyle = '#f1f5f9'; // Slate-100 land
+                // (Simplified for schematic look, focusing on route lines)
+
+                // Route Styling
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                const ott = getXY(locations.ottawa);
+                const qc = getXY(locations.qc);
+                const edm = getXY(locations.edmundston);
+                const mon = getXY(locations.moncton);
+                const pei = getXY(locations.pei);
+                const hal = getXY(locations.halifax);
+
+                // 1. Ottawa -> Edmundston (Solid)
+                ctx.strokeStyle = '#0891b2'; // Cyan-600
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(ott.x, ott.y);
+                ctx.lineTo(qc.x, qc.y);
+                ctx.lineTo(edm.x, edm.y);
+                ctx.lineTo(mon.x, mon.y); // To Moncton Hub
+                ctx.stroke();
+
+                // 2. Moncton -> PEI (Bridge - Solid)
+                ctx.beginPath();
+                ctx.moveTo(mon.x, mon.y);
+                ctx.lineTo(mon.x, mon.y - (h * 0.15)); // Up towards bridge
+                ctx.lineTo(pei.x, pei.y);
+                ctx.stroke();
+
+                // 3. PEI -> Halifax (Ferry - Dashed)
+                ctx.strokeStyle = '#f59e0b'; // Amber for Special/Ferry
+                ctx.setLineDash([10, 10]);
+                ctx.beginPath();
+                ctx.moveTo(pei.x, pei.y);
+                ctx.quadraticCurveTo(pei.x + 50, pei.y + 50, hal.x, hal.y);
+                ctx.stroke();
+
+                // 4. Halifax -> Moncton (Return - Dashed or Lighter)
+                ctx.strokeStyle = '#94a3b8'; // Slate for return
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(hal.x, hal.y);
+                ctx.lineTo(mon.x, mon.y);
+                ctx.stroke();
+
+                // Draw Points
+                ctx.setLineDash([]);
+                Object.values(locations).forEach(loc => {
+                    if (loc.label === 'Ferry') return;
+                    const p = getXY(loc);
+                    
+                    // Dot
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.fill();
+                    ctx.strokeStyle = '#1e293b';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    // Label
+                    ctx.font = 'bold 12px Inter, sans-serif';
+                    ctx.fillStyle = '#334155';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(loc.label, p.x, p.y - 15);
+                });
+                
+                // Add labels for Bridge/Ferry
+                ctx.fillStyle = '#0e7490';
+                ctx.font = 'italic 11px Inter, sans-serif';
+                // Bridge label approx
+                ctx.fillText("Confederation Bridge", mon.x + (w*0.02), mon.y - (h*0.1));
+                
+                ctx.fillStyle = '#d97706';
+                // Ferry label approx
+                ctx.fillText("Ferry", pei.x + (w*0.05), pei.y + (h*0.1));
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+        }
+
         // --- CORE FUNCTIONS ---
 
         function switchTab(tabId) {
@@ -413,6 +561,12 @@
             activeTab.classList.add('tab-active');
             activeTab.classList.remove('tab-inactive');
             if(tabId === 'budget' && budgetChartInstance) { budgetChartInstance.resize(); }
+            
+            // Re-draw map if route tab is shown (fixes canvas size if hidden initially)
+            if(tabId === 'route') {
+                 // Trigger resize event to force map redraw
+                 window.dispatchEvent(new Event('resize'));
+            }
         }
 
         // --- ATTRACTIONS RENDERER ---
@@ -421,7 +575,10 @@
             grid.innerHTML = '';
             
             attractionsData.forEach(item => {
-                if (filter === 'all' || item.category === filter) {
+                if (filter === 'all' || item.category === filter || (filter.startsWith('ns') && item.category.startsWith('ns'))) {
+                    // Slight logic fix to handle 'ns-nature' vs 'ns-culture' filters
+                    if (filter !== 'all' && item.category !== filter) return;
+
                     const card = document.createElement('div');
                     card.className = "bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow";
                     
@@ -525,6 +682,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderAttractions('all');
             initBudgetCalc();
+            initMap(); // Initialize Map
             switchTab('route');
         });
 
