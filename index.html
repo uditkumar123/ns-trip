@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maritime Explorer: Ottawa to Nova Scotia Planner</title>
+    <title>Maritime Loop: Ottawa, PEI & NS Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .tab-active { border-bottom: 2px solid #2563eb; color: #1e40af; font-weight: 600; }
+        .tab-active { border-bottom: 2px solid #0891b2; color: #0e7490; font-weight: 600; }
         .tab-inactive { color: #64748b; }
         .tab-inactive:hover { color: #334155; }
         
-        /* Chart Container Styling - Mandatory Strictness */
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 500px; /* Constrain width for readability */
+            max-width: 500px;
             margin-left: auto;
             margin-right: auto;
-            height: 350px; /* Base height */
+            height: 350px;
             max-height: 400px;
         }
         @media (max-width: 640px) {
@@ -29,7 +28,6 @@
             }
         }
 
-        /* Timeline Graphics using pure CSS/Tailwind logic */
         .timeline-line {
             position: absolute;
             left: 50%;
@@ -43,32 +41,22 @@
 </head>
 <body class="text-slate-800">
 
-    <!-- Chosen Palette: Slate (Background), Blue (Primary/Action), Amber (Accent/Highlights) -->
-    <!-- Application Structure Plan:
-         1. Hero Section: Sets the context (Ottawa -> NS, 6 People).
-         2. Tabbed Navigation: Allows non-linear exploration of Route, Budget, Attractions, and Logistics.
-         3. Route Tab: Vertical timeline for the drive, breaking down the long journey into manageable legs.
-         4. Budget Tab: Interactive calculator using Chart.js to visualize costs for a large group (critical for 6 people).
-         5. Attractions Tab: Grid with filters to explore what to see.
-         6. Logistics Tab: Text-heavy section for car/packing advice.
-         Reasoning: A road trip requires balancing money, time, and fun. Tabs separate these distinct cognitive tasks.
-    -->
-
-    <!-- Main Container -->
+    <!-- Chosen Palette: Teal/Cyan (Ocean/Summer), Slate (Neutral), Amber (Sand/Highlights) -->
+    
     <div class="max-w-6xl mx-auto min-h-screen flex flex-col bg-white shadow-xl my-0 md:my-8 rounded-lg overflow-hidden">
         
         <!-- Header -->
-        <header class="bg-blue-900 text-white p-8">
+        <header class="bg-cyan-900 text-white p-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
-                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Maritime Explorer</h1>
-                    <p class="text-blue-200 mt-2 text-lg">Ottawa &#8594; Nova Scotia: Group Trip Planner</p>
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">The Maritime Loop</h1>
+                    <p class="text-cyan-200 mt-2 text-lg">Ottawa &#8594; PEI &#8594; Nova Scotia &#8594; Ottawa</p>
                 </div>
-                <div class="mt-4 md:mt-0 bg-blue-800 px-4 py-2 rounded-lg border border-blue-700">
-                    <span class="block text-sm text-blue-300 uppercase tracking-wide font-semibold">Trip Profile</span>
+                <div class="mt-4 md:mt-0 bg-cyan-800 px-4 py-2 rounded-lg border border-cyan-700">
+                    <span class="block text-sm text-cyan-300 uppercase tracking-wide font-semibold">Pre-Wedding Relaxer</span>
                     <div class="flex items-center space-x-4 mt-1">
                         <span class="text-white font-bold">&#128101; 6 Travelers</span>
-                        <span class="text-white font-bold">&#128663; ~3,000km Round Trip</span>
+                        <span class="text-white font-bold">&#128663; ~3,200km Loop</span>
                     </div>
                 </div>
             </div>
@@ -78,16 +66,16 @@
         <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
             <div class="flex overflow-x-auto px-4 md:px-8 space-x-8">
                 <button onclick="switchTab('route')" id="tab-route" class="tab-active py-4 px-2 whitespace-nowrap transition-colors">
-                    &#128506; Route & Timeline
+                    &#128506; The Loop (Route)
                 </button>
                 <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-4 px-2 whitespace-nowrap transition-colors">
                     &#128176; Smart Budget
                 </button>
                 <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-4 px-2 whitespace-nowrap transition-colors">
-                    &#127754; Attractions
+                    &#127754; Attractions (PEI + NS)
                 </button>
                 <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-4 px-2 whitespace-nowrap transition-colors">
-                    &#128295; Logistics
+                    &#128295; Logistics & Timing
                 </button>
             </div>
         </nav>
@@ -98,11 +86,9 @@
             <!-- TAB: ROUTE -->
             <section id="content-route" class="space-y-8 animate-fade-in">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-2">The Journey East</h2>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">The "Bridge In, Ferry Out" Strategy</h2>
                     <p class="text-slate-600 mb-6">
-                        Driving from Ottawa to Halifax is roughly 1,450km. With 6 people, comfort is key. 
-                        We recommend splitting the drive into <strong>two days</strong> to enjoy the journey and avoid fatigue. 
-                        Below is an optimized itinerary.
+                        To maximize scenery and minimize backtracking, we recommend driving onto PEI via the <span class="font-bold text-cyan-700">Confederation Bridge</span> and leaving via the <span class="font-bold text-cyan-700">Wood Islands Ferry</span> into Nova Scotia.
                     </p>
                     
                     <!-- Interactive Timeline -->
@@ -113,11 +99,11 @@
                         <!-- Stop 1 -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                             <div class="w-full md:w-1/2 md:pr-8 text-center md:text-right mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-blue-900">Start: Ottawa, ON</h3>
-                                <p class="text-slate-500">Day 1 - 07:00 AM</p>
-                                <p class="text-sm text-slate-600 mt-1">Full tank, coffee, and ready to go.</p>
+                                <h3 class="text-xl font-bold text-cyan-900">Start: Ottawa, ON</h3>
+                                <p class="text-slate-500">Day 1: 07:00 AM</p>
+                                <p class="text-sm text-slate-600 mt-1">Drive 7 hours. Overnight in <strong>Edmundston, NB</strong>.</p>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-blue-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">1</div>
+                            <div class="w-8 h-8 rounded-full bg-cyan-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">1</div>
                             <div class="w-full md:w-1/2 md:pl-8 hidden md:block"></div>
                         </div>
 
@@ -126,85 +112,64 @@
                             <div class="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
                             <div class="w-8 h-8 rounded-full bg-amber-400 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">2</div>
                             <div class="w-full md:w-1/2 md:pl-8 text-center md:text-left mb-4 md:mb-0">
-                                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded mb-2 inline-block">Lunch Break</span>
-                                <h3 class="text-xl font-bold text-slate-800">Drummondville / Quebec City</h3>
-                                <p class="text-slate-500">~4.5 Hours Drive</p>
-                                <p class="text-sm text-slate-600 mt-1">Grab lunch. If you leave early, lunch in Old Quebec is a treat, though it adds parking time.</p>
+                                <h3 class="text-xl font-bold text-slate-800">Into PEI (Confed. Bridge)</h3>
+                                <p class="text-slate-500">Day 2: Afternoon</p>
+                                <p class="text-sm text-slate-600 mt-1">Drive through NB. Cross the 13km bridge! Stay in Charlottetown/Cavendish for 2 Nights.</p>
                             </div>
                         </div>
 
                         <!-- Stop 3 -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                             <div class="w-full md:w-1/2 md:pr-8 text-center md:text-right mb-4 md:mb-0">
-                                <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded mb-2 inline-block">Overnight</span>
-                                <h3 class="text-xl font-bold text-slate-800">Edmundston, NB</h3>
-                                <p class="text-slate-500">~7 Hours Total Drive Time</p>
-                                <p class="text-sm text-slate-600 mt-1">Perfect halfway point. Cross into Atlantic Time Zone (+1 hr). Get a good rest.</p>
+                                <h3 class="text-xl font-bold text-slate-800">Ferry to Nova Scotia</h3>
+                                <p class="text-slate-500">Day 4: Morning</p>
+                                <p class="text-sm text-slate-600 mt-1">Take the 75-min ferry from Wood Islands, PEI to Caribou, NS. Drive to Halifax/Cape Breton.</p>
                             </div>
                             <div class="w-8 h-8 rounded-full bg-indigo-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">3</div>
                             <div class="w-full md:w-1/2 md:pl-8 hidden md:block"></div>
                         </div>
 
                         <!-- Stop 4 -->
-                        <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
-                            <div class="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
-                            <div class="w-8 h-8 rounded-full bg-amber-400 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">4</div>
-                            <div class="w-full md:w-1/2 md:pl-8 text-center md:text-left mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-slate-800">Moncton & Hopewell Rocks</h3>
-                                <p class="text-slate-500">Day 2 - Midday</p>
-                                <p class="text-sm text-slate-600 mt-1">Stop to see the massive tides. It's a slight detour but worth it to stretch legs.</p>
-                            </div>
-                        </div>
-
-                        <!-- Stop 5 -->
                         <div class="flex flex-col md:flex-row items-center relative z-10">
-                            <div class="w-full md:w-1/2 md:pr-8 text-center md:text-right mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-blue-900">Arrival: Halifax, NS</h3>
-                                <p class="text-slate-500">Day 2 - Evening</p>
-                                <p class="text-sm text-slate-600 mt-1">Welcome to the ocean! Check into your Airbnb/Hotel.</p>
+                            <div class="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
+                            <div class="w-8 h-8 rounded-full bg-cyan-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">4</div>
+                            <div class="w-full md:w-1/2 md:pl-8 text-center md:text-left mb-4 md:mb-0">
+                                <h3 class="text-xl font-bold text-cyan-900">Explore Nova Scotia</h3>
+                                <p class="text-slate-500">Days 4-8</p>
+                                <p class="text-sm text-slate-600 mt-1">Halifax, Peggy's Cove, and Lunenburg. Then start the long drive home on Day 9.</p>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-blue-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">5</div>
-                            <div class="w-full md:w-1/2 md:pl-8 hidden md:block"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- TAB: BUDGET -->
-            <!-- Visualization & Content Choices:
-                 Goal: Show the financial impact of choices for a large group.
-                 Viz: Donut Chart (Chart.js) to show cost breakdown.
-                 Interaction: Sliders for input variables (Gas, Days, Lifestyle).
-                 Justification: Static budgets are useless. Users need to see how $50/night difference adds up over 6 people.
-            -->
             <section id="content-budget" class="hidden space-y-8 animate-fade-in">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Controls -->
                     <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                         <h2 class="text-xl font-bold text-slate-800 mb-4">Budget Parameters</h2>
-                        <p class="text-sm text-slate-500 mb-6">Adjust these sliders to match your travel style. Totals update automatically.</p>
+                        <p class="text-sm text-slate-500 mb-6">Adjust for 6 people in August (High Season).</p>
                         
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Trip Duration (Days): <span id="val-days" class="text-blue-600">7</span></label>
-                                <input type="range" id="input-days" min="4" max="14" value="7" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Trip Duration (Days): <span id="val-days" class="text-cyan-600">8</span></label>
+                                <input type="range" id="input-days" min="5" max="14" value="8" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Accom. per Night (Total): $<span id="val-accom" class="text-blue-600">350</span></label>
-                                <input type="range" id="input-accom" min="150" max="800" step="50" value="350" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
-                                <p class="text-xs text-slate-400 mt-1">For 2 hotel rooms or 1 large Airbnb.</p>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Accom. per Night (Total): $<span id="val-accom" class="text-cyan-600">400</span></label>
+                                <input type="range" id="input-accom" min="150" max="800" step="50" value="400" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Food per Person/Day: $<span id="val-food" class="text-blue-600">60</span></label>
-                                <input type="range" id="input-food" min="30" max="150" step="5" value="60" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
-                                <p class="text-xs text-slate-400 mt-1">$30 = Groceries, $100+ = Restaurants.</p>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Food per Person/Day: $<span id="val-food" class="text-cyan-600">65</span></label>
+                                <input type="range" id="input-food" min="30" max="150" step="5" value="65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Gas Price (per L): $<span id="val-gas" class="text-blue-600">1.60</span></label>
-                                <input type="range" id="input-gas" min="1.30" max="2.20" step="0.05" value="1.60" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Gas Price (per L): $<span id="val-gas" class="text-cyan-600">1.65</span></label>
+                                <input type="range" id="input-gas" min="1.30" max="2.20" step="0.05" value="1.65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
                         </div>
 
@@ -215,7 +180,7 @@
                             </div>
                             <div class="flex justify-between items-end">
                                 <span class="text-slate-500 text-sm">Per Person (6 pax)</span>
-                                <span id="per-person-cost" class="text-lg font-bold text-blue-600">$0</span>
+                                <span id="per-person-cost" class="text-lg font-bold text-cyan-600">$0</span>
                             </div>
                         </div>
                     </div>
@@ -224,7 +189,7 @@
                     <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-center">
                         <div class="mb-4">
                             <h2 class="text-xl font-bold text-slate-800">Cost Breakdown</h2>
-                            <p class="text-slate-500 text-sm">Visualizing where your money goes.</p>
+                            <p class="text-slate-500 text-sm">Includes Bridge/Ferry estimate (~$150 total for minivan).</p>
                         </div>
                         
                         <div class="chart-container">
@@ -245,7 +210,7 @@
                                 <div id="stat-food" class="font-bold text-slate-700">-</div>
                             </div>
                             <div class="p-3 bg-slate-50 rounded-lg">
-                                <div class="text-xs text-slate-500 uppercase">Attractions</div>
+                                <div class="text-xs text-slate-500 uppercase">Fun & Ferry</div>
                                 <div id="stat-fun" class="font-bold text-slate-700">-</div>
                             </div>
                         </div>
@@ -257,13 +222,14 @@
             <section id="content-attractions" class="hidden space-y-8 animate-fade-in">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Discover the Maritimes</h2>
-                        <p class="text-slate-600">Top picks for a first-time group trip.</p>
+                        <h2 class="text-2xl font-bold text-slate-800">Must-See Spots</h2>
+                        <p class="text-slate-600">Mixing Red Sand (PEI) and Ocean Rocks (NS).</p>
                     </div>
-                    <div class="flex space-x-2 mt-4 md:mt-0">
+                    <div class="flex space-x-2 mt-4 md:mt-0 flex-wrap gap-2">
                         <button onclick="filterAttractions('all')" class="px-3 py-1 text-sm bg-slate-200 hover:bg-slate-300 rounded-full text-slate-700 transition">All</button>
-                        <button onclick="filterAttractions('nature')" class="px-3 py-1 text-sm bg-green-100 hover:bg-green-200 rounded-full text-green-700 transition">Nature</button>
-                        <button onclick="filterAttractions('culture')" class="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 rounded-full text-blue-700 transition">City/Culture</button>
+                        <button onclick="filterAttractions('pei')" class="px-3 py-1 text-sm bg-amber-100 hover:bg-amber-200 rounded-full text-amber-800 transition font-bold">Prince Edward Island</button>
+                        <button onclick="filterAttractions('ns-nature')" class="px-3 py-1 text-sm bg-green-100 hover:bg-green-200 rounded-full text-green-700 transition">NS Nature</button>
+                        <button onclick="filterAttractions('ns-culture')" class="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 rounded-full text-blue-700 transition">NS Culture</button>
                     </div>
                 </div>
 
@@ -275,7 +241,7 @@
             <!-- TAB: LOGISTICS -->
             <section id="content-logistics" class="hidden space-y-8 animate-fade-in">
                 
-                <!-- NEW: Strategic Timing Section (Updated for August/Wedding Buffer) -->
+                <!-- Strategic Timing Section (August Recommendation) -->
                 <div class="bg-gradient-to-r from-teal-800 to-teal-600 rounded-xl shadow-lg p-1">
                     <div class="bg-white rounded-lg p-6">
                         <div class="flex items-center mb-6">
@@ -301,116 +267,71 @@
                                 <ul class="space-y-3 text-sm text-slate-700">
                                     <li class="flex items-start">
                                         <span class="text-teal-500 font-bold mr-2">✓</span> 
-                                        <strong>The "Wedding Buffer":</strong> This trip happens a full 2 months before your October wedding. It serves as a relaxation break before the final planning rush begins in September.
+                                        <strong>The Buffer:</strong> 2 months before your wedding. High summer vibes.
                                     </li>
                                     <li class="flex items-start">
                                         <span class="text-teal-500 font-bold mr-2">✓</span> 
-                                        <strong>Peak Weather:</strong> Early August is the warmest time of year. Perfect for beaches (Martinique, Lawrencetown) and patio dining.
-                                    </li>
-                                    <li class="flex items-start">
-                                        <span class="text-teal-500 font-bold mr-2">✓</span> 
-                                        <strong>Whale Watching:</strong> This is prime season for seeing whales off the coast of Cape Breton or Digby Neck.
+                                        <strong>Beach Weather:</strong> PEI water is warmer than NS. Cavendish Beach is peak in August.
                                     </li>
                                 </ul>
                             </div>
 
                             <!-- Trade-offs -->
                             <div class="border-l-0 md:border-l border-slate-200 md:pl-8">
-                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide mb-4">The Trade-off: High Season</h4>
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide mb-4">August Logistics</h4>
                                 
                                 <div class="space-y-4">
                                     <div class="flex items-start">
                                         <span class="text-amber-500 text-xl mr-3">💰</span>
                                         <div>
                                             <strong class="block text-slate-800 text-sm">Peak Pricing</strong>
-                                            <p class="text-xs text-slate-500">August is the most expensive month. Increase your "Accommodation" budget slider by ~20%.</p>
+                                            <p class="text-xs text-slate-500">August is expensive. PEI rentals near the beach book out by March.</p>
                                         </div>
                                     </div>
 
                                     <div class="flex items-start">
-                                        <span class="text-amber-500 text-xl mr-3">🚦</span>
+                                        <span class="text-red-500 text-xl mr-3">⛴️</span>
                                         <div>
-                                            <strong class="block text-slate-800 text-sm">Traffic & Crowds</strong>
-                                            <p class="text-xs text-slate-500">Peggy's Cove and the Skyline Trail will be busy. <strong>Pro Tip:</strong> Visit popular spots before 9 AM or after 5 PM.</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-start">
-                                        <span class="text-red-500 text-xl mr-3">🛑</span>
-                                        <div>
-                                            <strong class="block text-slate-800 text-sm">Booking Urgency</strong>
-                                            <p class="text-xs text-slate-500">For a group of 6 in August, you must book accommodation <strong>4-6 months in advance</strong>.</p>
+                                            <strong class="block text-slate-800 text-sm">Ferry Booking Mandatory</strong>
+                                            <p class="text-xs text-slate-500">The Ferry from PEI to NS saves 3 hours of driving but fills up. Book your slot for Day 4/5 as soon as dates are set.</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Vehicle Strategy -->
+                <!-- PEI Logistics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                        <div class="flex items-center mb-4">
-                            <span class="text-2xl mr-3">&#128660;</span>
-                            <h3 class="text-xl font-bold text-slate-800">Vehicle Strategy</h3>
+                         <div class="flex items-center mb-4">
+                            <span class="text-2xl mr-3">🌉</span>
+                            <h3 class="text-xl font-bold text-slate-800">Bridge vs. Ferry</h3>
                         </div>
                         <ul class="space-y-4">
-                            <li class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                                <strong class="block text-blue-900">The 6-Passenger Dilemma</strong>
-                                <p class="text-sm text-slate-700 mt-1">A standard SUV usually fits 5 comfortably or 7 with <strong>zero</strong> luggage space. For 6 people + luggage for a week, you <strong>need</strong> a Minivan (Grand Caravan/Sienna) or a Full-Size SUV (Suburban/Yukon). Alternatively, consider taking 2 smaller cars for flexibility, though gas costs double.</p>
-                            </li>
                             <li class="p-3 bg-slate-50 rounded-lg">
-                                <strong class="block text-slate-800">Rental vs. Personal</strong>
-                                <p class="text-sm text-slate-600 mt-1">The trip adds ~3,500km to a vehicle. If leasing, check your mileage limits. If renting, book <strong>months in advance</strong> as large vehicles sell out fast in summer.</p>
+                                <strong class="block text-slate-800">Confederation Bridge (Entry)</strong>
+                                <p class="text-sm text-slate-600 mt-1">Entering PEI is free. Leaving costs ~$50/car. We recommend <strong>entering</strong> this way from New Brunswick.</p>
+                            </li>
+                            <li class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                                <strong class="block text-blue-900">Wood Islands Ferry (Exit)</strong>
+                                <p class="text-sm text-slate-700 mt-1">Leaving PEI towards Nova Scotia. Costs ~$90 for a minivan + passengers, but lands you near the scenic Cabot Trail route, saving boring highway miles.</p>
                             </li>
                         </ul>
                     </div>
 
-                    <!-- Packing -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                        <div class="flex items-center mb-4">
-                            <span class="text-2xl mr-3">&#129503;</span>
-                            <h3 class="text-xl font-bold text-slate-800">Packing for the Coast</h3>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <h4 class="font-bold text-slate-700 mb-2 border-b pb-1">Essential</h4>
-                                <ul class="text-sm text-slate-600 space-y-1 list-disc pl-4">
-                                    <li>Windbreaker/Rain Jacket</li>
-                                    <li>Good walking shoes</li>
-                                    <li>Sweaters (evenings get cool)</li>
-                                    <li>Sunscreen & Sunglasses</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-slate-700 mb-2 border-b pb-1">Road Trip</h4>
-                                <ul class="text-sm text-slate-600 space-y-1 list-disc pl-4">
-                                    <li>Cooler for snacks</li>
-                                    <li>Downloaded Maps (spotty data)</li>
-                                    <li>Playlist/Audiobooks</li>
-                                    <li>Neck pillows</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Accommodation -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 md:col-span-2">
-                        <h3 class="text-xl font-bold text-slate-800 mb-4">Accommodation Strategy</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="p-4 border border-slate-200 rounded-lg hover:border-blue-400 transition">
-                                <div class="font-bold text-slate-800">Large Airbnbs</div>
-                                <p class="text-sm text-slate-600 mt-2">Best value for 6. Look for "Entire Home". Cooking breakfast saves money. Book in Halifax and Baddeck.</p>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <h3 class="text-xl font-bold text-slate-800 mb-4">Housing 6 People</h3>
+                        <div class="space-y-3">
+                            <div class="p-3 border border-slate-200 rounded-lg">
+                                <div class="font-bold text-slate-800">PEI Cottages</div>
+                                <p class="text-sm text-slate-600 mt-1">Look in Cavendish or North Rustico. Weekly rentals (Sat-Sat) are common in August, so finding 2-3 nights might be harder. Look for "Cottage Courts".</p>
                             </div>
-                            <div class="p-4 border border-slate-200 rounded-lg hover:border-blue-400 transition">
-                                <div class="font-bold text-slate-800">University Dorms</div>
-                                <p class="text-sm text-slate-600 mt-2">Available in summer (e.g., Dalhousie in Halifax). Cheap, central, but basic. Good for tight budgets.</p>
-                            </div>
-                            <div class="p-4 border border-slate-200 rounded-lg hover:border-blue-400 transition">
-                                <div class="font-bold text-slate-800">Camping/Cabins</div>
-                                <p class="text-sm text-slate-600 mt-2">Fundy & Cape Breton Highlands have "oTENTiks" (glamping tents). Reserve the moment Parks Canada booking opens.</p>
+                            <div class="p-3 border border-slate-200 rounded-lg">
+                                <div class="font-bold text-slate-800">Halifax/NS</div>
+                                <p class="text-sm text-slate-600 mt-1">Stick to Airbnbs/VRBOs for space. University dorms (Dalhousie) are a great backup budget option.</p>
                             </div>
                         </div>
                     </div>
@@ -419,7 +340,7 @@
         </main>
         
         <footer class="bg-slate-100 p-6 text-center text-slate-500 text-sm border-t border-slate-200">
-            <p>Generated Trip Planner for 6 Travelers. Prices are estimates in CAD based on typical summer rates.</p>
+            <p>Generated Trip Planner for 6 Travelers. Prices are estimates in CAD based on 2025/26 rates.</p>
         </footer>
     </div>
 
@@ -427,46 +348,53 @@
         // --- DATA & STATE ---
         const attractionsData = [
             {
+                title: "Green Gables Heritage Place",
+                category: "pei",
+                location: "Cavendish, PEI",
+                description: "The inspiration for L.M. Montgomery's books. A beautiful farm setting that's iconic for PEI.",
+                icon: "👒"
+            },
+            {
+                title: "Cavendish Beach",
+                category: "pei",
+                location: "PEI National Park",
+                description: "Famous red sandstone cliffs and warm(ish) water. Great for a group beach day.",
+                icon: "🏖️"
+            },
+            {
+                title: "Charlottetown Waterfront",
+                category: "pei",
+                location: "Charlottetown, PEI",
+                description: "Historic birthplace of Confederation. Great patio dining on Victoria Row for the group.",
+                icon: "🍦"
+            },
+            {
                 title: "Hopewell Rocks",
-                category: "nature",
-                location: "New Brunswick",
-                description: "Walk on the ocean floor at low tide. The tides here rise up to 16 meters! A must-stop on the drive down.",
+                category: "ns-nature",
+                location: "New Brunswick (En route)",
+                description: "Walk on the ocean floor at low tide. Best stop before the Confederation Bridge.",
                 icon: "🪨"
             },
             {
                 title: "Peggy's Cove",
-                category: "nature",
+                category: "ns-nature",
                 location: "Nova Scotia",
-                description: "The iconic lighthouse on granite rocks. Just 45 mins from Halifax. Visit at sunset to avoid tour buses.",
+                description: "The iconic lighthouse. 45 mins from Halifax. Visit early to beat the cruise ship buses.",
                 icon: "🔦"
             },
             {
                 title: "Halifax Waterfront",
-                category: "culture",
+                category: "ns-culture",
                 location: "Halifax, NS",
-                description: "Walk the boardwalk, visit the Maritime Museum of the Atlantic, and grab a Donair.",
+                description: "Walk the boardwalk, Maritime Museum, and Cows Ice Cream.",
                 icon: "🏙️"
             },
             {
-                title: "Cabot Trail",
-                category: "nature",
-                location: "Cape Breton, NS",
-                description: "One of the world's most scenic drives. Requires a full day (or two) loop from Baddeck.",
-                icon: "⛰️"
-            },
-            {
                 title: "Lunenburg",
-                category: "culture",
+                category: "ns-culture",
                 location: "South Shore, NS",
-                description: "UNESCO World Heritage site with colorful buildings and the Bluenose II. Great seafood.",
+                description: "UNESCO World Heritage site. Colorful buildings and the Bluenose II.",
                 icon: "⛵"
-            },
-            {
-                title: "Skyline Trail",
-                category: "nature",
-                location: "Cape Breton, NS",
-                description: "Famous hiking trail with boardwalk steps overlooking the ocean. High chance of seeing moose.",
-                icon: "🥾"
             }
         ];
 
@@ -475,23 +403,16 @@
         // --- CORE FUNCTIONS ---
 
         function switchTab(tabId) {
-            // Hide all content
             ['route', 'budget', 'attractions', 'logistics'].forEach(id => {
                 document.getElementById(`content-${id}`).classList.add('hidden');
                 document.getElementById(`tab-${id}`).classList.remove('tab-active');
                 document.getElementById(`tab-${id}`).classList.add('tab-inactive');
             });
-
-            // Show selected
             document.getElementById(`content-${tabId}`).classList.remove('hidden');
             const activeTab = document.getElementById(`tab-${tabId}`);
             activeTab.classList.add('tab-active');
             activeTab.classList.remove('tab-inactive');
-
-            // Special handling for chart resize
-            if(tabId === 'budget' && budgetChartInstance) {
-                budgetChartInstance.resize();
-            }
+            if(tabId === 'budget' && budgetChartInstance) { budgetChartInstance.resize(); }
         }
 
         // --- ATTRACTIONS RENDERER ---
@@ -504,15 +425,23 @@
                     const card = document.createElement('div');
                     card.className = "bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow";
                     
-                    let categoryColor = item.category === 'nature' ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50';
-                    let categoryLabel = item.category === 'nature' ? 'Nature' : 'Culture';
+                    let colors = {
+                        'pei': 'text-amber-800 bg-amber-50',
+                        'ns-nature': 'text-green-600 bg-green-50',
+                        'ns-culture': 'text-blue-600 bg-blue-50'
+                    };
+                    let labels = {
+                        'pei': 'PEI Must-Do',
+                        'ns-nature': 'NS Nature',
+                        'ns-culture': 'NS Culture'
+                    };
 
                     card.innerHTML = `
-                        <div class="h-2 bg-gradient-to-r from-blue-500 to-amber-400"></div>
+                        <div class="h-2 bg-gradient-to-r from-cyan-500 to-amber-400"></div>
                         <div class="p-6">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="text-4xl">${item.icon}</div>
-                                <span class="text-xs font-bold px-2 py-1 rounded uppercase tracking-wide ${categoryColor}">${categoryLabel}</span>
+                                <span class="text-xs font-bold px-2 py-1 rounded uppercase tracking-wide ${colors[item.category] || 'text-slate-600 bg-slate-100'}">${labels[item.category] || 'Attraction'}</span>
                             </div>
                             <h3 class="text-lg font-bold text-slate-800 mb-1">${item.title}</h3>
                             <p class="text-xs text-slate-500 font-semibold mb-3 uppercase tracking-wider">${item.location}</p>
@@ -531,8 +460,6 @@
         // --- BUDGET CALCULATOR ---
         function initBudgetCalc() {
             const inputs = ['days', 'accom', 'food', 'gas'];
-            
-            // Add listeners
             inputs.forEach(id => {
                 document.getElementById(`input-${id}`).addEventListener('input', (e) => {
                     document.getElementById(`val-${id}`).innerText = e.target.value;
@@ -540,15 +467,14 @@
                 });
             });
 
-            // Initialize Chart
             const ctx = document.getElementById('budgetChart').getContext('2d');
             budgetChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Transport', 'Accommodation', 'Food', 'Activities'],
+                    labels: ['Transport', 'Accommodation', 'Food', 'Fun/Ferry'],
                     datasets: [{
-                        data: [10, 10, 10, 10], // Initial dummy data
-                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#6366f1'],
+                        data: [10, 10, 10, 10],
+                        backgroundColor: ['#0891b2', '#f59e0b', '#10b981', '#6366f1'],
                         borderWidth: 0,
                         hoverOffset: 4
                     }]
@@ -558,15 +484,9 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { position: 'bottom' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ' $' + context.raw.toLocaleString();
-                                }
-                            }
-                        }
+                        tooltip: { callbacks: { label: function(context) { return ' $' + context.raw.toLocaleString(); } } }
                     },
-                    cutout: '70%'
+                    cutout: '65%'
                 }
             });
 
@@ -574,44 +494,37 @@
         }
 
         function updateBudget() {
-            // Get values
             const days = parseInt(document.getElementById('input-days').value);
             const accomPerNight = parseInt(document.getElementById('input-accom').value);
             const foodPerPerson = parseInt(document.getElementById('input-food').value);
             const gasPrice = parseFloat(document.getElementById('input-gas').value);
 
-            // Constants
             const people = 6;
-            const kmDistance = 3500; // 3000 round trip + 500 local
-            const fuelEfficiency = 11; // 11L/100km for a minivan loaded
-            const activityCost = 500; // Flat estimate for park passes etc
+            const kmDistance = 3500; 
+            const fuelEfficiency = 11; // 11L/100km Minivan
+            const ferryAndFun = 150 + (days * 60); // Ferry (~150) + Daily Fun Budget
 
-            // Calculations
             const gasCost = Math.round((kmDistance / 100) * fuelEfficiency * gasPrice);
             const accomCost = accomPerNight * days;
             const foodCost = foodPerPerson * people * days;
-            const totalCost = gasCost + accomCost + foodCost + activityCost;
+            const totalCost = gasCost + accomCost + foodCost + ferryAndFun;
             const perPerson = Math.round(totalCost / people);
 
-            // Update UI Text
             document.getElementById('total-cost').innerText = '$' + totalCost.toLocaleString();
             document.getElementById('per-person-cost').innerText = '$' + perPerson.toLocaleString();
 
             document.getElementById('stat-transport').innerText = '$' + gasCost;
             document.getElementById('stat-accom').innerText = '$' + accomCost;
             document.getElementById('stat-food').innerText = '$' + foodCost;
-            document.getElementById('stat-fun').innerText = '$' + activityCost;
+            document.getElementById('stat-fun').innerText = '$' + ferryAndFun;
 
-            // Update Chart
-            budgetChartInstance.data.datasets[0].data = [gasCost, accomCost, foodCost, activityCost];
+            budgetChartInstance.data.datasets[0].data = [gasCost, accomCost, foodCost, ferryAndFun];
             budgetChartInstance.update();
         }
 
-        // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             renderAttractions('all');
             initBudgetCalc();
-            // Start on Route tab
             switchTab('route');
         });
 
