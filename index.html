@@ -58,11 +58,11 @@
             z-index: 0;
         }
 
-        /* Hero Image Overlay */
+        /* Hero Image Overlay - Using Wikimedia Source */
         .hero-bg {
-            background-image: linear-gradient(rgba(14, 116, 144, 0.9), rgba(21, 94, 117, 0.8)), url('https://images.unsplash.com/photo-1490100667990-4fced8021649?auto=format&fit=crop&w=1920&q=80');
+            background-image: linear-gradient(rgba(14, 116, 144, 0.85), rgba(15, 23, 42, 0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg/1280px-Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg');
             background-size: cover;
-            background-position: center;
+            background-position: center 30%;
         }
 
         /* Login Overlay */
@@ -133,7 +133,7 @@
                     <span class="mr-2">🗺️</span> Map & Route
                 </button>
                 <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center">
-                    <span class="mr-2">💰</span> Smart Budget
+                    <span class="mr-2">💰</span> Fly vs. Drive
                 </button>
                 <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center">
                     <span class="mr-2">📸</span> Must-See
@@ -213,15 +213,22 @@
                 </div>
             </section>
 
-            <!-- TAB: BUDGET -->
+            <!-- TAB: BUDGET (UPDATED FOR FLIGHTS) -->
             <section id="content-budget" class="hidden space-y-8 animate-fade-in">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Controls -->
                     <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <h2 class="text-xl font-bold text-slate-800 mb-4">Cost Estimator</h2>
-                        <p class="text-sm text-slate-500 mb-6">Real-time calculations for 6 people.</p>
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-slate-800">Budget Mode</h2>
+                            <!-- Toggle Switch -->
+                            <div class="bg-slate-200 p-1 rounded-lg flex text-xs font-bold">
+                                <button onclick="setTransportMode('drive')" id="btn-mode-drive" class="px-3 py-1 bg-white text-slate-800 rounded shadow transition-all">🚗 Road Trip</button>
+                                <button onclick="setTransportMode('fly')" id="btn-mode-fly" class="px-3 py-1 text-slate-500 rounded transition-all">✈️ Fly (YYZ)</button>
+                            </div>
+                        </div>
                         
                         <div class="space-y-6">
+                            <!-- Common Inputs -->
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
                                     <span>Trip Duration (Days)</span>
@@ -246,12 +253,33 @@
                                 <input type="range" id="input-food" min="30" max="150" step="5" value="65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
 
-                            <div>
+                            <!-- DRIVE SPECIFIC -->
+                            <div id="drive-inputs">
                                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
                                     <span>Gas Price (per L)</span>
                                     <span class="text-cyan-600 font-bold">$<span id="val-gas">1.65</span></span>
                                 </label>
                                 <input type="range" id="input-gas" min="1.30" max="2.20" step="0.05" value="1.65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
+                            </div>
+
+                            <!-- FLY SPECIFIC -->
+                            <div id="fly-inputs" class="hidden space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                                        <span>Flight Price (Round Trip)</span>
+                                        <span class="text-indigo-600 font-bold">$<span id="val-flight">250</span></span>
+                                    </label>
+                                    <input type="range" id="input-flight" min="150" max="800" step="10" value="250" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                                    <p class="text-xs text-slate-500 mt-1">Flights from Toronto (YYZ).</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                                        <span>Rental Car (Total/Week)</span>
+                                        <span class="text-indigo-600 font-bold">$<span id="val-rental">1500</span></span>
+                                    </label>
+                                    <input type="range" id="input-rental" min="800" max="2500" step="100" value="1500" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                                    <p class="text-xs text-slate-500 mt-1">Minivan in high season (Aug).</p>
+                                </div>
                             </div>
                         </div>
 
@@ -275,7 +303,7 @@
                         
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center">
                             <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                <div class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Transport</div>
+                                <div id="label-transport" class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Transport</div>
                                 <div id="stat-transport" class="font-bold text-slate-700 text-lg">-</div>
                             </div>
                             <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -318,8 +346,40 @@
             <!-- TAB: LOGISTICS -->
             <section id="content-logistics" class="hidden space-y-8 animate-fade-in">
                 
+                <!-- The Toronto Flight Hack -->
+                <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-6 mb-8">
+                    <div class="flex items-start">
+                        <span class="text-4xl mr-4">✈️</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-indigo-900 mb-2">The "Toronto Flight Hack" Strategy</h3>
+                            <p class="text-sm text-indigo-800 mb-4">
+                                You found $250 flights from Toronto (YYZ). That's a great price ($1,500 total for 6). <br>
+                                However, here is the math you need to consider:
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <strong class="text-green-600 block mb-1">PROS</strong>
+                                    <ul class="text-xs text-slate-600 space-y-1">
+                                        <li>• Saves ~25 hours of driving round trip.</li>
+                                        <li>• Less fatigue for drivers.</li>
+                                        <li>• More time on the beach.</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow-sm border border-red-100">
+                                    <strong class="text-red-600 block mb-1">CONS (Hidden Costs)</strong>
+                                    <ul class="text-xs text-slate-600 space-y-1">
+                                        <li>• <strong>Rental Car:</strong> Minivans in Halifax in August are scarce. Expect to pay $1,500-$2,000/week.</li>
+                                        <li>• <strong>Ottawa to YYZ:</strong> Gas + Parking for 8 days adds ~$200+.</li>
+                                        <li>• <strong>Total Premium:</strong> Flying will likely cost ~$1,500 MORE than driving your own car.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Wedding Strategy -->
-                <div class="bg-gradient-to-r from-teal-800 to-teal-600 rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-gradient-to-r from-teal-800 to-teal-600 rounded-2xl shadow-xl overflow-hidden mb-8">
                     <div class="p-8 text-white border-b border-teal-700/30">
                         <div class="flex items-center">
                             <span class="text-4xl mr-4">💍</span>
@@ -394,17 +454,17 @@
     </div>
 
     <script>
-        // --- ASSETS (Unsplash IDs) ---
+        // --- ASSETS (Stable Wikimedia Sources) ---
         const assets = {
-            aunt: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80',
-            anne: 'https://images.unsplash.com/photo-1621882414734-7221e106950e?auto=format&fit=crop&w=600&q=80', // PEI Landscape
-            brackley: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80', // Beach
-            basin: 'https://images.unsplash.com/photo-1476673160081-cf060971a4ae?auto=format&fit=crop&w=600&q=80', // Water
-            charlottetown: 'https://images.unsplash.com/photo-1623631484725-fef2691ad261?auto=format&fit=crop&w=600&q=80', // Ice cream/City
-            hopewell: 'https://images.unsplash.com/photo-1688647585350-137b8565a587?auto=format&fit=crop&w=600&q=80', // Rocks
-            peggy: 'https://images.unsplash.com/photo-1469532863959-195c65dc7f62?auto=format&fit=crop&w=600&q=80', // Lighthouse
-            halifax: 'https://images.unsplash.com/photo-1559873722-1d54f5934571?auto=format&fit=crop&w=600&q=80', // Halifax
-            lunenburg: 'https://images.unsplash.com/photo-1604071374567-5509bd2d9482?auto=format&fit=crop&w=600&q=80' // Colorful houses
+            aunt: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/716_%2C_Teahouse_Trek_-_Kanchenjunga_-_Nepal_%285645543787%29.jpg/640px-716_%2C_Teahouse_Trek_-_Kanchenjunga_-_Nepal_%285645543787%29.jpg', // Tea/Cozy Vibe
+            anne: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Green_Gables_front_view.jpg/640px-Green_Gables_front_view.jpg', 
+            brackley: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Prince_Edward_Island_National_Park_Brackley_Beach.jpg/640px-Prince_Edward_Island_National_Park_Brackley_Beach.jpg',
+            basin: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Basin_Head_beach.jpg/640px-Basin_Head_beach.jpg',
+            charlottetown: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Charlottetown_PEI_waterfront.jpg/640px-Charlottetown_PEI_waterfront.jpg', 
+            hopewell: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Hopewell_Rocks_Low_Tide.jpg/640px-Hopewell_Rocks_Low_Tide.jpg', 
+            peggy: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg/640px-Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg', 
+            halifax: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Halifax_Waterfront_Boardwalk.jpg/640px-Halifax_Waterfront_Boardwalk.jpg', 
+            lunenburg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Lunenburg_Waterfront_August_2013.jpg/640px-Lunenburg_Waterfront_August_2013.jpg'
         };
 
         const attractionsData = [
@@ -475,6 +535,7 @@
 
         let budgetChartInstance = null;
         let mapInstance = null;
+        let transportMode = 'drive'; // 'drive' or 'fly'
 
         // --- PASSWORD LOGIC ---
         function checkPassword() {
@@ -494,7 +555,6 @@
                 }, 600);
             } else {
                 errorMsg.classList.remove('hidden');
-                // Shake effect
                 document.getElementById('password-input').classList.add('border-red-500');
                 setTimeout(() => document.getElementById('password-input').classList.remove('border-red-500'), 500);
             }
@@ -509,11 +569,11 @@
             if (mapInstance) return; 
 
             mapInstance = L.map('map', {
-                scrollWheelZoom: false // Prevent scrolling page from zooming map accidentally
+                scrollWheelZoom: false 
             }).setView([46.4, -64.5], 6);
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 subdomains: 'abcd',
                 maxZoom: 19
             }).addTo(mapInstance);
@@ -605,7 +665,10 @@
 
                 card.innerHTML = `
                     <div class="h-48 overflow-hidden relative">
-                        <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <img src="${item.image}" 
+                             alt="${item.title}" 
+                             onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Image+Unavailable'"
+                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         <div class="absolute top-4 right-4">
                             <span class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm ${tagColor}">${tagLabel}</span>
                         </div>
@@ -626,12 +689,15 @@
 
         // --- BUDGET CALCULATOR ---
         function initBudgetCalc() {
-            const inputs = ['days', 'accom', 'food', 'gas'];
+            const inputs = ['days', 'accom', 'food', 'gas', 'flight', 'rental'];
             inputs.forEach(id => {
-                document.getElementById(`input-${id}`).addEventListener('input', (e) => {
-                    document.getElementById(`val-${id}`).innerText = e.target.value;
-                    updateBudget();
-                });
+                const el = document.getElementById(`input-${id}`);
+                if(el) {
+                    el.addEventListener('input', (e) => {
+                        document.getElementById(`val-${id}`).innerText = e.target.value;
+                        updateBudget();
+                    });
+                }
             });
 
             const ctx = document.getElementById('budgetChart').getContext('2d');
@@ -663,31 +729,66 @@
             updateBudget();
         }
 
+        function setTransportMode(mode) {
+            transportMode = mode;
+            // UI Toggles
+            if(mode === 'drive') {
+                document.getElementById('btn-mode-drive').classList.add('bg-white', 'text-slate-800', 'shadow');
+                document.getElementById('btn-mode-drive').classList.remove('text-slate-500');
+                document.getElementById('btn-mode-fly').classList.remove('bg-white', 'text-slate-800', 'shadow');
+                document.getElementById('btn-mode-fly').classList.add('text-slate-500');
+                
+                document.getElementById('drive-inputs').classList.remove('hidden');
+                document.getElementById('fly-inputs').classList.add('hidden');
+                document.getElementById('label-transport').innerText = "GAS";
+            } else {
+                document.getElementById('btn-mode-fly').classList.add('bg-white', 'text-slate-800', 'shadow');
+                document.getElementById('btn-mode-fly').classList.remove('text-slate-500');
+                document.getElementById('btn-mode-drive').classList.remove('bg-white', 'text-slate-800', 'shadow');
+                document.getElementById('btn-mode-drive').classList.add('text-slate-500');
+                
+                document.getElementById('drive-inputs').classList.add('hidden');
+                document.getElementById('fly-inputs').classList.remove('hidden');
+                document.getElementById('label-transport').innerText = "FLIGHT + CAR";
+            }
+            updateBudget();
+        }
+
         function updateBudget() {
             const days = parseInt(document.getElementById('input-days').value);
             const accomPerNight = parseInt(document.getElementById('input-accom').value);
             const foodPerPerson = parseInt(document.getElementById('input-food').value);
-            const gasPrice = parseFloat(document.getElementById('input-gas').value);
-
             const people = 6;
-            const kmDistance = 3500; 
-            const fuelEfficiency = 11;
             const ferryAndFun = 150 + (days * 60);
 
-            const gasCost = Math.round((kmDistance / 100) * fuelEfficiency * gasPrice);
+            // Transport Logic
+            let transportCost = 0;
+
+            if (transportMode === 'drive') {
+                 const gasPrice = parseFloat(document.getElementById('input-gas').value);
+                 const kmDistance = 3500; 
+                 const fuelEfficiency = 11;
+                 transportCost = Math.round((kmDistance / 100) * fuelEfficiency * gasPrice);
+            } else {
+                 const flightPrice = parseInt(document.getElementById('input-flight').value);
+                 const rentalPrice = parseInt(document.getElementById('input-rental').value);
+                 const transitToYYZ = 200; // Gas/Parking estimate
+                 transportCost = (flightPrice * people) + rentalPrice + transitToYYZ;
+            }
+
             const accomCost = accomPerNight * days;
             const foodCost = foodPerPerson * people * days;
-            const totalCost = gasCost + accomCost + foodCost + ferryAndFun;
+            const totalCost = transportCost + accomCost + foodCost + ferryAndFun;
             const perPerson = Math.round(totalCost / people);
 
             document.getElementById('total-cost').innerText = '$' + totalCost.toLocaleString();
             document.getElementById('per-person-cost').innerText = '$' + perPerson.toLocaleString();
-            document.getElementById('stat-transport').innerText = '$' + gasCost;
-            document.getElementById('stat-accom').innerText = '$' + accomCost;
-            document.getElementById('stat-food').innerText = '$' + foodCost;
-            document.getElementById('stat-fun').innerText = '$' + ferryAndFun;
+            document.getElementById('stat-transport').innerText = '$' + transportCost.toLocaleString();
+            document.getElementById('stat-accom').innerText = '$' + accomCost.toLocaleString();
+            document.getElementById('stat-food').innerText = '$' + foodCost.toLocaleString();
+            document.getElementById('stat-fun').innerText = '$' + ferryAndFun.toLocaleString();
 
-            budgetChartInstance.data.datasets[0].data = [gasCost, accomCost, foodCost, ferryAndFun];
+            budgetChartInstance.data.datasets[0].data = [transportCost, accomCost, foodCost, ferryAndFun];
             budgetChartInstance.update();
         }
 
@@ -697,6 +798,6 @@
         });
 
     </script>
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Leaflet JS used. Unsplash images used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Leaflet JS used. Wikimedia images used. -->
 </body>
 </html>
