@@ -8,7 +8,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ... existing styles ... */
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .tab-active { border-bottom: 2px solid #0891b2; color: #0e7490; font-weight: 600; }
+        .tab-inactive { color: #64748b; }
+        .tab-inactive:hover { color: #334155; }
         
         .chart-container {
             position: relative;
@@ -25,12 +28,12 @@
             }
         }
 
-        /* NEW: Map Specific Container */
+        /* Map Specific Container */
         .map-wrapper {
             position: relative;
             width: 100%;
             height: 400px;
-            background-color: #f0f9ff; /* Lightest Cyan/Water */
+            background-color: #f0f9ff;
             border-radius: 1rem;
             border: 1px solid #cffafe;
             overflow: hidden;
@@ -51,13 +54,45 @@
             background-color: #e2e8f0;
             z-index: 0;
         }
+
+        /* Login Overlay */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <!-- Chosen Palette: Teal/Cyan (Ocean/Summer), Slate (Neutral), Amber (Sand/Highlights) -->
-    
-    <div class="max-w-6xl mx-auto min-h-screen flex flex-col bg-white shadow-xl my-0 md:my-8 rounded-lg overflow-hidden">
+    <!-- PASSWORD OVERLAY -->
+    <div id="login-overlay">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center">
+            <div class="text-4xl mb-4">🔒</div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Trip Planner Locked</h2>
+            <p class="text-sm text-slate-500 mb-6">Enter password to view itinerary.</p>
+            
+            <input type="password" id="password-input" placeholder="Enter password" 
+                   class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-cyan-500 outline-none transition">
+            
+            <button onclick="checkPassword()" 
+                    class="w-full bg-cyan-700 text-white font-bold py-3 rounded-lg hover:bg-cyan-800 transition">
+                Unlock Plan
+            </button>
+            <p id="error-msg" class="text-red-500 text-xs mt-3 hidden">Incorrect password.</p>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER (Hidden initially) -->
+    <div id="app-container" class="hidden max-w-6xl mx-auto min-h-screen flex flex-col bg-white shadow-xl my-0 md:my-8 rounded-lg overflow-hidden">
         
         <!-- Header -->
         <header class="bg-cyan-900 text-white p-8">
@@ -102,13 +137,12 @@
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                     <h2 class="text-2xl font-bold text-slate-800 mb-2">The "Bridge In, Ferry Out" Strategy</h2>
                     <p class="text-slate-600 mb-6">
-                        To maximize scenery and minimize backtracking, we recommend driving onto PEI via the <span class="font-bold text-cyan-700">Confederation Bridge</span> and leaving via the <span class="font-bold text-cyan-700">Wood Islands Ferry</span> into Nova Scotia.
+                        Optimized for family visits and beach days. Enter via Bridge, Exit via Ferry.
                     </p>
 
-                    <!-- NEW: Schematic Map Canvas -->
+                    <!-- Schematic Map Canvas -->
                     <div class="map-wrapper">
                         <canvas id="routeMapCanvas"></canvas>
-                        <!-- Legend Overlay -->
                         <div class="absolute bottom-4 left-4 bg-white/90 p-3 rounded-lg shadow-sm border border-slate-200 text-xs pointer-events-none">
                             <div class="flex items-center mb-1"><span class="w-3 h-3 rounded-full bg-slate-800 mr-2"></span> Stops</div>
                             <div class="flex items-center mb-1"><span class="w-8 h-1 bg-cyan-600 mr-2"></span> Drive</div>
@@ -118,7 +152,6 @@
                     
                     <!-- Interactive Timeline -->
                     <div class="relative py-8">
-                        <!-- Vertical Line -->
                         <div class="hidden md:block timeline-line bg-slate-200"></div>
 
                         <!-- Stop 1 -->
@@ -132,36 +165,36 @@
                             <div class="w-full md:w-1/2 md:pl-8 hidden md:block"></div>
                         </div>
 
-                        <!-- Stop 2 -->
+                        <!-- Stop 2: PEI Arrival -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                             <div class="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
                             <div class="w-8 h-8 rounded-full bg-amber-400 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">2</div>
                             <div class="w-full md:w-1/2 md:pl-8 text-center md:text-left mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-slate-800">Into PEI (Confed. Bridge)</h3>
-                                <p class="text-slate-500">Day 2: Afternoon</p>
-                                <p class="text-sm text-slate-600 mt-1">Drive through NB. Cross the 13km bridge! Stay in Charlottetown/Cavendish for 2 Nights.</p>
+                                <h3 class="text-xl font-bold text-slate-800">PEI Arrival & Family</h3>
+                                <p class="text-slate-500">Days 2-4 (PEI Leg)</p>
+                                <p class="text-sm text-slate-600 mt-1">Cross Confederation Bridge. Visit <strong class="text-cyan-700">Udit's Aunt</strong>. Hit Brackley Beach & Basin Head. See the Anne Musical.</p>
                             </div>
                         </div>
 
-                        <!-- Stop 3 -->
+                        <!-- Stop 3: Ferry -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                             <div class="w-full md:w-1/2 md:pr-8 text-center md:text-right mb-4 md:mb-0">
                                 <h3 class="text-xl font-bold text-slate-800">Ferry to Nova Scotia</h3>
-                                <p class="text-slate-500">Day 4: Morning</p>
-                                <p class="text-sm text-slate-600 mt-1">Take the 75-min ferry from Wood Islands, PEI to Caribou, NS. Drive to Halifax/Cape Breton.</p>
+                                <p class="text-slate-500">Day 5: Morning</p>
+                                <p class="text-sm text-slate-600 mt-1">Ferry from Wood Islands. Head to Cape Breton or Halifax.</p>
                             </div>
                             <div class="w-8 h-8 rounded-full bg-indigo-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">3</div>
                             <div class="w-full md:w-1/2 md:pl-8 hidden md:block"></div>
                         </div>
 
-                        <!-- Stop 4 -->
+                        <!-- Stop 4: NS -->
                         <div class="flex flex-col md:flex-row items-center relative z-10">
                             <div class="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
                             <div class="w-8 h-8 rounded-full bg-cyan-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">4</div>
                             <div class="w-full md:w-1/2 md:pl-8 text-center md:text-left mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-cyan-900">Explore Nova Scotia</h3>
-                                <p class="text-slate-500">Days 4-8</p>
-                                <p class="text-sm text-slate-600 mt-1">Halifax, Peggy's Cove, and Lunenburg. Then start the long drive home on Day 9.</p>
+                                <h3 class="text-xl font-bold text-cyan-900">Nova Scotia Leg</h3>
+                                <p class="text-slate-500">Days 5-8</p>
+                                <p class="text-sm text-slate-600 mt-1">Halifax Waterfront & Peggy's Cove. Drive home Day 9.</p>
                             </div>
                         </div>
                     </div>
@@ -248,7 +281,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-800">Must-See Spots</h2>
-                        <p class="text-slate-600">Mixing Red Sand (PEI) and Ocean Rocks (NS).</p>
+                        <p class="text-slate-600">Udit's Family, Singing Sands & Ocean Rocks.</p>
                     </div>
                     <div class="flex space-x-2 mt-4 md:mt-0 flex-wrap gap-2">
                         <button onclick="filterAttractions('all')" class="px-3 py-1 text-sm bg-slate-200 hover:bg-slate-300 rounded-full text-slate-700 transition">All</button>
@@ -292,11 +325,11 @@
                                 <ul class="space-y-3 text-sm text-slate-700">
                                     <li class="flex items-start">
                                         <span class="text-teal-500 font-bold mr-2">✓</span> 
-                                        <strong>The Buffer:</strong> 2 months before your wedding. High summer vibes.
+                                        <strong>The Anne Musical:</strong> Confirmed in season (June-Sept) at the Confederation Centre!
                                     </li>
                                     <li class="flex items-start">
                                         <span class="text-teal-500 font-bold mr-2">✓</span> 
-                                        <strong>Beach Weather:</strong> PEI water is warmer than NS. Cavendish Beach is peak in August.
+                                        <strong>Beach Weather:</strong> Perfect for Brackley Beach & Basin Head swimming.
                                     </li>
                                 </ul>
                             </div>
@@ -372,26 +405,39 @@
     <script>
         // --- DATA & STATE ---
         const attractionsData = [
-            // ... existing data ...
             {
-                title: "Green Gables Heritage Place",
+                title: "Udit's Aunt's House",
                 category: "pei",
-                location: "Cavendish, PEI",
-                description: "The inspiration for L.M. Montgomery's books. A beautiful farm setting that's iconic for PEI.",
-                icon: "👒"
+                location: "Prince Edward Island",
+                description: "Family visit! The highlight of the PEI leg. Time for tea and catching up.",
+                icon: "🏡"
             },
             {
-                title: "Cavendish Beach",
+                title: "Anne of Green Gables Musical",
+                category: "pei",
+                location: "Confederation Centre",
+                description: "The world's longest-running annual musical. Runs June-Sept, so it is perfectly in season for your trip!",
+                icon: "🎭"
+            },
+            {
+                title: "Brackley Beach",
                 category: "pei",
                 location: "PEI National Park",
-                description: "Famous red sandstone cliffs and warm(ish) water. Great for a group beach day.",
+                description: "Famous for massive dunes. A bit quieter than Cavendish but just as beautiful. Great for sunset walks.",
                 icon: "🏖️"
+            },
+            {
+                title: "Basin Head (Singing Sands)",
+                category: "pei",
+                location: "Eastern PEI (Souris)",
+                description: "The sand actually squeaks when you walk! Jumping off the bridge into the 'run' is a local rite of passage.",
+                icon: "🎶"
             },
             {
                 title: "Charlottetown Waterfront",
                 category: "pei",
                 location: "Charlottetown, PEI",
-                description: "Historic birthplace of Confederation. Great patio dining on Victoria Row for the group.",
+                description: "Walk Victoria Row, see the tall ships, and definitely get **Cows Ice Cream** on the Wharf.",
                 icon: "🍦"
             },
             {
@@ -412,7 +458,7 @@
                 title: "Halifax Waterfront",
                 category: "ns-culture",
                 location: "Halifax, NS",
-                description: "Walk the boardwalk, Maritime Museum, and Cows Ice Cream.",
+                description: "Walk the boardwalk, Maritime Museum, and ... yes, more Cows Ice Cream.",
                 icon: "🏙️"
             },
             {
@@ -426,25 +472,48 @@
 
         let budgetChartInstance = null;
 
-        // --- MAP LOGIC (NEW) ---
+        // --- PASSWORD LOGIC ---
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            const overlay = document.getElementById('login-overlay');
+            const app = document.getElementById('app-container');
+
+            if (input.toLowerCase() === 'maritime') {
+                overlay.style.opacity = '0';
+                overlay.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    app.classList.remove('hidden');
+                    // Trigger map resize once visible
+                    window.dispatchEvent(new Event('resize'));
+                }, 500);
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+        // Allow Enter key
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+
+        // --- MAP LOGIC ---
         function initMap() {
             const canvas = document.getElementById('routeMapCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Map Points (Normalized 0-1 coordinates)
-            // Layout: Ottawa (Left), PEI (Top Right), NS (Bottom Right)
             const locations = {
                 ottawa: { x: 0.1, y: 0.6, label: "Ottawa" },
                 qc: { x: 0.35, y: 0.5, label: "Quebec City" },
                 edmundston: { x: 0.5, y: 0.55, label: "Edmundston" },
                 moncton: { x: 0.65, y: 0.65, label: "Moncton" },
-                pei: { x: 0.75, y: 0.35, label: "PEI" },
-                ferry: { x: 0.82, y: 0.45, label: "Ferry" }, // Virtual point for curve
+                pei: { x: 0.75, y: 0.35, label: "PEI (Aunt!)" }, // Updated label
+                ferry: { x: 0.82, y: 0.45, label: "Ferry" },
                 halifax: { x: 0.85, y: 0.75, label: "Halifax" }
             };
 
             function resize() {
-                // Set actual canvas size to match display size for sharpness
                 const rect = canvas.parentElement.getBoundingClientRect();
                 canvas.width = rect.width;
                 canvas.height = rect.height;
@@ -455,18 +524,11 @@
                 const w = canvas.width;
                 const h = canvas.height;
                 
-                // Clear
-                ctx.fillStyle = '#ecfeff'; // Watery background
+                ctx.fillStyle = '#ecfeff';
                 ctx.fillRect(0, 0, w, h);
 
-                // Helper to get pixel coords
                 const getXY = (loc) => ({ x: loc.x * w, y: loc.y * h });
 
-                // Draw Land Masses (Abstract blobs)
-                ctx.fillStyle = '#f1f5f9'; // Slate-100 land
-                // (Simplified for schematic look, focusing on route lines)
-
-                // Route Styling
                 ctx.lineWidth = 4;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
@@ -478,78 +540,74 @@
                 const pei = getXY(locations.pei);
                 const hal = getXY(locations.halifax);
 
-                // 1. Ottawa -> Edmundston (Solid)
-                ctx.strokeStyle = '#0891b2'; // Cyan-600
+                // 1. Ottawa -> Moncton
+                ctx.strokeStyle = '#0891b2'; 
                 ctx.setLineDash([]);
                 ctx.beginPath();
                 ctx.moveTo(ott.x, ott.y);
                 ctx.lineTo(qc.x, qc.y);
                 ctx.lineTo(edm.x, edm.y);
-                ctx.lineTo(mon.x, mon.y); // To Moncton Hub
+                ctx.lineTo(mon.x, mon.y);
                 ctx.stroke();
 
-                // 2. Moncton -> PEI (Bridge - Solid)
+                // 2. Moncton -> PEI
                 ctx.beginPath();
                 ctx.moveTo(mon.x, mon.y);
-                ctx.lineTo(mon.x, mon.y - (h * 0.15)); // Up towards bridge
+                ctx.lineTo(mon.x, mon.y - (h * 0.15));
                 ctx.lineTo(pei.x, pei.y);
                 ctx.stroke();
 
-                // 3. PEI -> Halifax (Ferry - Dashed)
-                ctx.strokeStyle = '#f59e0b'; // Amber for Special/Ferry
+                // 3. PEI -> Halifax (Ferry)
+                ctx.strokeStyle = '#f59e0b';
                 ctx.setLineDash([10, 10]);
                 ctx.beginPath();
                 ctx.moveTo(pei.x, pei.y);
                 ctx.quadraticCurveTo(pei.x + 50, pei.y + 50, hal.x, hal.y);
                 ctx.stroke();
 
-                // 4. Halifax -> Moncton (Return - Dashed or Lighter)
-                ctx.strokeStyle = '#94a3b8'; // Slate for return
+                // 4. Return
+                ctx.strokeStyle = '#94a3b8';
                 ctx.setLineDash([5, 5]);
                 ctx.beginPath();
                 ctx.moveTo(hal.x, hal.y);
                 ctx.lineTo(mon.x, mon.y);
                 ctx.stroke();
 
-                // Draw Points
+                // Points
                 ctx.setLineDash([]);
                 Object.values(locations).forEach(loc => {
                     if (loc.label === 'Ferry') return;
                     const p = getXY(loc);
                     
-                    // Dot
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
-                    ctx.fillStyle = '#fff';
+                    ctx.fillStyle = loc.label.includes('Aunt') ? '#fbbf24' : '#fff'; // Gold for Aunt
                     ctx.fill();
                     ctx.strokeStyle = '#1e293b';
                     ctx.lineWidth = 3;
                     ctx.stroke();
 
-                    // Label
                     ctx.font = 'bold 12px Inter, sans-serif';
                     ctx.fillStyle = '#334155';
                     ctx.textAlign = 'center';
                     ctx.fillText(loc.label, p.x, p.y - 15);
                 });
                 
-                // Add labels for Bridge/Ferry
+                // Labels
                 ctx.fillStyle = '#0e7490';
                 ctx.font = 'italic 11px Inter, sans-serif';
-                // Bridge label approx
                 ctx.fillText("Confederation Bridge", mon.x + (w*0.02), mon.y - (h*0.1));
                 
                 ctx.fillStyle = '#d97706';
-                // Ferry label approx
                 ctx.fillText("Ferry", pei.x + (w*0.05), pei.y + (h*0.1));
             }
 
             window.addEventListener('resize', resize);
-            resize();
+            // Initial draw attempt
+            if(canvas.width > 0) draw();
         }
 
         // --- CORE FUNCTIONS ---
-
         function switchTab(tabId) {
             ['route', 'budget', 'attractions', 'logistics'].forEach(id => {
                 document.getElementById(`content-${id}`).classList.add('hidden');
@@ -561,12 +619,7 @@
             activeTab.classList.add('tab-active');
             activeTab.classList.remove('tab-inactive');
             if(tabId === 'budget' && budgetChartInstance) { budgetChartInstance.resize(); }
-            
-            // Re-draw map if route tab is shown (fixes canvas size if hidden initially)
-            if(tabId === 'route') {
-                 // Trigger resize event to force map redraw
-                 window.dispatchEvent(new Event('resize'));
-            }
+            if(tabId === 'route') { window.dispatchEvent(new Event('resize')); }
         }
 
         // --- ATTRACTIONS RENDERER ---
@@ -575,44 +628,40 @@
             grid.innerHTML = '';
             
             attractionsData.forEach(item => {
-                if (filter === 'all' || item.category === filter || (filter.startsWith('ns') && item.category.startsWith('ns'))) {
-                    // Slight logic fix to handle 'ns-nature' vs 'ns-culture' filters
-                    if (filter !== 'all' && item.category !== filter) return;
+                // Special handling for Aunt (always show in PEI or All)
+                if (filter !== 'all' && filter === 'pei' && item.title.includes('Aunt')) {
+                    // fall through
+                } else if (filter !== 'all' && item.category !== filter) return;
 
-                    const card = document.createElement('div');
-                    card.className = "bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow";
-                    
-                    let colors = {
-                        'pei': 'text-amber-800 bg-amber-50',
-                        'ns-nature': 'text-green-600 bg-green-50',
-                        'ns-culture': 'text-blue-600 bg-blue-50'
-                    };
-                    let labels = {
-                        'pei': 'PEI Must-Do',
-                        'ns-nature': 'NS Nature',
-                        'ns-culture': 'NS Culture'
-                    };
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow";
+                
+                let colors = {
+                    'pei': 'text-amber-800 bg-amber-50',
+                    'ns-nature': 'text-green-600 bg-green-50',
+                    'ns-culture': 'text-blue-600 bg-blue-50'
+                };
+                // Custom override for Aunt
+                let tagColor = item.title.includes('Aunt') ? 'text-purple-700 bg-purple-100' : (colors[item.category] || 'text-slate-600 bg-slate-100');
+                let tagLabel = item.title.includes('Aunt') ? 'Family' : (item.category === 'pei' ? 'PEI' : 'Nova Scotia');
 
-                    card.innerHTML = `
-                        <div class="h-2 bg-gradient-to-r from-cyan-500 to-amber-400"></div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="text-4xl">${item.icon}</div>
-                                <span class="text-xs font-bold px-2 py-1 rounded uppercase tracking-wide ${colors[item.category] || 'text-slate-600 bg-slate-100'}">${labels[item.category] || 'Attraction'}</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-slate-800 mb-1">${item.title}</h3>
-                            <p class="text-xs text-slate-500 font-semibold mb-3 uppercase tracking-wider">${item.location}</p>
-                            <p class="text-sm text-slate-600 leading-relaxed">${item.description}</p>
+                card.innerHTML = `
+                    <div class="h-2 bg-gradient-to-r from-cyan-500 to-amber-400"></div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="text-4xl">${item.icon}</div>
+                            <span class="text-xs font-bold px-2 py-1 rounded uppercase tracking-wide ${tagColor}">${tagLabel}</span>
                         </div>
-                    `;
-                    grid.appendChild(card);
-                }
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">${item.title}</h3>
+                        <p class="text-xs text-slate-500 font-semibold mb-3 uppercase tracking-wider">${item.location}</p>
+                        <p class="text-sm text-slate-600 leading-relaxed">${item.description}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
             });
         }
 
-        function filterAttractions(category) {
-            renderAttractions(category);
-        }
+        function filterAttractions(category) { renderAttractions(category); }
 
         // --- BUDGET CALCULATOR ---
         function initBudgetCalc() {
@@ -646,7 +695,6 @@
                     cutout: '65%'
                 }
             });
-
             updateBudget();
         }
 
@@ -658,8 +706,8 @@
 
             const people = 6;
             const kmDistance = 3500; 
-            const fuelEfficiency = 11; // 11L/100km Minivan
-            const ferryAndFun = 150 + (days * 60); // Ferry (~150) + Daily Fun Budget
+            const fuelEfficiency = 11;
+            const ferryAndFun = 150 + (days * 60);
 
             const gasCost = Math.round((kmDistance / 100) * fuelEfficiency * gasPrice);
             const accomCost = accomPerNight * days;
@@ -669,7 +717,6 @@
 
             document.getElementById('total-cost').innerText = '$' + totalCost.toLocaleString();
             document.getElementById('per-person-cost').innerText = '$' + perPerson.toLocaleString();
-
             document.getElementById('stat-transport').innerText = '$' + gasCost;
             document.getElementById('stat-accom').innerText = '$' + accomCost;
             document.getElementById('stat-food').innerText = '$' + foodCost;
@@ -682,7 +729,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderAttractions('all');
             initBudgetCalc();
-            initMap(); // Initialize Map
+            initMap();
             switchTab('route');
         });
 
