@@ -4,50 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maritime Loop: Ottawa, PEI & NS Planner</title>
+    
+    <!-- CSS Framework -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Charting & Maps -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .tab-active { border-bottom: 2px solid #0891b2; color: #0e7490; font-weight: 600; }
-        .tab-inactive { color: #64748b; }
-        .tab-inactive:hover { color: #334155; }
         
+        /* Interactive Tab Styles */
+        .tab-active { border-bottom: 3px solid #0891b2; color: #0e7490; font-weight: 700; background-color: rgba(8, 145, 178, 0.05); }
+        .tab-inactive { color: #64748b; font-weight: 500; }
+        .tab-inactive:hover { color: #334155; background-color: #f1f5f9; }
+        
+        /* Chart & Map Containers */
         .chart-container {
             position: relative;
             width: 100%;
             max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto;
             height: 350px;
             max-height: 400px;
         }
-        @media (max-width: 640px) {
-            .chart-container {
-                height: 300px;
-            }
-        }
-
-        /* Map Specific Container */
         #map {
             width: 100%;
-            height: 500px; /* Taller for better view */
-            border-radius: 1rem;
-            z-index: 1; /* Ensure below overlays */
+            height: 500px;
+            border-radius: 0.75rem;
+            z-index: 1;
         }
         .map-wrapper {
             position: relative;
-            border-radius: 1rem;
+            border-radius: 0.75rem;
             border: 1px solid #cbd5e1;
             overflow: hidden;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
+        /* Timeline Graphics */
         .timeline-line {
             position: absolute;
             left: 50%;
@@ -56,6 +56,13 @@
             height: 100%;
             background-color: #e2e8f0;
             z-index: 0;
+        }
+
+        /* Hero Image Overlay */
+        .hero-bg {
+            background-image: linear-gradient(rgba(14, 116, 144, 0.9), rgba(21, 94, 117, 0.8)), url('https://images.unsplash.com/photo-1490100667990-4fced8021649?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
         }
 
         /* Login Overlay */
@@ -77,121 +84,129 @@
 
     <!-- PASSWORD OVERLAY -->
     <div id="login-overlay">
-        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center">
-            <div class="text-4xl mb-4">🔒</div>
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-4 border-cyan-500/20">
+            <div class="text-5xl mb-6">🔒</div>
             <h2 class="text-2xl font-bold text-slate-800 mb-2">Maritime Planner</h2>
             <p class="text-sm text-slate-500 mb-6">Enter password to view itinerary.</p>
             
             <input type="password" id="password-input" placeholder="Enter password" 
-                   class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-cyan-500 outline-none transition">
+                   class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-cyan-500 outline-none transition text-center text-lg">
             
             <button onclick="checkPassword()" 
-                    class="w-full bg-cyan-700 text-white font-bold py-3 rounded-lg hover:bg-cyan-800 transition">
+                    class="w-full bg-cyan-700 text-white font-bold py-3 rounded-lg hover:bg-cyan-800 transition shadow-lg transform active:scale-95">
                 Unlock Plan
             </button>
-            <p id="error-msg" class="text-red-500 text-xs mt-3 hidden">Incorrect password.</p>
+            <p id="error-msg" class="text-red-500 text-xs mt-3 hidden font-bold">Incorrect password.</p>
         </div>
     </div>
 
     <!-- MAIN APP CONTAINER -->
-    <div id="app-container" class="hidden max-w-6xl mx-auto min-h-screen flex flex-col bg-white shadow-xl my-0 md:my-8 rounded-lg overflow-hidden">
+    <div id="app-container" class="hidden max-w-7xl mx-auto min-h-screen flex flex-col bg-slate-50 shadow-2xl my-0 md:my-8 rounded-2xl overflow-hidden">
         
-        <!-- Header -->
-        <header class="bg-cyan-900 text-white p-8">
+        <!-- Hero Header -->
+        <header class="hero-bg text-white p-8 md:p-12 shadow-lg">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
-                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">The Maritime Loop</h1>
-                    <p class="text-cyan-200 mt-2 text-lg">Ottawa &#8594; PEI &#8594; Nova Scotia &#8594; Ottawa</p>
+                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The Maritime Loop</h1>
+                    <p class="text-cyan-100 text-xl font-light">Ottawa &#8594; PEI &#8594; Nova Scotia &#8594; Ottawa</p>
                 </div>
-                <div class="mt-4 md:mt-0 bg-cyan-800 px-4 py-2 rounded-lg border border-cyan-700">
-                    <span class="block text-sm text-cyan-300 uppercase tracking-wide font-semibold">Pre-Wedding Relaxer</span>
-                    <div class="flex items-center space-x-4 mt-1">
-                        <span class="text-white font-bold">&#128101; 6 Travelers</span>
-                        <span class="text-white font-bold">&#128663; ~3,200km Loop</span>
+                <div class="mt-6 md:mt-0 bg-white/10 backdrop-blur-md px-6 py-3 rounded-xl border border-white/20">
+                    <span class="block text-xs text-cyan-200 uppercase tracking-widest font-bold mb-1">Trip Profile</span>
+                    <div class="flex items-center space-x-6">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-2">🚐</span>
+                            <span class="font-bold">6 Travelers</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-2">🛣️</span>
+                            <span class="font-bold">~3,200km</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- Navigation -->
-        <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
-            <div class="flex overflow-x-auto px-4 md:px-8 space-x-8">
-                <button onclick="switchTab('route')" id="tab-route" class="tab-active py-4 px-2 whitespace-nowrap transition-colors">
-                    &#128506; The Loop (Map)
+        <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+            <div class="flex overflow-x-auto px-4 md:px-8">
+                <button onclick="switchTab('route')" id="tab-route" class="tab-active py-5 px-6 whitespace-nowrap transition-all flex items-center">
+                    <span class="mr-2">🗺️</span> Map & Route
                 </button>
-                <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-4 px-2 whitespace-nowrap transition-colors">
-                    &#128176; Smart Budget
+                <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center">
+                    <span class="mr-2">💰</span> Smart Budget
                 </button>
-                <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-4 px-2 whitespace-nowrap transition-colors">
-                    &#127754; Attractions
+                <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center">
+                    <span class="mr-2">📸</span> Must-See
                 </button>
-                <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-4 px-2 whitespace-nowrap transition-colors">
-                    &#128295; Logistics
+                <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center">
+                    <span class="mr-2">📋</span> Logistics
                 </button>
             </div>
         </nav>
 
         <!-- Main Content Area -->
-        <main class="flex-grow p-4 md:p-8 bg-slate-50">
+        <main class="flex-grow p-4 md:p-8">
 
             <!-- TAB: ROUTE -->
             <section id="content-route" class="space-y-8 animate-fade-in">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Interactive Route Map</h2>
-                    <p class="text-slate-600 mb-6">
-                        Zoom in to explore the roads. The dashed orange line represents the ferry crossing.
-                    </p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Interactive Map</h2>
+                            <p class="text-slate-600">Zoom in to see the roads. <span class="text-amber-600 font-bold">Orange dashed line</span> is the ferry.</p>
+                        </div>
+                    </div>
 
                     <!-- Leaflet Map Container -->
                     <div class="map-wrapper">
                         <div id="map"></div>
                     </div>
                     
-                    <!-- Interactive Timeline -->
-                    <div class="relative py-8">
-                        <div class="hidden md:block timeline-line bg-slate-200"></div>
+                    <!-- Timeline -->
+                    <div class="mt-12 relative">
+                        <div class="hidden md:block timeline-line"></div>
 
                         <!-- Stop 1 -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
-                            <div class="w-full md:w-1/2 md:pr-8 text-center md:text-right mb-4 md:mb-0">
+                            <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
                                 <h3 class="text-xl font-bold text-cyan-900">Start: Ottawa, ON</h3>
-                                <p class="text-slate-500">Day 1: 07:00 AM</p>
-                                <p class="text-sm text-slate-600 mt-1">Drive 7 hours. Overnight in <strong>Edmundston, NB</strong>.</p>
+                                <p class="text-slate-500 font-medium">Day 1: 07:00 AM</p>
+                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">The long haul. Drive 7 hours to Edmundston, NB. Stop in Quebec City for lunch if time permits.</p>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-cyan-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">1</div>
-                            <div class="w-full md:w-1/2 md:pl-8 hidden md:block"></div>
+                            <div class="w-10 h-10 rounded-full bg-cyan-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">1</div>
+                            <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
                         </div>
 
-                        <!-- Stop 2: PEI Arrival -->
+                        <!-- Stop 2 -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
-                            <div class="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
-                            <div class="w-8 h-8 rounded-full bg-amber-400 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">2</div>
-                            <div class="w-full md:w-1/2 md:pl-8 text-center md:text-left mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-slate-800">PEI Arrival & Family</h3>
-                                <p class="text-slate-500">Days 2-4 (PEI Leg)</p>
-                                <p class="text-sm text-slate-600 mt-1">Cross Confederation Bridge. Visit <strong class="text-cyan-700">Udit's Aunt</strong>. Hit Brackley Beach & Basin Head. See the Anne Musical.</p>
+                            <div class="w-full md:w-1/2 md:pr-12 hidden md:block"></div>
+                            <div class="w-10 h-10 rounded-full bg-amber-500 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">2</div>
+                            <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
+                                <h3 class="text-xl font-bold text-slate-800">PEI Arrival (Bridge)</h3>
+                                <p class="text-slate-500 font-medium">Days 2-4</p>
+                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Cross the 13km Confederation Bridge. Stay in Cavendish. Visit <strong class="text-cyan-700">Udit's Aunt</strong> and hit Brackley Beach.</p>
                             </div>
                         </div>
 
-                        <!-- Stop 3: Ferry -->
+                        <!-- Stop 3 -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
-                            <div class="w-full md:w-1/2 md:pr-8 text-center md:text-right mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-slate-800">Ferry to Nova Scotia</h3>
-                                <p class="text-slate-500">Day 5: Morning</p>
-                                <p class="text-sm text-slate-600 mt-1">Ferry from Wood Islands. Head to Cape Breton or Halifax.</p>
+                            <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
+                                <h3 class="text-xl font-bold text-slate-800">The Ferry Crossing</h3>
+                                <p class="text-slate-500 font-medium">Day 5: Morning</p>
+                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Take the Wood Islands Ferry to Nova Scotia. A 75-minute break from driving. Book ahead!</p>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-indigo-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">3</div>
-                            <div class="w-full md:w-1/2 md:pl-8 hidden md:block"></div>
+                            <div class="w-10 h-10 rounded-full bg-indigo-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">3</div>
+                            <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
                         </div>
 
-                        <!-- Stop 4: NS -->
+                        <!-- Stop 4 -->
                         <div class="flex flex-col md:flex-row items-center relative z-10">
-                            <div class="w-full md:w-1/2 md:pr-8 hidden md:block"></div>
-                            <div class="w-8 h-8 rounded-full bg-cyan-600 border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">4</div>
-                            <div class="w-full md:w-1/2 md:pl-8 text-center md:text-left mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-cyan-900">Nova Scotia Leg</h3>
-                                <p class="text-slate-500">Days 5-8</p>
-                                <p class="text-sm text-slate-600 mt-1">Halifax Waterfront & Peggy's Cove. Drive home Day 9.</p>
+                            <div class="w-full md:w-1/2 md:pr-12 hidden md:block"></div>
+                            <div class="w-10 h-10 rounded-full bg-cyan-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">4</div>
+                            <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
+                                <h3 class="text-xl font-bold text-cyan-900">Nova Scotia Coast</h3>
+                                <p class="text-slate-500 font-medium">Days 5-8</p>
+                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Halifax Waterfront, Peggy's Cove, Lunenburg. Drive home via New Brunswick on Day 9.</p>
                             </div>
                         </div>
                     </div>
@@ -202,28 +217,40 @@
             <section id="content-budget" class="hidden space-y-8 animate-fade-in">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Controls -->
-                    <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                        <h2 class="text-xl font-bold text-slate-800 mb-4">Budget Parameters</h2>
-                        <p class="text-sm text-slate-500 mb-6">Adjust for 6 people in August (High Season).</p>
+                    <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                        <h2 class="text-xl font-bold text-slate-800 mb-4">Cost Estimator</h2>
+                        <p class="text-sm text-slate-500 mb-6">Real-time calculations for 6 people.</p>
                         
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Trip Duration (Days): <span id="val-days" class="text-cyan-600">8</span></label>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                                    <span>Trip Duration (Days)</span>
+                                    <span id="val-days" class="text-cyan-600 font-bold">8</span>
+                                </label>
                                 <input type="range" id="input-days" min="5" max="14" value="8" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Accom. per Night (Total): $<span id="val-accom" class="text-cyan-600">400</span></label>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                                    <span>Accom. / Night (Total)</span>
+                                    <span class="text-cyan-600 font-bold">$<span id="val-accom">400</span></span>
+                                </label>
                                 <input type="range" id="input-accom" min="150" max="800" step="50" value="400" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Food per Person/Day: $<span id="val-food" class="text-cyan-600">65</span></label>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                                    <span>Food / Person / Day</span>
+                                    <span class="text-cyan-600 font-bold">$<span id="val-food">65</span></span>
+                                </label>
                                 <input type="range" id="input-food" min="30" max="150" step="5" value="65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Gas Price (per L): $<span id="val-gas" class="text-cyan-600">1.65</span></label>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
+                                    <span>Gas Price (per L)</span>
+                                    <span class="text-cyan-600 font-bold">$<span id="val-gas">1.65</span></span>
+                                </label>
                                 <input type="range" id="input-gas" min="1.30" max="2.20" step="0.05" value="1.65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
                             </div>
                         </div>
@@ -231,42 +258,37 @@
                         <div class="mt-8 pt-6 border-t border-slate-100">
                             <div class="flex justify-between items-end mb-2">
                                 <span class="text-slate-600 font-medium">Total Cost</span>
-                                <span id="total-cost" class="text-2xl font-bold text-slate-800">$0</span>
+                                <span id="total-cost" class="text-3xl font-bold text-slate-800">$0</span>
                             </div>
-                            <div class="flex justify-between items-end">
-                                <span class="text-slate-500 text-sm">Per Person (6 pax)</span>
-                                <span id="per-person-cost" class="text-lg font-bold text-cyan-600">$0</span>
+                            <div class="flex justify-between items-end bg-cyan-50 p-3 rounded-lg">
+                                <span class="text-cyan-800 text-sm font-medium">Cost Per Person</span>
+                                <span id="per-person-cost" class="text-xl font-bold text-cyan-700">$0</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Visualization -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-center">
-                        <div class="mb-4">
-                            <h2 class="text-xl font-bold text-slate-800">Cost Breakdown</h2>
-                            <p class="text-slate-500 text-sm">Includes Bridge/Ferry estimate (~$150 total for minivan).</p>
-                        </div>
-                        
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
                         <div class="chart-container">
                             <canvas id="budgetChart"></canvas>
                         </div>
                         
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-center">
-                            <div class="p-3 bg-slate-50 rounded-lg">
-                                <div class="text-xs text-slate-500 uppercase">Transport</div>
-                                <div id="stat-transport" class="font-bold text-slate-700">-</div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center">
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <div class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Transport</div>
+                                <div id="stat-transport" class="font-bold text-slate-700 text-lg">-</div>
                             </div>
-                            <div class="p-3 bg-slate-50 rounded-lg">
-                                <div class="text-xs text-slate-500 uppercase">Accommodation</div>
-                                <div id="stat-accom" class="font-bold text-slate-700">-</div>
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <div class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Stay</div>
+                                <div id="stat-accom" class="font-bold text-slate-700 text-lg">-</div>
                             </div>
-                            <div class="p-3 bg-slate-50 rounded-lg">
-                                <div class="text-xs text-slate-500 uppercase">Food</div>
-                                <div id="stat-food" class="font-bold text-slate-700">-</div>
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <div class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Food</div>
+                                <div id="stat-food" class="font-bold text-slate-700 text-lg">-</div>
                             </div>
-                            <div class="p-3 bg-slate-50 rounded-lg">
-                                <div class="text-xs text-slate-500 uppercase">Fun & Ferry</div>
-                                <div id="stat-fun" class="font-bold text-slate-700">-</div>
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <div class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Activities</div>
+                                <div id="stat-fun" class="font-bold text-slate-700 text-lg">-</div>
                             </div>
                         </div>
                     </div>
@@ -278,17 +300,17 @@
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-800">Must-See Spots</h2>
-                        <p class="text-slate-600">Udit's Family, Singing Sands & Ocean Rocks.</p>
+                        <p class="text-slate-600">Curated specifically for this trip.</p>
                     </div>
                     <div class="flex space-x-2 mt-4 md:mt-0 flex-wrap gap-2">
-                        <button onclick="filterAttractions('all')" class="px-3 py-1 text-sm bg-slate-200 hover:bg-slate-300 rounded-full text-slate-700 transition">All</button>
-                        <button onclick="filterAttractions('pei')" class="px-3 py-1 text-sm bg-amber-100 hover:bg-amber-200 rounded-full text-amber-800 transition font-bold">PEI</button>
-                        <button onclick="filterAttractions('ns-nature')" class="px-3 py-1 text-sm bg-green-100 hover:bg-green-200 rounded-full text-green-700 transition">NS Nature</button>
-                        <button onclick="filterAttractions('ns-culture')" class="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 rounded-full text-blue-700 transition">NS Culture</button>
+                        <button onclick="filterAttractions('all')" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full shadow-md hover:bg-slate-700 transition">All</button>
+                        <button onclick="filterAttractions('pei')" class="px-4 py-2 text-sm bg-white border border-amber-200 text-amber-700 rounded-full hover:bg-amber-50 transition font-bold shadow-sm">PEI</button>
+                        <button onclick="filterAttractions('ns-nature')" class="px-4 py-2 text-sm bg-white border border-green-200 text-green-700 rounded-full hover:bg-green-50 transition font-bold shadow-sm">Nature</button>
+                        <button onclick="filterAttractions('ns-culture')" class="px-4 py-2 text-sm bg-white border border-blue-200 text-blue-700 rounded-full hover:bg-blue-50 transition font-bold shadow-sm">Culture</button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="attraction-grid">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="attraction-grid">
                     <!-- Cards injected by JS -->
                 </div>
             </section>
@@ -296,174 +318,158 @@
             <!-- TAB: LOGISTICS -->
             <section id="content-logistics" class="hidden space-y-8 animate-fade-in">
                 
-                <!-- Strategic Timing Section (August Recommendation) -->
-                <div class="bg-gradient-to-r from-teal-800 to-teal-600 rounded-xl shadow-lg p-1">
-                    <div class="bg-white rounded-lg p-6">
-                        <div class="flex items-center mb-6">
-                            <span class="text-3xl mr-3">💍</span>
+                <!-- Wedding Strategy -->
+                <div class="bg-gradient-to-r from-teal-800 to-teal-600 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-8 text-white border-b border-teal-700/30">
+                        <div class="flex items-center">
+                            <span class="text-4xl mr-4">💍</span>
                             <div>
-                                <h3 class="text-xl font-bold text-slate-800">The "Pre-Wedding" Relaxer Strategy</h3>
-                                <p class="text-sm text-slate-500">Optimized for an October Wedding Timeline</p>
+                                <h3 class="text-2xl font-bold">The "Pre-Wedding" Strategy</h3>
+                                <p class="text-teal-100">Timing: Aug 1–9, 2026 (Civic Holiday)</p>
                             </div>
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            
-                            <!-- The Recommendation -->
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="text-lg font-bold text-teal-700">Target: Civic Holiday / Natal Day</h4>
-                                    <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2 py-1 rounded uppercase">Aug 1–9, 2026</span>
-                                </div>
-                                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
-                                    <p class="font-bold text-slate-800 mb-1">Monday, August 3rd</p>
-                                    <p class="text-xs text-slate-500">ON: Civic Holiday | NS: Natal Day</p>
-                                </div>
-                                <ul class="space-y-3 text-sm text-slate-700">
-                                    <li class="flex items-start">
-                                        <span class="text-teal-500 font-bold mr-2">✓</span> 
-                                        <strong>The Anne Musical:</strong> Confirmed in season (June-Sept) at the Confederation Centre!
-                                    </li>
-                                    <li class="flex items-start">
-                                        <span class="text-teal-500 font-bold mr-2">✓</span> 
-                                        <strong>Beach Weather:</strong> Perfect for Brackley Beach & Basin Head swimming.
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- Trade-offs -->
-                            <div class="border-l-0 md:border-l border-slate-200 md:pl-8">
-                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wide mb-4">August Logistics</h4>
-                                
-                                <div class="space-y-4">
-                                    <div class="flex items-start">
-                                        <span class="text-amber-500 text-xl mr-3">💰</span>
-                                        <div>
-                                            <strong class="block text-slate-800 text-sm">Peak Pricing</strong>
-                                            <p class="text-xs text-slate-500">August is expensive. PEI rentals near the beach book out by March.</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-start">
-                                        <span class="text-red-500 text-xl mr-3">⛴️</span>
-                                        <div>
-                                            <strong class="block text-slate-800 text-sm">Ferry Booking Mandatory</strong>
-                                            <p class="text-xs text-slate-500">The Ferry from PEI to NS saves 3 hours of driving but fills up. Book your slot for Day 4/5 as soon as dates are set.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                    <div class="bg-white p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-bold text-teal-800 mb-4 uppercase text-sm tracking-wide">Why this dates works</h4>
+                            <ul class="space-y-4">
+                                <li class="flex">
+                                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xs mr-3">1</div>
+                                    <p class="text-sm text-slate-600"><strong>The Buffer:</strong> Gives you a full 2 months to relax before the October wedding chaos.</p>
+                                </li>
+                                <li class="flex">
+                                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xs mr-3">2</div>
+                                    <p class="text-sm text-slate-600"><strong>Best Weather:</strong> Early August is the only time the ocean is remotely warm enough for swimming without a wetsuit.</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 rounded-xl p-5 border border-amber-100">
+                            <h4 class="font-bold text-amber-800 mb-2 flex items-center"><span class="mr-2">⚠️</span> Critical To-Dos</h4>
+                            <ul class="space-y-2 text-sm text-amber-900">
+                                <li>• Book Ferry (Wood Islands) by <strong>May 1st</strong>.</li>
+                                <li>• Book Accommodation by <strong>March 1st</strong> (Wedding season is busy in PEI too!).</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
 
-                <!-- PEI Logistics -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <!-- Logistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                          <div class="flex items-center mb-4">
-                            <span class="text-2xl mr-3">🌉</span>
+                            <span class="text-3xl mr-3">🌉</span>
                             <h3 class="text-xl font-bold text-slate-800">Bridge vs. Ferry</h3>
                         </div>
-                        <ul class="space-y-4">
-                            <li class="p-3 bg-slate-50 rounded-lg">
-                                <strong class="block text-slate-800">Confederation Bridge (Entry)</strong>
-                                <p class="text-sm text-slate-600 mt-1">Entering PEI is free. Leaving costs ~$50/car. We recommend <strong>entering</strong> this way from New Brunswick.</p>
-                            </li>
-                            <li class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                                <strong class="block text-blue-900">Wood Islands Ferry (Exit)</strong>
-                                <p class="text-sm text-slate-700 mt-1">Leaving PEI towards Nova Scotia. Costs ~$90 for a minivan + passengers, but lands you near the scenic Cabot Trail route, saving boring highway miles.</p>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Accommodation -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                        <h3 class="text-xl font-bold text-slate-800 mb-4">Housing 6 People</h3>
+                        <p class="text-slate-600 text-sm mb-4">The "Loop" works best counter-clockwise.</p>
                         <div class="space-y-3">
-                            <div class="p-3 border border-slate-200 rounded-lg">
-                                <div class="font-bold text-slate-800">PEI Cottages</div>
-                                <p class="text-sm text-slate-600 mt-1">Look in Cavendish or North Rustico. Weekly rentals (Sat-Sat) are common in August, so finding 2-3 nights might be harder. Look for "Cottage Courts".</p>
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="font-bold text-slate-700">Confederation Bridge</span>
+                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">FREE TO ENTER PEI</span>
                             </div>
-                            <div class="p-3 border border-slate-200 rounded-lg">
-                                <div class="font-bold text-slate-800">Halifax/NS</div>
-                                <p class="text-sm text-slate-600 mt-1">Stick to Airbnbs/VRBOs for space. University dorms (Dalhousie) are a great backup budget option.</p>
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
+                                <span class="font-bold text-blue-900">Wood Islands Ferry</span>
+                                <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">~$90 TO EXIT (Vehicle + Pax)</span>
                             </div>
                         </div>
                     </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="flex items-center mb-4">
+                           <span class="text-3xl mr-3">🏠</span>
+                           <h3 class="text-xl font-bold text-slate-800">Accommodation</h3>
+                       </div>
+                       <p class="text-slate-600 text-sm mb-4">For 6 people, hotels require 3 rooms. Renting a cottage is cheaper.</p>
+                       <ul class="text-sm text-slate-600 space-y-2 list-disc pl-5">
+                           <li><strong>PEI:</strong> Look for "Cottage Courts" in Cavendish or North Rustico.</li>
+                           <li><strong>Halifax:</strong> Check Dalhousie University summer residence (cheap!) or Airbnbs in Dartmouth (ferry to downtown).</li>
+                       </ul>
+                   </div>
                 </div>
             </section>
         </main>
         
-        <footer class="bg-slate-100 p-6 text-center text-slate-500 text-sm border-t border-slate-200">
-            <p>Generated Trip Planner for 6 Travelers. Prices are estimates in CAD based on 2025/26 rates.</p>
+        <footer class="bg-slate-800 text-slate-400 p-8 text-center text-sm">
+            <p>&copy; 2026 Maritime Trip Planner. Built for your GitHub Portfolio.</p>
         </footer>
     </div>
 
     <script>
-        // --- DATA & STATE ---
+        // --- ASSETS (Unsplash IDs) ---
+        const assets = {
+            aunt: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80',
+            anne: 'https://images.unsplash.com/photo-1621882414734-7221e106950e?auto=format&fit=crop&w=600&q=80', // PEI Landscape
+            brackley: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80', // Beach
+            basin: 'https://images.unsplash.com/photo-1476673160081-cf060971a4ae?auto=format&fit=crop&w=600&q=80', // Water
+            charlottetown: 'https://images.unsplash.com/photo-1623631484725-fef2691ad261?auto=format&fit=crop&w=600&q=80', // Ice cream/City
+            hopewell: 'https://images.unsplash.com/photo-1688647585350-137b8565a587?auto=format&fit=crop&w=600&q=80', // Rocks
+            peggy: 'https://images.unsplash.com/photo-1469532863959-195c65dc7f62?auto=format&fit=crop&w=600&q=80', // Lighthouse
+            halifax: 'https://images.unsplash.com/photo-1559873722-1d54f5934571?auto=format&fit=crop&w=600&q=80', // Halifax
+            lunenburg: 'https://images.unsplash.com/photo-1604071374567-5509bd2d9482?auto=format&fit=crop&w=600&q=80' // Colorful houses
+        };
+
         const attractionsData = [
             {
                 title: "Udit's Aunt's House",
                 category: "pei",
                 location: "Prince Edward Island",
                 description: "Family visit! The highlight of the PEI leg. Time for tea and catching up.",
-                icon: "🏡"
+                image: assets.aunt
             },
             {
-                title: "Anne of Green Gables Musical",
+                title: "Anne of Green Gables",
                 category: "pei",
                 location: "Confederation Centre",
-                description: "The world's longest-running annual musical. Runs June-Sept, so it is perfectly in season for your trip!",
-                icon: "🎭"
+                description: "The world's longest-running annual musical. Runs June-Sept!",
+                image: assets.anne
             },
             {
                 title: "Brackley Beach",
                 category: "pei",
                 location: "PEI National Park",
-                description: "Famous for massive dunes. A bit quieter than Cavendish but just as beautiful. Great for sunset walks.",
-                icon: "🏖️"
+                description: "Massive dunes and endless sand. Great for sunset walks.",
+                image: assets.brackley
             },
             {
-                title: "Basin Head (Singing Sands)",
+                title: "Basin Head",
                 category: "pei",
-                location: "Eastern PEI (Souris)",
-                description: "The sand actually squeaks when you walk! Jumping off the bridge into the 'run' is a local rite of passage.",
-                icon: "🎶"
+                location: "Eastern PEI",
+                description: "Singing Sands! The sand squeaks when you walk. Jump off the bridge!",
+                image: assets.basin
             },
             {
-                title: "Charlottetown Waterfront",
+                title: "Charlottetown & Cows",
                 category: "pei",
-                location: "Charlottetown, PEI",
-                description: "Walk Victoria Row, see the tall ships, and definitely get **Cows Ice Cream** on the Wharf.",
-                icon: "🍦"
+                location: "Victoria Row",
+                description: "Historic waterfront, tall ships, and the best ice cream in Canada.",
+                image: assets.charlottetown
             },
             {
                 title: "Hopewell Rocks",
                 category: "ns-nature",
-                location: "New Brunswick (En route)",
-                description: "Walk on the ocean floor at low tide. Best stop before the Confederation Bridge.",
-                icon: "🪨"
+                location: "New Brunswick",
+                description: "Walk on the ocean floor at low tide. 16 meter tides!",
+                image: assets.hopewell
             },
             {
                 title: "Peggy's Cove",
                 category: "ns-nature",
                 location: "Nova Scotia",
-                description: "The iconic lighthouse. 45 mins from Halifax. Visit early to beat the cruise ship buses.",
-                icon: "🔦"
+                description: "The iconic lighthouse on granite rocks. Visit early to beat buses.",
+                image: assets.peggy
             },
             {
                 title: "Halifax Waterfront",
                 category: "ns-culture",
                 location: "Halifax, NS",
                 description: "Walk the boardwalk, Maritime Museum, and ... yes, more Cows Ice Cream.",
-                icon: "🏙️"
+                image: assets.halifax
             },
             {
                 title: "Lunenburg",
                 category: "ns-culture",
                 location: "South Shore, NS",
                 description: "UNESCO World Heritage site. Colorful buildings and the Bluenose II.",
-                icon: "⛵"
+                image: assets.lunenburg
             }
         ];
 
@@ -479,15 +485,18 @@
 
             if (input.toLowerCase() === 'maritime') {
                 overlay.style.opacity = '0';
-                overlay.style.transition = 'opacity 0.5s ease';
+                overlay.style.transition = 'opacity 0.6s ease-out';
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     app.classList.remove('hidden');
-                    // Initialize Map after visibility logic allows it
-                    initLeafletMap();
-                }, 500);
+                    // Trigger map init
+                    setTimeout(initLeafletMap, 100);
+                }, 600);
             } else {
                 errorMsg.classList.remove('hidden');
+                // Shake effect
+                document.getElementById('password-input').classList.add('border-red-500');
+                setTimeout(() => document.getElementById('password-input').classList.remove('border-red-500'), 500);
             }
         }
         document.getElementById('password-input').addEventListener('keypress', function (e) {
@@ -497,65 +506,67 @@
 
         // --- LEAFLET MAP LOGIC ---
         function initLeafletMap() {
-            if (mapInstance) return; // Already init
+            if (mapInstance) return; 
 
-            // Center map roughly between NB/NS/PEI
-            mapInstance = L.map('map').setView([46.4, -64.5], 6);
+            mapInstance = L.map('map', {
+                scrollWheelZoom: false // Prevent scrolling page from zooming map accidentally
+            }).setView([46.4, -64.5], 6);
 
-            // Add OpenStreetMap tiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-                attribution: '© OpenStreetMap'
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
             }).addTo(mapInstance);
 
-            // Coordinates
             const locs = {
                 ottawa: [45.4215, -75.6972],
                 qc: [46.8139, -71.2080],
                 edmundston: [47.3665, -68.3295],
                 moncton: [46.0878, -64.7782],
-                bridge: [46.215, -63.743], // Confederation Bridge
+                bridge: [46.215, -63.743], 
                 pei_cavendish: [46.4913, -63.3768],
-                ferry_pei: [45.9529, -62.7486], // Wood Islands
-                ferry_ns: [45.7276, -62.6841], // Caribou
+                ferry_pei: [45.9529, -62.7486], 
+                ferry_ns: [45.7276, -62.6841], 
                 halifax: [44.6488, -63.5752]
             };
 
-            // 1. Add Route Lines
-            // Drive: Ottawa -> QC -> Edmundston -> Moncton -> Bridge
+            // Route Lines
             const drivePath1 = [locs.ottawa, locs.qc, locs.edmundston, locs.moncton, locs.bridge, locs.pei_cavendish];
-            L.polyline(drivePath1, {color: '#0891b2', weight: 4}).addTo(mapInstance);
+            L.polyline(drivePath1, {color: '#0891b2', weight: 5, opacity: 0.8}).addTo(mapInstance);
             
-            // Ferry: PEI -> NS
-            const ferryPath = [locs.pei_cavendish, locs.ferry_pei, locs.ferry_ns, locs.halifax];
-            // PEI to Ferry Port
-            L.polyline([locs.pei_cavendish, locs.ferry_pei], {color: '#0891b2', weight: 4}).addTo(mapInstance);
-            // The Ferry itself (Dashed)
-            L.polyline([locs.ferry_pei, locs.ferry_ns], {color: '#f59e0b', weight: 4, dashArray: '10, 10'}).addTo(mapInstance);
-            // NS Ferry Port to Halifax
-            L.polyline([locs.ferry_ns, locs.halifax], {color: '#0891b2', weight: 4}).addTo(mapInstance);
+            // Ferry Segment
+            L.polyline([locs.pei_cavendish, locs.ferry_pei], {color: '#0891b2', weight: 5, opacity: 0.8}).addTo(mapInstance);
+            L.polyline([locs.ferry_pei, locs.ferry_ns], {color: '#f59e0b', weight: 4, dashArray: '12, 12'}).addTo(mapInstance);
+            L.polyline([locs.ferry_ns, locs.halifax], {color: '#0891b2', weight: 5, opacity: 0.8}).addTo(mapInstance);
             
-            // Return: Halifax -> Moncton
-            L.polyline([locs.halifax, locs.moncton], {color: '#94a3b8', weight: 3, dashArray: '5, 10'}).addTo(mapInstance);
+            // Return
+            L.polyline([locs.halifax, locs.moncton], {color: '#64748b', weight: 3, dashArray: '6, 10', opacity: 0.6}).addTo(mapInstance);
 
+            // Markers
+            const iconDefault = L.icon({
+                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
 
-            // 2. Add Markers
             const markers = [
                 { coords: locs.ottawa, title: "Start: Ottawa" },
-                { coords: locs.edmundston, title: "Stop: Edmundston" },
-                { coords: locs.pei_cavendish, title: "PEI: Aunt & Anne!" },
+                { coords: locs.edmundston, title: "Stopover: Edmundston" },
+                { coords: locs.pei_cavendish, title: "PEI: Family & Beach" },
                 { coords: locs.ferry_pei, title: "Ferry Terminal" },
-                { coords: locs.halifax, title: "Halifax Waterfront" }
+                { coords: locs.halifax, title: "Halifax: Waterfront" }
             ];
 
             markers.forEach(m => {
-                L.marker(m.coords).addTo(mapInstance).bindPopup(m.title);
+                L.marker(m.coords, {icon: iconDefault}).addTo(mapInstance).bindPopup(`<b>${m.title}</b>`);
             });
             
-            // Force resize after load
             setTimeout(() => { mapInstance.invalidateSize(); }, 200);
         }
-
 
         // --- CORE FUNCTIONS ---
         function switchTab(tabId) {
@@ -571,7 +582,6 @@
             
             if(tabId === 'budget' && budgetChartInstance) { budgetChartInstance.resize(); }
             
-            // IMPORTANT: Leaflet needs to know it's visible to render tiles correctly
             if(tabId === 'route' && mapInstance) { 
                 setTimeout(() => { mapInstance.invalidateSize(); }, 100);
             }
@@ -587,25 +597,24 @@
                 } else if (filter !== 'all' && item.category !== filter) return;
 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow";
+                card.className = "bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group";
                 
-                let colors = {
-                    'pei': 'text-amber-800 bg-amber-50',
-                    'ns-nature': 'text-green-600 bg-green-50',
-                    'ns-culture': 'text-blue-600 bg-blue-50'
-                };
-                let tagColor = item.title.includes('Aunt') ? 'text-purple-700 bg-purple-100' : (colors[item.category] || 'text-slate-600 bg-slate-100');
+                let tagColor = item.category === 'pei' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800';
+                if (item.title.includes('Aunt')) tagColor = 'bg-purple-100 text-purple-800';
                 let tagLabel = item.title.includes('Aunt') ? 'Family' : (item.category === 'pei' ? 'PEI' : 'Nova Scotia');
 
                 card.innerHTML = `
-                    <div class="h-2 bg-gradient-to-r from-cyan-500 to-amber-400"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="text-4xl">${item.icon}</div>
-                            <span class="text-xs font-bold px-2 py-1 rounded uppercase tracking-wide ${tagColor}">${tagLabel}</span>
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-4 right-4">
+                            <span class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm ${tagColor}">${tagLabel}</span>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-1">${item.title}</h3>
-                        <p class="text-xs text-slate-500 font-semibold mb-3 uppercase tracking-wider">${item.location}</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-cyan-700 transition-colors">${item.title}</h3>
+                        <div class="flex items-center mb-3 text-slate-400 text-xs uppercase font-bold tracking-wider">
+                            <span class="mr-1">📍</span> ${item.location}
+                        </div>
                         <p class="text-sm text-slate-600 leading-relaxed">${item.description}</p>
                     </div>
                 `;
@@ -634,17 +643,21 @@
                         data: [10, 10, 10, 10],
                         backgroundColor: ['#0891b2', '#f59e0b', '#10b981', '#6366f1'],
                         borderWidth: 0,
-                        hoverOffset: 4
+                        hoverOffset: 10
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { callbacks: { label: function(context) { return ' $' + context.raw.toLocaleString(); } } }
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                        tooltip: { 
+                            callbacks: { label: function(context) { return ' $' + context.raw.toLocaleString(); } },
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            padding: 12
+                        }
                     },
-                    cutout: '65%'
+                    cutout: '70%'
                 }
             });
             updateBudget();
@@ -681,10 +694,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderAttractions('all');
             initBudgetCalc();
-            // Map initialized after password unlock
         });
 
     </script>
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Leaflet JS used for Map. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Leaflet JS used. Unsplash images used. -->
 </body>
 </html>
