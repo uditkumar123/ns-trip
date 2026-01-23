@@ -60,7 +60,6 @@
 
         /* Hero Image Overlay - Couples/Romantic Vibe */
         .hero-bg {
-            /* Sunset at Peggy's Cove */
             background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg/1280px-Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg');
             background-size: cover;
             background-position: center 40%;
@@ -150,6 +149,27 @@
 
             <!-- TAB: ROUTE -->
             <section id="content-route" class="space-y-8 animate-fade-in">
+                
+                <!-- Trip Stats Summary -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-slate-800 text-white p-4 rounded-xl shadow-md">
+                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Total Distance</div>
+                        <div class="text-2xl font-bold">~3,100 km</div>
+                    </div>
+                    <div class="bg-slate-800 text-white p-4 rounded-xl shadow-md">
+                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Driving Time</div>
+                        <div class="text-2xl font-bold">34 Hours</div>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Avg Drive/Day</div>
+                        <div class="text-2xl font-bold text-slate-800">4-5 hrs</div>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Rest Days</div>
+                        <div class="text-2xl font-bold text-green-600">3 Days</div>
+                    </div>
+                </div>
+
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <div class="flex justify-between items-end mb-6">
                         <div>
@@ -210,18 +230,36 @@
                         </div>
 
                         <!-- Stop 4 -->
-                        <div class="flex flex-col md:flex-row items-center relative z-10">
+                        <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                             <div class="w-full md:w-1/2 md:pr-12 hidden md:block"></div>
                             <div class="w-10 h-10 rounded-full bg-pink-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">4</div>
                             <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
                                 <h3 class="text-xl font-bold text-pink-900">Halifax & South Shore</h3>
-                                <p class="text-slate-500 font-medium mb-2">Days 5-8</p>
+                                <p class="text-slate-500 font-medium mb-2">Days 5-7</p>
                                 <span class="inline-block bg-slate-100 text-slate-700 text-xs font-bold px-2 py-1 rounded border border-slate-200 mb-2">
-                                    🚗 100 km (Day Trips)
+                                    🚗 100 km (Local Driving)
                                 </span>
-                                <p class="text-sm text-slate-600">Waterfront walks, Peggy's Cove at sunset, and historic Lunenburg. Drive home Day 9.</p>
+                                <p class="text-sm text-slate-600">Waterfront walks, Peggy's Cove at sunset, and historic Lunenburg.</p>
                             </div>
                         </div>
+
+                        <!-- Stop 5: RETURN (New) -->
+                        <div class="flex flex-col md:flex-row items-center relative z-10">
+                            <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
+                                <span class="inline-block bg-pink-100 text-pink-800 text-xs font-bold px-2 py-1 rounded border border-pink-200 mb-2">
+                                    THE BIG DRIVE HOME
+                                </span>
+                                <h3 class="text-xl font-bold text-slate-800">Halifax &#8594; Ottawa</h3>
+                                <p class="text-slate-500 font-medium mb-2">Days 8-9</p>
+                                <span class="inline-block bg-slate-800 text-white text-xs font-bold px-2 py-1 rounded border border-slate-700 mb-2">
+                                    🚗 1,445 km • 14h 30m Drive
+                                </span>
+                                <p class="text-sm text-slate-600">Don't try this in one day! Stop overnight in <strong>Riviere-du-Loup, QC</strong> (approx halfway) to keep it romantic.</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-slate-700 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">5</div>
+                            <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
+                        </div>
+
                     </div>
                 </div>
             </section>
@@ -544,13 +582,18 @@
                 halifax: [44.6488, -63.5752]
             };
 
+            // Drive to PEI
             const drivePath1 = [locs.ottawa, locs.qc, locs.edmundston, locs.moncton, locs.bridge, locs.pei_cavendish];
             L.polyline(drivePath1, {color: '#db2777', weight: 5, opacity: 0.8}).addTo(mapInstance);
             
+            // PEI to Ferry
             L.polyline([locs.pei_cavendish, locs.ferry_pei], {color: '#db2777', weight: 5, opacity: 0.8}).addTo(mapInstance);
+            // Ferry
             L.polyline([locs.ferry_pei, locs.ferry_ns], {color: '#f59e0b', weight: 4, dashArray: '12, 12'}).addTo(mapInstance);
+            // NS
             L.polyline([locs.ferry_ns, locs.halifax], {color: '#db2777', weight: 5, opacity: 0.8}).addTo(mapInstance);
-            L.polyline([locs.halifax, locs.moncton], {color: '#64748b', weight: 3, dashArray: '6, 10', opacity: 0.6}).addTo(mapInstance);
+            // RETURN LEG: Halifax -> Ottawa (Grey Line)
+            L.polyline([locs.halifax, locs.moncton, locs.edmundston, locs.qc, locs.ottawa], {color: '#475569', weight: 3, dashArray: '6, 10', opacity: 0.6}).addTo(mapInstance);
 
             const iconDefault = L.icon({
                 iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -563,7 +606,7 @@
             });
 
             const markers = [
-                { coords: locs.ottawa, title: "Start: Ottawa" },
+                { coords: locs.ottawa, title: "Start/End: Ottawa" },
                 { coords: locs.edmundston, title: "Stopover: Edmundston" },
                 { coords: locs.pei_cavendish, title: "PEI: Family & Beach" },
                 { coords: locs.ferry_pei, title: "Ferry Terminal" },
