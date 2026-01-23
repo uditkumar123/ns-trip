@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maritime Loop: Ottawa, PEI & NS Planner</title>
+    <title>Maritime Loop: Couples Edition</title>
     
     <!-- CSS Framework -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,7 +20,7 @@
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         
         /* Interactive Tab Styles */
-        .tab-active { border-bottom: 3px solid #0891b2; color: #0e7490; font-weight: 700; background-color: rgba(8, 145, 178, 0.05); }
+        .tab-active { border-bottom: 3px solid #db2777; color: #be185d; font-weight: 700; background-color: rgba(219, 39, 119, 0.05); }
         .tab-inactive { color: #64748b; font-weight: 500; }
         .tab-inactive:hover { color: #334155; background-color: #f1f5f9; }
         
@@ -58,9 +58,9 @@
             z-index: 0;
         }
 
-        /* Hero Image Overlay */
+        /* Hero Image Overlay - Couples/Romantic Vibe */
         .hero-bg {
-            background-image: linear-gradient(rgba(14, 116, 144, 0.85), rgba(15, 23, 42, 0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg/1280px-Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg');
+            background-image: linear-gradient(rgba(190, 24, 93, 0.8), rgba(88, 28, 135, 0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg/1280px-Peggy%27s_Cove_Lighthouse_Nova_Scotia.jpg');
             background-size: cover;
             background-position: center 30%;
         }
@@ -84,16 +84,16 @@
 
     <!-- PASSWORD OVERLAY -->
     <div id="login-overlay">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-4 border-cyan-500/20">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-4 border-pink-500/20">
             <div class="text-5xl mb-6">🔒</div>
             <h2 class="text-2xl font-bold text-slate-800 mb-2">Maritime Planner</h2>
             <p class="text-sm text-slate-500 mb-6">Enter password to view itinerary.</p>
             
             <input type="password" id="password-input" placeholder="Enter password" 
-                   class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-cyan-500 outline-none transition text-center text-lg">
+                   class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-pink-500 outline-none transition text-center text-lg">
             
             <button onclick="checkPassword()" 
-                    class="w-full bg-cyan-700 text-white font-bold py-3 rounded-lg hover:bg-cyan-800 transition shadow-lg transform active:scale-95">
+                    class="w-full bg-pink-700 text-white font-bold py-3 rounded-lg hover:bg-pink-800 transition shadow-lg transform active:scale-95">
                 Unlock Plan
             </button>
             <p id="error-msg" class="text-red-500 text-xs mt-3 hidden font-bold">Incorrect password.</p>
@@ -107,19 +107,19 @@
         <header class="hero-bg text-white p-8 md:p-12 shadow-lg">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
-                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The Maritime Loop</h1>
-                    <p class="text-cyan-100 text-xl font-light">Ottawa &#8594; PEI &#8594; Nova Scotia &#8594; Ottawa</p>
+                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">Maritime Loop: Couples Edition</h1>
+                    <p class="text-pink-100 text-xl font-light">Ottawa &#8594; PEI &#8594; Nova Scotia &#8594; Ottawa</p>
                 </div>
                 <div class="mt-6 md:mt-0 bg-white/10 backdrop-blur-md px-6 py-3 rounded-xl border border-white/20">
-                    <span class="block text-xs text-cyan-200 uppercase tracking-widest font-bold mb-1">Trip Profile</span>
+                    <span class="block text-xs text-pink-200 uppercase tracking-widest font-bold mb-1">Trip Profile</span>
                     <div class="flex items-center space-x-6">
                         <div class="flex items-center">
-                            <span class="text-2xl mr-2">🚐</span>
-                            <span class="font-bold" id="header-travelers">6 Travelers</span>
+                            <span class="text-2xl mr-2">❤️</span>
+                            <span class="font-bold" id="header-travelers">2 Travelers</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="text-2xl mr-2">🛣️</span>
-                            <span class="font-bold">~3,200km</span>
+                            <span class="text-2xl mr-2">📅</span>
+                            <span class="font-bold">Aug 16 Week</span>
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,7 @@
                     <span class="mr-2">💰</span> Smart Budget
                 </button>
                 <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center">
-                    <span class="mr-2">📸</span> Must-See
+                    <span class="mr-2">📸</span> Romantic Spots
                 </button>
                 <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center">
                     <span class="mr-2">📋</span> Logistics
@@ -169,11 +169,11 @@
                         <!-- Stop 1 -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                             <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-cyan-900">Start: Ottawa, ON</h3>
-                                <p class="text-slate-500 font-medium">Day 1: 07:00 AM</p>
-                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">The long haul. Drive 7 hours to Edmundston, NB. Stop in Quebec City for lunch if time permits.</p>
+                                <h3 class="text-xl font-bold text-pink-900">Start: Ottawa, ON</h3>
+                                <p class="text-slate-500 font-medium">Day 1: 08:00 AM</p>
+                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Leisurely start. Drive to Edmundston, NB. Stop for a nice lunch in Old Quebec City.</p>
                             </div>
-                            <div class="w-10 h-10 rounded-full bg-cyan-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">1</div>
+                            <div class="w-10 h-10 rounded-full bg-pink-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">1</div>
                             <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
                         </div>
 
@@ -182,18 +182,18 @@
                             <div class="w-full md:w-1/2 md:pr-12 hidden md:block"></div>
                             <div class="w-10 h-10 rounded-full bg-amber-500 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">2</div>
                             <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-slate-800">PEI Arrival (Bridge)</h3>
+                                <h3 class="text-xl font-bold text-slate-800">PEI: Family & Beach</h3>
                                 <p class="text-slate-500 font-medium">Days 2-4</p>
-                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Cross the 13km Confederation Bridge. Stay in Cavendish. Visit <strong class="text-cyan-700">Udit's Aunt</strong> and hit Brackley Beach.</p>
+                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Cross the Bridge. Visit <strong class="text-pink-700">Udit's Aunt</strong>. Relax at Brackley Beach. Sunset dinner in North Rustico.</p>
                             </div>
                         </div>
 
                         <!-- Stop 3 -->
                         <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                             <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-slate-800">The Ferry Crossing</h3>
+                                <h3 class="text-xl font-bold text-slate-800">Ferry to Nova Scotia</h3>
                                 <p class="text-slate-500 font-medium">Day 5: Morning</p>
-                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Take the Wood Islands Ferry to Nova Scotia. A 75-minute break from driving. Book ahead!</p>
+                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Take the Wood Islands Ferry. Enjoy the view from the deck. Drive the scenic route to Halifax.</p>
                             </div>
                             <div class="w-10 h-10 rounded-full bg-indigo-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">3</div>
                             <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
@@ -202,11 +202,11 @@
                         <!-- Stop 4 -->
                         <div class="flex flex-col md:flex-row items-center relative z-10">
                             <div class="w-full md:w-1/2 md:pr-12 hidden md:block"></div>
-                            <div class="w-10 h-10 rounded-full bg-cyan-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">4</div>
+                            <div class="w-10 h-10 rounded-full bg-pink-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">4</div>
                             <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
-                                <h3 class="text-xl font-bold text-cyan-900">Nova Scotia Coast</h3>
+                                <h3 class="text-xl font-bold text-pink-900">Halifax & South Shore</h3>
                                 <p class="text-slate-500 font-medium">Days 5-8</p>
-                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Halifax Waterfront, Peggy's Cove, Lunenburg. Drive home via New Brunswick on Day 9.</p>
+                                <p class="text-sm text-slate-600 mt-2 bg-slate-50 p-3 rounded-lg inline-block">Waterfront walks, Peggy's Cove at sunset, and historic Lunenburg. Drive home Day 9.</p>
                             </div>
                         </div>
                     </div>
@@ -222,44 +222,45 @@
                             <h2 class="text-xl font-bold text-slate-800">Cost Estimator</h2>
                             <!-- GROUP SIZE TOGGLE -->
                             <div class="bg-slate-100 p-1 rounded-lg flex text-sm font-bold">
+                                <button onclick="setGroupSize(2)" id="btn-pax-2" class="px-3 py-1 rounded transition-colors bg-white shadow text-pink-700">2 Pax</button>
                                 <button onclick="setGroupSize(4)" id="btn-pax-4" class="px-3 py-1 rounded transition-colors text-slate-500">4 Pax</button>
-                                <button onclick="setGroupSize(6)" id="btn-pax-6" class="px-3 py-1 rounded transition-colors bg-white shadow text-cyan-700">6 Pax</button>
                             </div>
                         </div>
-                        <p class="text-sm text-slate-500 mb-6" id="budget-desc">Calculating for a group of 6 (Minivan).</p>
+                        <p class="text-sm text-slate-500 mb-6" id="budget-desc">Calculating for a couple (Standard Car).</p>
                         
                         <div class="space-y-6">
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
                                     <span>Trip Duration (Days)</span>
-                                    <span id="val-days" class="text-cyan-600 font-bold">8</span>
+                                    <span id="val-days" class="text-pink-600 font-bold">9</span>
                                 </label>
-                                <input type="range" id="input-days" min="5" max="14" value="8" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
+                                <input type="range" id="input-days" min="5" max="14" value="9" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
                                     <span>Accom. / Night (Total)</span>
-                                    <span class="text-cyan-600 font-bold">$<span id="val-accom">400</span></span>
+                                    <span class="text-pink-600 font-bold">$<span id="val-accom">200</span></span>
                                 </label>
-                                <input type="range" id="input-accom" min="150" max="800" step="50" value="400" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
-                                <p class="text-xs text-slate-400 mt-1" id="accom-hint">For 6 people (approx 2 rooms/large Airbnb)</p>
+                                <input type="range" id="input-accom" min="150" max="600" step="25" value="200" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600">
+                                <p class="text-xs text-slate-400 mt-1" id="accom-hint">For 2 people (1 hotel room/B&B)</p>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
                                     <span>Food / Person / Day</span>
-                                    <span class="text-cyan-600 font-bold">$<span id="val-food">65</span></span>
+                                    <span class="text-pink-600 font-bold">$<span id="val-food">75</span></span>
                                 </label>
-                                <input type="range" id="input-food" min="30" max="150" step="5" value="65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
+                                <input type="range" id="input-food" min="40" max="200" step="5" value="75" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600">
+                                <p class="text-xs text-slate-400 mt-1">Slightly higher for nice dinners.</p>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
                                     <span>Gas Price (per L)</span>
-                                    <span class="text-cyan-600 font-bold">$<span id="val-gas">1.65</span></span>
+                                    <span class="text-pink-600 font-bold">$<span id="val-gas">1.65</span></span>
                                 </label>
-                                <input type="range" id="input-gas" min="1.30" max="2.20" step="0.05" value="1.65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600">
+                                <input type="range" id="input-gas" min="1.30" max="2.20" step="0.05" value="1.65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600">
                             </div>
                         </div>
 
@@ -268,9 +269,9 @@
                                 <span class="text-slate-600 font-medium">Total Cost</span>
                                 <span id="total-cost" class="text-3xl font-bold text-slate-800">$0</span>
                             </div>
-                            <div class="flex justify-between items-end bg-cyan-50 p-3 rounded-lg">
-                                <span class="text-cyan-800 text-sm font-medium">Cost Per Person</span>
-                                <span id="per-person-cost" class="text-xl font-bold text-cyan-700">$0</span>
+                            <div class="flex justify-between items-end bg-pink-50 p-3 rounded-lg">
+                                <span class="text-pink-800 text-sm font-medium">Cost Per Person</span>
+                                <span id="per-person-cost" class="text-xl font-bold text-pink-700">$0</span>
                             </div>
                         </div>
                     </div>
@@ -308,7 +309,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-800">Must-See Spots</h2>
-                        <p class="text-slate-600">Curated specifically for this trip.</p>
+                        <p class="text-slate-600">Romantic landscapes and family stops.</p>
                     </div>
                     <div class="flex space-x-2 mt-4 md:mt-0 flex-wrap gap-2">
                         <button onclick="filterAttractions('all')" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full shadow-md hover:bg-slate-700 transition">All</button>
@@ -326,36 +327,37 @@
             <!-- TAB: LOGISTICS -->
             <section id="content-logistics" class="hidden space-y-8 animate-fade-in">
                 
-                <!-- Wedding Strategy -->
-                <div class="bg-gradient-to-r from-teal-800 to-teal-600 rounded-2xl shadow-xl overflow-hidden mb-8">
-                    <div class="p-8 text-white border-b border-teal-700/30">
+                <!-- Timing Strategy -->
+                <div class="bg-gradient-to-r from-purple-800 to-pink-700 rounded-2xl shadow-xl overflow-hidden mb-8">
+                    <div class="p-8 text-white border-b border-white/20">
                         <div class="flex items-center">
-                            <span class="text-4xl mr-4">💍</span>
+                            <span class="text-4xl mr-4">🌅</span>
                             <div>
-                                <h3 class="text-2xl font-bold">The "Pre-Wedding" Strategy</h3>
-                                <p class="text-teal-100">Timing: Aug 1–9, 2026 (Civic Holiday)</p>
+                                <h3 class="text-2xl font-bold">The Week of August 16th</h3>
+                                <p class="text-pink-100">The "Late Summer" Sweet Spot</p>
                             </div>
                         </div>
                     </div>
                     <div class="bg-white p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <h4 class="font-bold text-teal-800 mb-4 uppercase text-sm tracking-wide">Why this dates works</h4>
+                            <h4 class="font-bold text-purple-800 mb-4 uppercase text-sm tracking-wide">Why this week is perfect</h4>
                             <ul class="space-y-4">
                                 <li class="flex">
-                                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xs mr-3">1</div>
-                                    <p class="text-sm text-slate-600"><strong>The Buffer:</strong> Gives you a full 2 months to relax before the October wedding chaos.</p>
+                                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs mr-3">1</div>
+                                    <p class="text-sm text-slate-600"><strong>Warmest Water:</strong> The Atlantic Ocean takes all summer to heat up. Mid-August is the absolute peak for swimming at Brackley Beach.</p>
                                 </li>
                                 <li class="flex">
-                                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xs mr-3">2</div>
-                                    <p class="text-sm text-slate-600"><strong>Best Weather:</strong> Early August is the only time the ocean is remotely warm enough for swimming without a wetsuit.</p>
+                                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs mr-3">2</div>
+                                    <p class="text-sm text-slate-600"><strong>Less Chaotic:</strong> You miss the August 1st (Civic Holiday) rush. Things are slightly quieter, but everything is still 100% open.</p>
                                 </li>
                             </ul>
                         </div>
                         <div class="bg-amber-50 rounded-xl p-5 border border-amber-100">
-                            <h4 class="font-bold text-amber-800 mb-2 flex items-center"><span class="mr-2">⚠️</span> Critical To-Dos</h4>
-                            <ul class="space-y-2 text-sm text-amber-900">
-                                <li>• Book Ferry (Wood Islands) by <strong>May 1st</strong>.</li>
-                                <li>• Book Accommodation by <strong>March 1st</strong> (Wedding season is busy in PEI too!).</li>
+                            <h4 class="font-bold text-amber-800 mb-2 flex items-center"><span class="mr-2">⚠️</span> For Couples</h4>
+                            <p class="text-sm text-amber-900 mb-2">Since it's just the two of you, you can be flexible!</p>
+                            <ul class="space-y-1 text-xs text-amber-800 list-disc pl-4">
+                                <li>Book <strong>Historic Inns</strong> in Lunenburg instead of hotels.</li>
+                                <li>Ferry reservation is still recommended for peace of mind.</li>
                             </ul>
                         </div>
                     </div>
@@ -366,7 +368,7 @@
                     <!-- Dynamic Vehicle Strategy Card -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                          <div class="flex items-center mb-4">
-                            <span class="text-3xl mr-3">🚐</span>
+                            <span class="text-3xl mr-3">🚗</span>
                             <h3 class="text-xl font-bold text-slate-800">Vehicle Strategy</h3>
                         </div>
                         <div id="logistics-vehicle-content">
@@ -376,13 +378,13 @@
 
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <div class="flex items-center mb-4">
-                           <span class="text-3xl mr-3">🏠</span>
+                           <span class="text-3xl mr-3">🛌</span>
                            <h3 class="text-xl font-bold text-slate-800">Accommodation</h3>
                        </div>
-                       <p class="text-slate-600 text-sm mb-4">Tips for high season.</p>
+                       <p class="text-slate-600 text-sm mb-4">Finding romantic spots.</p>
                        <ul class="text-sm text-slate-600 space-y-2 list-disc pl-5">
-                           <li><strong>PEI:</strong> Look for "Cottage Courts" in Cavendish or North Rustico.</li>
-                           <li><strong>Halifax:</strong> Check Dalhousie University summer residence (cheap!) or Airbnbs in Dartmouth (ferry to downtown).</li>
+                           <li><strong>PEI:</strong> Look for B&Bs in North Rustico or the "Kindred Spirits" inn near Cavendish.</li>
+                           <li><strong>Halifax:</strong> The waterfront hotels are great, but pricey. Dartmouth Airbnbs offer a great view of the skyline and a cheap ferry ride across.</li>
                        </ul>
                    </div>
                 </div>
@@ -478,7 +480,7 @@
         let mapInstance = null;
         
         // --- STATE: GROUP SIZE ---
-        let groupSize = 6; // Default
+        let groupSize = 2; // Default for Couples
 
         // --- PASSWORD LOGIC ---
         function checkPassword() {
@@ -530,11 +532,11 @@
             };
 
             const drivePath1 = [locs.ottawa, locs.qc, locs.edmundston, locs.moncton, locs.bridge, locs.pei_cavendish];
-            L.polyline(drivePath1, {color: '#0891b2', weight: 5, opacity: 0.8}).addTo(mapInstance);
+            L.polyline(drivePath1, {color: '#db2777', weight: 5, opacity: 0.8}).addTo(mapInstance);
             
-            L.polyline([locs.pei_cavendish, locs.ferry_pei], {color: '#0891b2', weight: 5, opacity: 0.8}).addTo(mapInstance);
+            L.polyline([locs.pei_cavendish, locs.ferry_pei], {color: '#db2777', weight: 5, opacity: 0.8}).addTo(mapInstance);
             L.polyline([locs.ferry_pei, locs.ferry_ns], {color: '#f59e0b', weight: 4, dashArray: '12, 12'}).addTo(mapInstance);
-            L.polyline([locs.ferry_ns, locs.halifax], {color: '#0891b2', weight: 5, opacity: 0.8}).addTo(mapInstance);
+            L.polyline([locs.ferry_ns, locs.halifax], {color: '#db2777', weight: 5, opacity: 0.8}).addTo(mapInstance);
             L.polyline([locs.halifax, locs.moncton], {color: '#64748b', weight: 3, dashArray: '6, 10', opacity: 0.6}).addTo(mapInstance);
 
             const iconDefault = L.icon({
@@ -600,7 +602,7 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-cyan-700 transition-colors">${item.title}</h3>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-pink-700 transition-colors">${item.title}</h3>
                         <div class="flex items-center mb-3 text-slate-400 text-xs uppercase font-bold tracking-wider">
                             <span class="mr-1">📍</span> ${item.location}
                         </div>
@@ -618,56 +620,50 @@
             groupSize = size;
             
             // UI Toggle States
-            if (size === 4) {
-                document.getElementById('btn-pax-4').className = "px-3 py-1 rounded transition-colors bg-white shadow text-cyan-700";
-                document.getElementById('btn-pax-6').className = "px-3 py-1 rounded transition-colors text-slate-500 hover:bg-slate-200";
-                document.getElementById('budget-desc').innerText = "Calculating for a group of 4 (SUV/Sedan).";
-                document.getElementById('accom-hint').innerText = "For 4 people (1 room/med Airbnb)";
-                // Adjust default accom input for 4 pax
-                document.getElementById('input-accom').value = 250; 
-                document.getElementById('val-accom').innerText = 250;
-            } else {
+            if (size === 2) {
+                document.getElementById('btn-pax-2').className = "px-3 py-1 rounded transition-colors bg-white shadow text-pink-700";
                 document.getElementById('btn-pax-4').className = "px-3 py-1 rounded transition-colors text-slate-500 hover:bg-slate-200";
-                document.getElementById('btn-pax-6').className = "px-3 py-1 rounded transition-colors bg-white shadow text-cyan-700";
-                document.getElementById('budget-desc').innerText = "Calculating for a group of 6 (Minivan).";
-                document.getElementById('accom-hint').innerText = "For 6 people (approx 2 rooms/large Airbnb)";
-                // Adjust default accom input for 6 pax
-                document.getElementById('input-accom').value = 400; 
-                document.getElementById('val-accom').innerText = 400;
+                document.getElementById('budget-desc').innerText = "Calculating for a couple (Standard Car).";
+                document.getElementById('accom-hint').innerText = "For 2 people (1 hotel room/B&B)";
+                document.getElementById('input-accom').value = 200; 
+                document.getElementById('val-accom').innerText = 200;
+            } else {
+                document.getElementById('btn-pax-2').className = "px-3 py-1 rounded transition-colors text-slate-500 hover:bg-slate-200";
+                document.getElementById('btn-pax-4').className = "px-3 py-1 rounded transition-colors bg-white shadow text-pink-700";
+                document.getElementById('budget-desc').innerText = "Calculating for 4 people (SUV).";
+                document.getElementById('accom-hint').innerText = "For 4 people (2 rooms or Suite)";
+                document.getElementById('input-accom').value = 350; 
+                document.getElementById('val-accom').innerText = 350;
             }
 
             // Update Header
             document.getElementById('header-travelers').innerText = `${size} Travelers`;
-
-            // Update Vehicle Strategy Card
             updateLogisticsCard(size);
-
-            // Recalculate
             updateBudget();
         }
 
         function updateLogisticsCard(size) {
             const container = document.getElementById('logistics-vehicle-content');
-            if (size === 6) {
+            if (size === 2) {
                 container.innerHTML = `
-                    <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500 mb-3">
-                        <strong class="block text-blue-900">The 6-Passenger Dilemma</strong>
-                        <p class="text-sm text-slate-700 mt-1">A standard SUV usually fits 5 comfortably. For 6 + luggage, you <strong>need</strong> a Minivan (Grand Caravan/Sienna) or a Full-Size SUV (Suburban).</p>
+                    <div class="p-3 bg-pink-50 rounded-lg border-l-4 border-pink-500 mb-3">
+                        <strong class="block text-pink-900">Couples Choice</strong>
+                        <p class="text-sm text-slate-700 mt-1">Since it's just you two, you don't need a huge car. A <strong>Sedan</strong> is fuel efficient, or rent a <strong>Convertible</strong> for the Cabot Trail if you want to splurge!</p>
                     </div>
                     <div class="p-3 bg-slate-50 rounded-lg">
-                        <strong class="block text-slate-800">Rental Tip</strong>
-                        <p class="text-sm text-slate-600 mt-1">Book months in advance. Large vehicles sell out first.</p>
+                        <strong class="block text-slate-800">Parking Tip</strong>
+                        <p class="text-sm text-slate-600 mt-1">Smaller cars are much easier to park in tight spots like Lunenburg and Halifax waterfront.</p>
                     </div>
                 `;
             } else {
                 container.innerHTML = `
                     <div class="p-3 bg-green-50 rounded-lg border-l-4 border-green-500 mb-3">
                         <strong class="block text-green-900">Easy Vehicle Choice</strong>
-                        <p class="text-sm text-slate-700 mt-1">For 4 people, a standard Mid-Size SUV (RAV4/CRV) or a large Sedan is perfect. You will save significantly on gas compared to a minivan.</p>
+                        <p class="text-sm text-slate-700 mt-1">For 4 people, a standard Mid-Size SUV (RAV4/CRV) is perfect for luggage space. You will save significantly on gas compared to a minivan.</p>
                     </div>
                     <div class="p-3 bg-slate-50 rounded-lg">
                         <strong class="block text-slate-800">Rental Tip</strong>
-                        <p class="text-sm text-slate-600 mt-1">Standard SUVs are abundant, but booking early still secures better rates.</p>
+                        <p class="text-sm text-slate-600 mt-1">Book early to secure an SUV.</p>
                     </div>
                 `;
             }
@@ -710,8 +706,7 @@
                 }
             });
             updateBudget();
-            // Init default vehicle card
-            updateLogisticsCard(6);
+            updateLogisticsCard(2); // Default to couples
         }
 
         function updateBudget() {
@@ -722,17 +717,13 @@
 
             // Logic changes based on Group Size
             const kmDistance = 3500; 
-            // Minivan (6pax) ~11L/100km vs SUV (4pax) ~9L/100km
-            const fuelEfficiency = groupSize === 6 ? 11 : 9; 
+            // Standard Car (8L/100km) vs SUV (9L/100km)
+            const fuelEfficiency = groupSize === 2 ? 8 : 9; 
             
             // Ferry Math: ~$90 Car + ~$20 per extra adult passenger
-            // 4 pax = 90 + (3*20) = 150
-            // 6 pax = 90 + (5*20) = 190
+            // 2 pax = 90 + (1*20) = 110
             const ferryBase = 90 + ((groupSize - 1) * 20);
-            
-            // Fun Budget: ~$10/day/person base
-            const funTotal = (days * 10 * groupSize);
-            
+            const funTotal = (days * 15 * groupSize); // Higher daily fun budget for couples
             const ferryAndFun = ferryBase + funTotal;
 
             const gasCost = Math.round((kmDistance / 100) * fuelEfficiency * gasPrice);
