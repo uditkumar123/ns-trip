@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>Maritime Explorer: PEI Focused Edition</title>
+    <title>Maritime Explorer: Fundy Strategy</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,12 +19,10 @@
         .tab-inactive:hover { color: #334155; background-color: #f1f5f9; }
         #map { width: 100%; height: 500px; border-radius: 0.75rem; z-index: 1; }
         .timeline-line { position: absolute; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background-color: #e2e8f0; z-index: 0; }
-        /* Hero Image: PEI Dunes */
-        .hero-bg { background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)), url('https://images.unsplash.com/photo-1599946347371-68eb71b16afc?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center 40%; }
+        .hero-bg { background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)), url('https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center 40%; }
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } }
         .animate-pulse-red { animation: pulse-red 2s infinite; }
-        /* Fallback for missing images */
         .img-fallback { background-color: #fce7f3; background-image: radial-gradient(#db2777 0.5px, #fce7f3 0.5px); background-size: 10px 10px; display: flex; align-items: center; justify-content: center; color: #be185d; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; }
     </style>
 </head>
@@ -34,7 +32,7 @@
     <div id="login-overlay">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-4 border-pink-500/20">
             <div class="text-5xl mb-6">🔒</div>
-            <h2 class="text-2xl font-bold text-slate-800 mb-2">PEI Planner</h2>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Maritime Planner</h2>
             <p class="text-sm text-slate-500 mb-6">Enter password to view itinerary.</p>
             <input type="password" id="password-input" placeholder="Enter password" class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-pink-500 outline-none transition text-center text-lg">
             <button onclick="checkPassword()" class="w-full bg-pink-700 text-white font-bold py-3 rounded-lg hover:bg-pink-800 transition shadow-lg transform active:scale-95">Unlock Plan</button>
@@ -49,8 +47,8 @@
         <header class="hero-bg text-white p-8 md:p-12 shadow-lg">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
-                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The PEI Escape</h1>
-                    <p class="text-pink-100 text-xl font-light">Ottawa &#8594; Prince Edward Island &#8594; Ottawa</p>
+                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The Relaxed Return</h1>
+                    <p class="text-pink-100 text-xl font-light">Ottawa &#8594; PEI &#8594; Fundy &#8594; Ottawa</p>
                 </div>
                 <div class="mt-6 md:mt-0 bg-white/10 backdrop-blur-md px-6 py-3 rounded-xl border border-white/20">
                     <span class="block text-xs text-pink-200 uppercase tracking-widest font-bold mb-1">Trip Profile</span>
@@ -60,8 +58,8 @@
                             <span class="font-bold">Kia Sportage</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="text-2xl mr-2">🏕️</span>
-                            <span class="font-bold">Aug 16 Week</span>
+                            <span class="text-2xl mr-2">📅</span>
+                            <span class="font-bold">Aug 15-22</span>
                         </div>
                     </div>
                 </div>
@@ -88,19 +86,19 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     <div class="bg-slate-800 text-white p-4 rounded-xl shadow-md">
                         <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Total Distance</div>
-                        <div class="text-2xl font-bold">~2,700 km</div>
+                        <div class="text-2xl font-bold">~2,850 km</div>
                     </div>
                     <div class="bg-slate-800 text-white p-4 rounded-xl shadow-md">
                         <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Driving Time</div>
-                        <div class="text-2xl font-bold">28 Hours</div>
+                        <div class="text-2xl font-bold">36 Hours</div>
                     </div>
                     <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Pace</div>
-                        <div class="text-2xl font-bold text-green-600">Relaxed</div>
+                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Return Strategy</div>
+                        <div class="text-2xl font-bold text-green-600">Split (2 Days)</div>
                     </div>
                     <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">PEI Nights</div>
-                        <div class="text-2xl font-bold text-slate-800">4-5</div>
+                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Tide Strategy</div>
+                        <div class="text-2xl font-bold text-slate-800">Overnight</div>
                     </div>
                 </div>
 
@@ -115,8 +113,8 @@
                     <!-- STOP 1 -->
                     <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                         <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
-                            <h3 class="text-xl font-bold text-pink-900">Aug 15: Trapper's Cabin</h3>
-                            <p class="text-sm text-slate-600">Ottawa &#8594; Upper Kintore, NB. The adventure begins.</p>
+                            <h3 class="text-xl font-bold text-pink-900">Sat, Aug 15: Trapper's Cabin</h3>
+                            <p class="text-sm text-slate-600">Ottawa &#8594; Upper Kintore, NB.</p>
                             <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded mt-1">✅ Booked ($116)</span>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-pink-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">1</div>
@@ -129,8 +127,7 @@
                         <div class="w-10 h-10 rounded-full bg-amber-500 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">2</div>
                         <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
                             <h3 class="text-xl font-bold text-slate-800">Aug 16-18: Stanhope Camping</h3>
-                            <p class="text-sm text-slate-600">Cross Bridge ($0 entry). Family visit. Beach fires.</p>
-                            <span class="inline-block bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded mt-1">⏰ Book Feb 9th (7am)</span>
+                            <p class="text-sm text-slate-600">Cross Bridge ($0 entry). Family visit. Beach days. <strong>Book Feb 9th!</strong></p>
                         </div>
                     </div>
 
@@ -138,24 +135,50 @@
                     <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                         <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
                             <h3 class="text-xl font-bold text-slate-800">Aug 18-20: Charlottetown</h3>
-                            <p class="text-sm text-slate-600">Post-camping luxury. Stay in a B&B. Cows Ice Cream. Basin Head day trip.</p>
+                            <p class="text-sm text-slate-600">Post-camping luxury. B&B stay. Explore East/West tips.</p>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-green-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">3</div>
                         <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
                     </div>
 
-                    <!-- STOP 4 -->
-                    <div class="flex flex-col md:flex-row items-center relative z-10">
+                    <!-- STOP 4 (FUNDY) -->
+                    <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                         <div class="w-full md:w-1/2 md:pr-12 hidden md:block"></div>
                         <div class="w-10 h-10 rounded-full bg-teal-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">4</div>
                         <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
-                            <h3 class="text-xl font-bold text-teal-900">Aug 20-23: The Return</h3>
-                            <p class="text-sm text-slate-600">Bridge Exit ($50). Hopewell Rocks. Fundy Park. Drive home.</p>
+                            <span class="inline-block bg-teal-100 text-teal-800 text-xs font-bold px-2 py-1 rounded border border-teal-200 mb-2">
+                                STRATEGIC OVERNIGHT
+                            </span>
+                            <h3 class="text-xl font-bold text-teal-900">Thu, Aug 20: Fundy National Park</h3>
+                            <p class="text-sm text-slate-600"><strong>Depart PEI:</strong> 10:00 AM. Stop at Hopewell Rocks.<br><strong>Stay:</strong> Village of Alma. Eat sticky buns and lobster.</p>
+                        </div>
+                    </div>
+
+                    <!-- STOP 5 (RIVIERE DU LOUP) -->
+                    <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
+                        <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
+                            <span class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded border border-blue-200 mb-2">
+                                BONUS STOPOVER
+                            </span>
+                            <h3 class="text-xl font-bold text-slate-800">Fri, Aug 21: St. Lawrence Sunset</h3>
+                            <p class="text-sm text-slate-600">Morning Hike in Fundy. Drive 4.5h to <strong>Rivière-du-Loup, QC</strong>. Relaxed evening.</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-blue-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">5</div>
+                        <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
+                    </div>
+
+                    <!-- STOP 6 (HOME) -->
+                    <div class="flex flex-col md:flex-row items-center relative z-10">
+                        <div class="w-full md:w-1/2 md:pr-12 hidden md:block"></div>
+                        <div class="w-10 h-10 rounded-full bg-slate-700 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">6</div>
+                        <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
+                            <h3 class="text-xl font-bold text-slate-800">Sat, Aug 22: Easy Return</h3>
+                            <p class="text-sm text-slate-600">Drive 6 hours to Ottawa. Arrive by afternoon.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- CALENDAR VISUALIZATION (New) -->
+                <!-- CALENDAR VISUALIZATION -->
                 <div class="mt-16 pt-8 border-t border-slate-200">
                     <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
                         <span class="mr-2">🗓️</span> Trip Calendar: August 2026
@@ -171,82 +194,72 @@
                             <div class="font-bold text-blue-600">Sun</div>
                         </div>
                         <div class="grid grid-cols-7 gap-2">
-                            <!-- Empty Cells for start of Aug (Aug 1 is Sat) -->
                             <div class="p-2"></div><div class="p-2"></div><div class="p-2"></div><div class="p-2"></div><div class="p-2"></div>
-                            
-                            <!-- Days 1-14 Faded -->
-                            <div class="p-2 text-slate-300">1</div><div class="p-2 text-slate-300">2</div>
-                            <div class="p-2 text-slate-300">3</div><div class="p-2 text-slate-300">4</div><div class="p-2 text-slate-300">5</div><div class="p-2 text-slate-300">6</div><div class="p-2 text-slate-300">7</div><div class="p-2 text-slate-300">8</div><div class="p-2 text-slate-300">9</div>
-                            <div class="p-2 text-slate-300">10</div><div class="p-2 text-slate-300">11</div><div class="p-2 text-slate-300">12</div><div class="p-2 text-slate-300">13</div><div class="p-2 text-slate-300">14</div>
+                            <div class="p-2 text-slate-300">1</div><div class="p-2 text-slate-300">2</div><div class="p-2 text-slate-300">3</div><div class="p-2 text-slate-300">4</div><div class="p-2 text-slate-300">5</div><div class="p-2 text-slate-300">6</div><div class="p-2 text-slate-300">7</div><div class="p-2 text-slate-300">8</div><div class="p-2 text-slate-300">9</div><div class="p-2 text-slate-300">10</div><div class="p-2 text-slate-300">11</div><div class="p-2 text-slate-300">12</div><div class="p-2 text-slate-300">13</div><div class="p-2 text-slate-300">14</div>
 
                             <!-- THE TRIP -->
                             <!-- Aug 15: Trapper -->
-                            <div class="p-1 min-h-[90px] bg-pink-50 border-2 border-pink-200 rounded-lg relative hover:shadow-md transition">
+                            <div class="p-1 min-h-[90px] bg-pink-50 border-2 border-pink-200 rounded-lg relative">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-pink-500">15</span>
                                 <div class="mt-6 text-[10px] font-bold text-pink-800 uppercase leading-tight">Start</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Drive to NB</div>
                                 <div class="text-[9px] text-pink-600 mt-1">🏠 Cabin</div>
                             </div>
 
                             <!-- Aug 16: Camping -->
-                            <div class="p-1 min-h-[90px] bg-amber-50 border-2 border-amber-200 rounded-lg relative hover:shadow-md transition">
+                            <div class="p-1 min-h-[90px] bg-amber-50 border-2 border-amber-200 rounded-lg relative">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-amber-500">16</span>
                                 <div class="mt-6 text-[10px] font-bold text-amber-800 uppercase leading-tight">PEI</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Aunt Visit</div>
                                 <div class="text-[9px] text-amber-600 mt-1">⛺ Camp</div>
                             </div>
 
                             <!-- Aug 17: Camping -->
-                            <div class="p-1 min-h-[90px] bg-amber-50 border-2 border-amber-200 rounded-lg relative hover:shadow-md transition">
+                            <div class="p-1 min-h-[90px] bg-amber-50 border-2 border-amber-200 rounded-lg relative">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-amber-500">17</span>
                                 <div class="mt-6 text-[10px] font-bold text-amber-800 uppercase leading-tight">Beach</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Stanhope</div>
                                 <div class="text-[9px] text-amber-600 mt-1">⛺ Camp</div>
                             </div>
 
                             <!-- Aug 18: Hotel -->
-                            <div class="p-1 min-h-[90px] bg-green-50 border-2 border-green-200 rounded-lg relative hover:shadow-md transition">
+                            <div class="p-1 min-h-[90px] bg-green-50 border-2 border-green-200 rounded-lg relative">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-green-500">18</span>
                                 <div class="mt-6 text-[10px] font-bold text-green-800 uppercase leading-tight">City</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Charlottetown</div>
                                 <div class="text-[9px] text-green-600 mt-1">🛏️ B&B</div>
                             </div>
 
                             <!-- Aug 19: Hotel -->
-                            <div class="p-1 min-h-[90px] bg-green-50 border-2 border-green-200 rounded-lg relative hover:shadow-md transition">
+                            <div class="p-1 min-h-[90px] bg-green-50 border-2 border-green-200 rounded-lg relative">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-green-500">19</span>
                                 <div class="mt-6 text-[10px] font-bold text-green-800 uppercase leading-tight">Explore</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Basin Head</div>
                                 <div class="text-[9px] text-green-600 mt-1">🛏️ B&B</div>
                             </div>
 
-                            <!-- Aug 20: Fundy -->
-                            <div class="p-1 min-h-[90px] bg-teal-50 border-2 border-teal-200 rounded-lg relative hover:shadow-md transition">
+                            <!-- Aug 20: FUNDY -->
+                            <div class="p-1 min-h-[90px] bg-teal-50 border-2 border-teal-200 rounded-lg relative">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-teal-500">20</span>
-                                <div class="mt-6 text-[10px] font-bold text-teal-800 uppercase leading-tight">Return</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Hopewell Rocks</div>
-                                <div class="text-[9px] text-teal-600 mt-1">Driving</div>
+                                <div class="mt-6 text-[10px] font-bold text-teal-800 uppercase leading-tight">Fundy</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Tides</div>
+                                <div class="text-[9px] text-teal-600 mt-1">🛏️ Alma</div>
                             </div>
 
-                            <!-- Aug 21: Fundy -->
-                            <div class="p-1 min-h-[90px] bg-teal-50 border-2 border-teal-200 rounded-lg relative hover:shadow-md transition">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-teal-500">21</span>
-                                <div class="mt-6 text-[10px] font-bold text-teal-800 uppercase leading-tight">Hike</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Fundy Park</div>
-                                <div class="text-[9px] text-teal-600 mt-1">Driving</div>
+                            <!-- Aug 21: RDL -->
+                            <div class="p-1 min-h-[90px] bg-blue-50 border-2 border-blue-200 rounded-lg relative">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-blue-500">21</span>
+                                <div class="mt-6 text-[10px] font-bold text-blue-800 uppercase leading-tight">Quebec</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Easy Drive</div>
+                                <div class="text-[9px] text-blue-600 mt-1">🛏️ Riv-Loup</div>
                             </div>
 
                             <!-- Aug 22: Home -->
-                            <div class="p-1 min-h-[90px] bg-slate-100 border-2 border-slate-300 rounded-lg relative hover:shadow-md transition">
+                            <div class="p-1 min-h-[90px] bg-slate-100 border-2 border-slate-300 rounded-lg relative">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-slate-500">22</span>
                                 <div class="mt-6 text-[10px] font-bold text-slate-800 uppercase leading-tight">Home</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Long Drive</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">6h Drive</div>
                             </div>
 
                             <!-- Aug 23: Rest -->
                             <div class="p-1 min-h-[90px] bg-slate-50 border border-slate-200 rounded-lg relative text-opacity-50">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-slate-400">23</span>
-                                <div class="mt-6 text-[10px] text-slate-400">Rest / Buffer Day</div>
+                                <div class="mt-6 text-[10px] text-slate-400">Recovery</div>
                             </div>
                         </div>
                     </div>
@@ -264,11 +277,11 @@
                             <!-- ACCOMMODATION FIXED COST ALERT -->
                             <div class="space-y-2">
                                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 flex justify-between items-center">
-                                    <span class="text-xs font-bold text-green-800 uppercase">Night 1 (Cabin)</span>
+                                    <span class="text-xs font-bold text-green-800 uppercase">Booked: Cabin</span>
                                     <span class="text-sm font-bold text-green-700">$116</span>
                                 </div>
                                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 flex justify-between items-center">
-                                    <span class="text-xs font-bold text-green-800 uppercase">Nights 2-3 (Camp)</span>
+                                    <span class="text-xs font-bold text-green-800 uppercase">Camping (2 Nts)</span>
                                     <span class="text-sm font-bold text-green-700">~$100</span>
                                 </div>
                             </div>
@@ -283,11 +296,11 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                                    <span>Avg Cost for Remaining Nights</span>
-                                    <span class="text-pink-600 font-bold">$<span id="val-accom">200</span></span>
+                                    <span>Remaining 4 Nights (B&Bs)</span>
+                                    <span class="text-pink-600 font-bold">$<span id="val-accom">180</span></span>
                                 </label>
-                                <input type="range" id="input-accom" min="150" max="600" step="25" value="200" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600">
-                                <p class="text-xs text-slate-400 mt-1">For Nights 4-8 (Hotels/B&Bs)</p>
+                                <input type="range" id="input-accom" min="120" max="400" step="10" value="180" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600">
+                                <p class="text-xs text-slate-400 mt-1">Charlottetown, Alma, Riv-du-Loup</p>
                             </div>
                             
                             <div>
@@ -338,7 +351,7 @@
                     <div class="flex space-x-2 mt-4 md:mt-0 flex-wrap gap-2">
                         <button onclick="renderAttractions('all')" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full">All</button>
                         <button onclick="renderAttractions('pei')" class="px-4 py-2 text-sm bg-white border border-amber-200 text-amber-700 rounded-full font-bold">PEI</button>
-                        <button onclick="renderAttractions('nb')" class="px-4 py-2 text-sm bg-white border border-green-200 text-green-700 rounded-full font-bold">New Brunswick</button>
+                        <button onclick="renderAttractions('nb')" class="px-4 py-2 text-sm bg-white border border-green-200 text-green-700 rounded-full font-bold">Bay of Fundy</button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="attraction-grid"></div>
@@ -359,6 +372,29 @@
                     </div>
                 </div>
 
+                <!-- FUNDY OVERNIGHT STRATEGY -->
+                <div class="bg-teal-50 border border-teal-200 rounded-2xl shadow-sm mb-8 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <span class="text-3xl mr-3">🌊</span>
+                            <h3 class="text-xl font-bold text-teal-900">Why Stay in Alma (Aug 20)?</h3>
+                        </div>
+                        <p class="text-sm text-slate-700 mb-4">Staying overnight allows you to experience the full <strong>Tide Cycle</strong>.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-lg shadow-sm border border-teal-100">
+                                <div class="text-xs font-bold text-teal-600 uppercase mb-1">Thursday Afternoon</div>
+                                <p class="text-sm font-bold text-slate-800">Explore Low Tide</p>
+                                <p class="text-xs text-slate-500 mt-1">Walk on the ocean floor at Hopewell Rocks. Explore caves.</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow-sm border border-teal-100">
+                                <div class="text-xs font-bold text-teal-600 uppercase mb-1">Friday Morning</div>
+                                <p class="text-sm font-bold text-slate-800">High Tide Kayak/View</p>
+                                <p class="text-xs text-slate-500 mt-1">See the water rise 40 feet. Kayak at Hopewell or hike Fundy Park.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- NIGHT 1 CONFIRMED -->
                 <div class="bg-white rounded-2xl shadow-lg border border-green-100 mb-8 overflow-hidden">
                     <div class="bg-green-700 p-4 text-white flex justify-between items-center">
@@ -372,19 +408,6 @@
                         <div class="flex items-center text-sm text-slate-700">
                             <span class="font-bold mr-2">Prep:</span> Buy groceries in Grand Falls. No stores near cabin.
                         </div>
-                    </div>
-                </div>
-
-                <!-- Bridge Info -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-3">🌉</span>
-                        <h3 class="text-xl font-bold text-slate-800">Bridge Logistics</h3>
-                    </div>
-                    <p class="text-sm text-slate-600 mb-4">Confederation Bridge toll is collected <strong>only when leaving PEI</strong>.</p>
-                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
-                        <span class="font-bold text-blue-900">Exit Toll</span>
-                        <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">~$50.25 (Car)</span>
                     </div>
                 </div>
 
@@ -413,7 +436,7 @@
             { title: "Stanhope Camp", cat: "pei", loc: "PEI National Park", img: assets.brackley, desc: "Your home for 2 nights. Beach fires and stars." },
             { title: "Basin Head", cat: "pei", loc: "Eastern PEI", img: assets.basin, desc: "The Singing Sands. Don't miss jumping off the bridge." },
             { title: "Charlottetown", cat: "pei", loc: "Victoria Row", img: assets.charlottetown, desc: "Historic waterfront, shopping, and Cows Ice Cream." },
-            { title: "Hopewell Rocks", cat: "nb", loc: "New Brunswick", img: assets.hopewell, desc: "Walk on the ocean floor. Highest tides in the world." },
+            { title: "Hopewell Rocks", cat: "nb", loc: "Bay of Fundy", img: assets.hopewell, desc: "Walk on the ocean floor at low tide. Must see." },
             { title: "Fundy Nat. Park", cat: "nb", loc: "Alma, NB", img: assets.fundy, desc: "Incredible waterfalls and hiking on the drive home." }
         ];
 
@@ -429,7 +452,8 @@
                 trapper: [46.7, -67.6],
                 stanhope: [46.4, -63.1],
                 charlottetown: [46.2, -63.1],
-                fundy: [45.6, -64.9],
+                alma: [45.6, -64.9], // Alma/Fundy
+                rdl: [47.8, -69.5], // Riviere-du-Loup
                 bridge: [46.2, -63.7]
             };
 
@@ -439,20 +463,22 @@
             // Leg 2: Trapper -> Stanhope (Into PEI)
             L.polyline([locs.trapper, locs.bridge, locs.stanhope], {color: '#db2777', weight: 5}).addTo(mapInstance);
 
-            // Leg 3: Return via Fundy
-            L.polyline([locs.charlottetown, locs.bridge, locs.fundy], {color: '#059669', weight: 5}).addTo(mapInstance);
-            L.polyline([locs.fundy, locs.trapper, locs.ottawa], {color: '#64748b', weight: 3, dashArray: '5, 10'}).addTo(mapInstance);
+            // Leg 3: Return via Fundy (Alma) -> RDL -> Home
+            L.polyline([locs.charlottetown, locs.bridge, locs.alma], {color: '#059669', weight: 5}).addTo(mapInstance);
+            L.polyline([locs.alma, locs.rdl], {color: '#059669', weight: 5}).addTo(mapInstance);
+            L.polyline([locs.rdl, locs.ottawa], {color: '#64748b', weight: 3, dashArray: '5, 10'}).addTo(mapInstance);
 
             L.marker(locs.ottawa).addTo(mapInstance).bindPopup("Ottawa");
             L.marker(locs.trapper).addTo(mapInstance).bindPopup("Trapper's Cabin (Booked)");
             L.marker(locs.stanhope).addTo(mapInstance).bindPopup("Stanhope Camp");
-            L.marker(locs.fundy).addTo(mapInstance).bindPopup("Fundy/Hopewell");
+            L.marker(locs.alma).addTo(mapInstance).bindPopup("Fundy/Alma");
+            L.marker(locs.rdl).addTo(mapInstance).bindPopup("Riviere-du-Loup (Relaxed Return)");
         }
 
         // --- BUDGET ---
         let budgetChartInstance = null;
         function updateBudget() {
-            const inputs = ['days', 'accom', 'food', 'gas'];
+            const inputs = ['accom', 'food', 'gas'];
             const vals = {};
             inputs.forEach(id => vals[id] = parseFloat(document.getElementById(`input-${id}`)?.value || 0));
             
@@ -462,22 +488,24 @@
             const fixedAccom = trapper + camping;
             
             // Variable Costs
-            let km = 2700;
+            let km = 2850; 
             let fuel = 9.5; // Sportage
             let gas = Math.round((km/100) * fuel * vals.gas);
             let bridge = 50.25; 
             
-            // Accom Remainder: Total Days - 1 (Cabin) - 2 (Camp)
-            let remDays = Math.max(0, vals.days - 3); 
+            // Accom Remainder: 7 Nights Total - 1 (Cabin) - 2 (Camp) = 4 Nights variable (Ch'town x2, Alma x1, RDL x1)
+            let remDays = 4;
             let varAccom = remDays * vals.accom;
             
-            let total = gas + bridge + fixedAccom + varAccom + (vals.food * 2 * vals.days);
+            // 8 Days Total (Food/Gas)
+            let totalDays = 8;
+            let total = gas + bridge + fixedAccom + varAccom + (vals.food * 2 * totalDays);
             
             document.getElementById('total-cost').innerText = '$' + total.toLocaleString();
             document.getElementById('per-person-cost').innerText = '$' + Math.round(total/2).toLocaleString();
             
             if(budgetChartInstance) {
-                budgetChartInstance.data.datasets[0].data = [gas, fixedAccom + varAccom, vals.food*2*vals.days, bridge + 150];
+                budgetChartInstance.data.datasets[0].data = [gas, fixedAccom + varAccom, vals.food*2*totalDays, bridge + 150];
                 budgetChartInstance.update();
             }
         }
@@ -489,7 +517,7 @@
                 data: { labels: ['Transport', 'Stay', 'Food', 'Fun'], datasets: [{ data: [1,1,1,1], backgroundColor: ['#0891b2', '#f59e0b', '#10b981', '#6366f1'] }] },
                 options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
             });
-            ['days', 'accom', 'food', 'gas'].forEach(id => document.getElementById(`input-${id}`).addEventListener('input', updateBudget));
+            ['accom', 'food', 'gas'].forEach(id => document.getElementById(`input-${id}`).addEventListener('input', updateBudget));
             updateBudget();
         }
 
