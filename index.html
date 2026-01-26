@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>Maritime Explorer: With Finn</title>
+    <title>Maritime Explorer: Whales & Finn</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,8 +19,8 @@
         .tab-inactive:hover { color: #334155; background-color: #f1f5f9; }
         #map { width: 100%; height: 500px; border-radius: 0.75rem; z-index: 1; }
         .timeline-line { position: absolute; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background-color: #e2e8f0; z-index: 0; }
-        /* Hero Image: Happy Dog on Beach */
-        .hero-bg { background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)), url('https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center 40%; }
+        /* Hero Image: Whales St Lawrence */
+        .hero-bg { background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)), url('https://images.unsplash.com/photo-1576169904975-d22792888941?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center 40%; }
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } }
         .animate-pulse-red { animation: pulse-red 2s infinite; }
@@ -48,15 +48,15 @@
         <header class="hero-bg text-white p-8 md:p-12 shadow-lg">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
-                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">Maritime Loop: Finn Edition</h1>
-                    <p class="text-pink-100 text-xl font-light">Ottawa &#8594; PEI &#8594; Fundy &#8594; Ottawa</p>
+                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The Relaxed Return</h1>
+                    <p class="text-pink-100 text-xl font-light">Ottawa &#8594; PEI &#8594; Whales (QC) &#8594; Ottawa</p>
                 </div>
                 <div class="mt-6 md:mt-0 bg-white/10 backdrop-blur-md px-6 py-3 rounded-xl border border-white/20">
                     <span class="block text-xs text-pink-200 uppercase tracking-widest font-bold mb-1">Trip Profile</span>
                     <div class="flex items-center space-x-6">
                         <div class="flex items-center">
                             <span class="text-2xl mr-2">🐶</span>
-                            <span class="font-bold">With Finn</span>
+                            <span class="font-bold">Finn's Trip</span>
                         </div>
                         <div class="flex items-center">
                             <span class="text-2xl mr-2">📅</span>
@@ -90,16 +90,16 @@
                         <div class="text-2xl font-bold">~2,850 km</div>
                     </div>
                     <div class="bg-slate-800 text-white p-4 rounded-xl shadow-md">
-                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Whale Watch</div>
-                        <div class="text-2xl font-bold">Sat AM</div>
+                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Whale Strategy</div>
+                        <div class="text-2xl font-bold">Sleep RDL</div>
                     </div>
                     <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Return Strategy</div>
-                        <div class="text-2xl font-bold text-green-600">Pet Paced</div>
+                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Return Pacing</div>
+                        <div class="text-2xl font-bold text-green-600">Relaxed</div>
                     </div>
                     <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Bonus Night</div>
-                        <div class="text-2xl font-bold text-slate-800">Riv-du-Loup</div>
+                        <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Finn's Comfort</div>
+                        <div class="text-2xl font-bold text-slate-800">High</div>
                     </div>
                 </div>
 
@@ -115,8 +115,8 @@
                     <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                         <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
                             <h3 class="text-xl font-bold text-pink-900">Sat, Aug 15: Trapper's Cabin</h3>
-                            <p class="text-sm text-slate-600">Ottawa &#8594; Upper Kintore, NB. The adventure begins.</p>
-                            <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded mt-1">✅ Booked</span>
+                            <p class="text-sm text-slate-600">Ottawa &#8594; Upper Kintore, NB.</p>
+                            <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded mt-1">✅ Booked ($116)</span>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-pink-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">1</div>
                         <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
@@ -128,7 +128,7 @@
                         <div class="w-10 h-10 rounded-full bg-amber-500 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">2</div>
                         <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
                             <h3 class="text-xl font-bold text-slate-800">Aug 16-18: Stanhope Camping</h3>
-                            <p class="text-sm text-slate-600">Cross Bridge. Family visit. Beach days. Dog-friendly beaches available in park.</p>
+                            <p class="text-sm text-slate-600">Cross Bridge. Family visit. Beach camping.</p>
                             <span class="inline-block bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded mt-1">⏰ Book Feb 9th (7am)</span>
                         </div>
                     </div>
@@ -152,18 +152,18 @@
                                 BAY OF FUNDY
                             </span>
                             <h3 class="text-xl font-bold text-teal-900">Thu, Aug 20: The Tides</h3>
-                            <p class="text-sm text-slate-600">Depart PEI. Visit Hopewell Rocks (Dogs allowed on leash!). Stay in Alma.</p>
+                            <p class="text-sm text-slate-600">Depart PEI. Visit Hopewell Rocks. Stay in <strong>Alma</strong>.</p>
                         </div>
                     </div>
 
-                    <!-- STOP 5 (RIVIERE DU LOUP) -->
+                    <!-- STOP 5 (RIVIERE DU LOUP - OVERNIGHT) -->
                     <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                         <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
                             <span class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded border border-blue-200 mb-2">
-                                RELAXED ARRIVAL
+                                OVERNIGHT FOR WHALES
                             </span>
-                            <h3 class="text-xl font-bold text-slate-800">Fri, Aug 21: Settle in RDL</h3>
-                            <p class="text-sm text-slate-600">Drive 4.5h to Rivière-du-Loup. Check into Pet-Friendly Hotel. Walk Finn at <em>Parc de la Pointe</em>. Relax.</p>
+                            <h3 class="text-xl font-bold text-slate-800">Fri, Aug 21: Arrive Rivière-du-Loup</h3>
+                            <p class="text-sm text-slate-600">Drive 4.5h from Fundy. Check into Pet-Friendly Hotel. Walk Finn at park.</p>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-blue-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">5</div>
                         <div class="w-full md:w-1/2 md:pl-12 hidden md:block"></div>
@@ -174,11 +174,11 @@
                         <div class="w-full md:w-1/2 md:pr-12 hidden md:block"></div>
                         <div class="w-10 h-10 rounded-full bg-slate-700 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">6</div>
                         <div class="w-full md:w-1/2 md:pl-12 text-center md:text-left mb-4 md:mb-0">
-                            <h3 class="text-xl font-bold text-slate-800">Sat, Aug 22: Whales & Home</h3>
+                            <h3 class="text-xl font-bold text-slate-800">Sat, Aug 22: Whales then Home</h3>
                             <ul class="text-sm text-slate-600 list-disc pl-4 mt-2">
-                                <li><strong>09:30 AM:</strong> Whale Watching Tour (Finn stays in hotel/crate).</li>
+                                <li><strong>09:30 AM:</strong> AML Whale Cruise (Finn naps in hotel).</li>
                                 <li><strong>13:00 PM:</strong> Lunch & Walk Finn.</li>
-                                <li><strong>14:00 PM:</strong> Drive home to Ottawa (6h). Arrive evening.</li>
+                                <li><strong>14:00 PM:</strong> Easy 6h Drive to Ottawa.</li>
                             </ul>
                         </div>
                     </div>
@@ -243,6 +243,7 @@
                             <div class="p-1 min-h-[90px] bg-teal-50 border-2 border-teal-200 rounded-lg relative">
                                 <span class="absolute top-1 right-2 text-xs font-bold text-teal-500">20</span>
                                 <div class="mt-6 text-[10px] font-bold text-teal-800 uppercase leading-tight">Fundy</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Tides</div>
                                 <div class="text-[9px] text-teal-600 mt-1">🛏️ Alma</div>
                             </div>
 
@@ -283,12 +284,16 @@
                             <!-- ACCOMMODATION FIXED COST ALERT -->
                             <div class="space-y-2">
                                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 flex justify-between items-center">
-                                    <span class="text-xs font-bold text-green-800 uppercase">Night 1 (Cabin)</span>
+                                    <span class="text-xs font-bold text-green-800 uppercase">Booked: Night 1 (Cabin)</span>
                                     <span class="text-sm font-bold text-green-700">$116</span>
                                 </div>
                                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 flex justify-between items-center">
                                     <span class="text-xs font-bold text-green-800 uppercase">Camping (2 Nts)</span>
                                     <span class="text-sm font-bold text-green-700">~$100</span>
+                                </div>
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 flex justify-between items-center">
+                                    <span class="text-xs font-bold text-blue-800 uppercase">Whale Cruise (2 Tix)</span>
+                                    <span class="text-sm font-bold text-blue-700">~$200</span>
                                 </div>
                             </div>
 
@@ -306,7 +311,7 @@
                                     <span class="text-pink-600 font-bold">$<span id="val-accom">180</span></span>
                                 </label>
                                 <input type="range" id="input-accom" min="120" max="400" step="10" value="180" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600">
-                                <p class="text-xs text-slate-400 mt-1">Charlottetown, Alma, Riv-du-Loup (Pet fees may apply)</p>
+                                <p class="text-xs text-slate-400 mt-1">Charlottetown, Alma, Riv-du-Loup</p>
                             </div>
                             
                             <div>
@@ -389,7 +394,7 @@
                             <div class="bg-white p-4 rounded-lg shadow-sm">
                                 <h4 class="font-bold text-slate-800 mb-2">Friday Evening</h4>
                                 <ul class="text-sm text-slate-600 space-y-1 list-disc pl-4">
-                                    <li><strong>Walk:</strong> <a href="#" class="text-blue-600 underline">Parc de la Pointe</a> is perfect for sunset dog walking.</li>
+                                    <li><strong>Walk:</strong> <span class="text-blue-600 underline">Parc de la Pointe</span> is perfect for sunset dog walking.</li>
                                     <li><strong>Stay:</strong> Ensure hotel allows dogs to be left alone (crate usually required) for Sat AM.</li>
                                 </ul>
                             </div>
@@ -412,10 +417,10 @@
                     </div>
                     <div class="p-6">
                         <div class="flex items-center text-sm text-slate-700 mb-2">
-                            <span class="font-bold mr-2">Vehicle:</span> 2018 Kia Sportage (Confirmed OK).
+                            <span class="font-bold mr-2">Vehicle:</span> 2018 Kia Sportage (Confirmed OK for access).
                         </div>
                         <div class="flex items-center text-sm text-slate-700">
-                            <span class="font-bold mr-2">Prep:</span> Shop in Grand Falls.
+                            <span class="font-bold mr-2">Prep:</span> Buy groceries in Grand Falls. No stores near cabin.
                         </div>
                     </div>
                 </div>
@@ -458,7 +463,7 @@
             { title: "Stanhope Camp", cat: "pei", loc: "PEI National Park", img: assets.brackley, desc: "Your home for 2 nights. Beach fires and stars." },
             { title: "Basin Head", cat: "pei", loc: "Eastern PEI", img: assets.basin, desc: "The Singing Sands. Don't miss jumping off the bridge." },
             { title: "Charlottetown", cat: "pei", loc: "Victoria Row", img: assets.charlottetown, desc: "Historic waterfront, shopping, and Cows Ice Cream." },
-            { title: "Hopewell Rocks", cat: "nb", loc: "Bay of Fundy", img: assets.hopewell, desc: "Walk on the ocean floor at low tide. Must see." },
+            { title: "Hopewell Rocks", cat: "nb", loc: "Bay of Fundy", img: assets.hopewell, desc: "Walk on the ocean floor. Highest tides in the world." },
             { title: "Fundy Nat. Park", cat: "nb", loc: "Alma, NB", img: assets.fundy, desc: "Incredible waterfalls and hiking on the drive home." }
         ];
 
