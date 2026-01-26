@@ -104,12 +104,12 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-8">
                     <div id="map"></div>
                 </div>
                 
                 <!-- Timeline -->
-                <div class="mt-12 relative" id="timeline-container">
+                <div class="relative" id="timeline-container">
                     <div class="hidden md:block timeline-line"></div>
                     
                     <!-- STOP 1 -->
@@ -154,6 +154,104 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- CALENDAR VISUALIZATION (New) -->
+                <div class="mt-16 pt-8 border-t border-slate-200">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                        <span class="mr-2">🗓️</span> Trip Calendar: August 2026
+                    </h3>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="grid grid-cols-7 gap-2 text-center text-sm mb-4 border-b border-slate-100 pb-2">
+                            <div class="font-bold text-slate-400">Mon</div>
+                            <div class="font-bold text-slate-400">Tue</div>
+                            <div class="font-bold text-slate-400">Wed</div>
+                            <div class="font-bold text-slate-400">Thu</div>
+                            <div class="font-bold text-slate-400">Fri</div>
+                            <div class="font-bold text-blue-600">Sat</div>
+                            <div class="font-bold text-blue-600">Sun</div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2">
+                            <!-- Empty Cells for start of Aug (Aug 1 is Sat) -->
+                            <div class="p-2"></div><div class="p-2"></div><div class="p-2"></div><div class="p-2"></div><div class="p-2"></div>
+                            
+                            <!-- Days 1-14 Faded -->
+                            <div class="p-2 text-slate-300">1</div><div class="p-2 text-slate-300">2</div>
+                            <div class="p-2 text-slate-300">3</div><div class="p-2 text-slate-300">4</div><div class="p-2 text-slate-300">5</div><div class="p-2 text-slate-300">6</div><div class="p-2 text-slate-300">7</div><div class="p-2 text-slate-300">8</div><div class="p-2 text-slate-300">9</div>
+                            <div class="p-2 text-slate-300">10</div><div class="p-2 text-slate-300">11</div><div class="p-2 text-slate-300">12</div><div class="p-2 text-slate-300">13</div><div class="p-2 text-slate-300">14</div>
+
+                            <!-- THE TRIP -->
+                            <!-- Aug 15: Trapper -->
+                            <div class="p-1 min-h-[90px] bg-pink-50 border-2 border-pink-200 rounded-lg relative hover:shadow-md transition">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-pink-500">15</span>
+                                <div class="mt-6 text-[10px] font-bold text-pink-800 uppercase leading-tight">Start</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Drive to NB</div>
+                                <div class="text-[9px] text-pink-600 mt-1">🏠 Cabin</div>
+                            </div>
+
+                            <!-- Aug 16: Camping -->
+                            <div class="p-1 min-h-[90px] bg-amber-50 border-2 border-amber-200 rounded-lg relative hover:shadow-md transition">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-amber-500">16</span>
+                                <div class="mt-6 text-[10px] font-bold text-amber-800 uppercase leading-tight">PEI</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Aunt Visit</div>
+                                <div class="text-[9px] text-amber-600 mt-1">⛺ Camp</div>
+                            </div>
+
+                            <!-- Aug 17: Camping -->
+                            <div class="p-1 min-h-[90px] bg-amber-50 border-2 border-amber-200 rounded-lg relative hover:shadow-md transition">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-amber-500">17</span>
+                                <div class="mt-6 text-[10px] font-bold text-amber-800 uppercase leading-tight">Beach</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Stanhope</div>
+                                <div class="text-[9px] text-amber-600 mt-1">⛺ Camp</div>
+                            </div>
+
+                            <!-- Aug 18: Hotel -->
+                            <div class="p-1 min-h-[90px] bg-green-50 border-2 border-green-200 rounded-lg relative hover:shadow-md transition">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-green-500">18</span>
+                                <div class="mt-6 text-[10px] font-bold text-green-800 uppercase leading-tight">City</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Charlottetown</div>
+                                <div class="text-[9px] text-green-600 mt-1">🛏️ B&B</div>
+                            </div>
+
+                            <!-- Aug 19: Hotel -->
+                            <div class="p-1 min-h-[90px] bg-green-50 border-2 border-green-200 rounded-lg relative hover:shadow-md transition">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-green-500">19</span>
+                                <div class="mt-6 text-[10px] font-bold text-green-800 uppercase leading-tight">Explore</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Basin Head</div>
+                                <div class="text-[9px] text-green-600 mt-1">🛏️ B&B</div>
+                            </div>
+
+                            <!-- Aug 20: Fundy -->
+                            <div class="p-1 min-h-[90px] bg-teal-50 border-2 border-teal-200 rounded-lg relative hover:shadow-md transition">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-teal-500">20</span>
+                                <div class="mt-6 text-[10px] font-bold text-teal-800 uppercase leading-tight">Return</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Hopewell Rocks</div>
+                                <div class="text-[9px] text-teal-600 mt-1">Driving</div>
+                            </div>
+
+                            <!-- Aug 21: Fundy -->
+                            <div class="p-1 min-h-[90px] bg-teal-50 border-2 border-teal-200 rounded-lg relative hover:shadow-md transition">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-teal-500">21</span>
+                                <div class="mt-6 text-[10px] font-bold text-teal-800 uppercase leading-tight">Hike</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Fundy Park</div>
+                                <div class="text-[9px] text-teal-600 mt-1">Driving</div>
+                            </div>
+
+                            <!-- Aug 22: Home -->
+                            <div class="p-1 min-h-[90px] bg-slate-100 border-2 border-slate-300 rounded-lg relative hover:shadow-md transition">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-slate-500">22</span>
+                                <div class="mt-6 text-[10px] font-bold text-slate-800 uppercase leading-tight">Home</div>
+                                <div class="text-[10px] text-slate-600 leading-tight">Long Drive</div>
+                            </div>
+
+                            <!-- Aug 23: Rest -->
+                            <div class="p-1 min-h-[90px] bg-slate-50 border border-slate-200 rounded-lg relative text-opacity-50">
+                                <span class="absolute top-1 right-2 text-xs font-bold text-slate-400">23</span>
+                                <div class="mt-6 text-[10px] text-slate-400">Rest / Buffer Day</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </section>
 
             <!-- TAB: BUDGET -->
