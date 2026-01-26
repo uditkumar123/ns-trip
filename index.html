@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>Maritime Explorer: Whales & Finn</title>
+    <title>Maritime Explorer: Nature & Wildlife Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,7 +19,7 @@
         .tab-inactive:hover { color: #334155; background-color: #f1f5f9; }
         #map { width: 100%; height: 500px; border-radius: 0.75rem; z-index: 1; }
         .timeline-line { position: absolute; left: 50%; transform: translateX(-50%); width: 4px; height: 100%; background-color: #e2e8f0; z-index: 0; }
-        /* Hero Image: Whales St Lawrence */
+        /* Hero Image: Beluga Whale */
         .hero-bg { background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)), url('https://images.unsplash.com/photo-1576169904975-d22792888941?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center 40%; }
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } }
@@ -48,7 +48,7 @@
         <header class="hero-bg text-white p-8 md:p-12 shadow-lg">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
-                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The Relaxed Return</h1>
+                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The Nature Loop</h1>
                     <p class="text-pink-100 text-xl font-light">Ottawa &#8594; PEI &#8594; Whales (QC) &#8594; Ottawa</p>
                 </div>
                 <div class="mt-6 md:mt-0 bg-white/10 backdrop-blur-md px-6 py-3 rounded-xl border border-white/20">
@@ -56,11 +56,11 @@
                     <div class="flex items-center space-x-6">
                         <div class="flex items-center">
                             <span class="text-2xl mr-2">🐶</span>
-                            <span class="font-bold">Finn's Trip</span>
+                            <span class="font-bold">With Finn</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="text-2xl mr-2">📅</span>
-                            <span class="font-bold">Aug 15-22</span>
+                            <span class="text-2xl mr-2">🐋</span>
+                            <span class="font-bold">Whales Added</span>
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
             <div class="flex overflow-x-auto px-4 md:px-8">
                 <button onclick="switchTab('route')" id="tab-route" class="tab-active py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">🗺️</span> Itinerary</button>
                 <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">💰</span> Budget</button>
-                <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📸</span> Attractions</button>
+                <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">🦅</span> Wildlife & Nature</button>
                 <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📋</span> Logistics <span class="ml-2 bg-red-500 text-white text-[10px] px-1 rounded animate-pulse">!</span></button>
             </div>
         </nav>
@@ -90,8 +90,8 @@
                         <div class="text-2xl font-bold">~2,850 km</div>
                     </div>
                     <div class="bg-slate-800 text-white p-4 rounded-xl shadow-md">
-                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Whale Strategy</div>
-                        <div class="text-2xl font-bold">Sleep RDL</div>
+                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Whale Watch</div>
+                        <div class="text-2xl font-bold">Sat AM</div>
                     </div>
                     <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
                         <div class="text-xs text-slate-500 uppercase font-bold tracking-wider">Return Pacing</div>
@@ -115,7 +115,7 @@
                     <div class="flex flex-col md:flex-row items-center mb-12 relative z-10">
                         <div class="w-full md:w-1/2 md:pr-12 text-center md:text-right mb-4 md:mb-0">
                             <h3 class="text-xl font-bold text-pink-900">Sat, Aug 15: Trapper's Cabin</h3>
-                            <p class="text-sm text-slate-600">Ottawa &#8594; Upper Kintore, NB.</p>
+                            <p class="text-sm text-slate-600">Ottawa &#8594; Upper Kintore, NB. The adventure begins.</p>
                             <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded mt-1">✅ Booked ($116)</span>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-pink-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold">1</div>
@@ -183,95 +183,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- CALENDAR VISUALIZATION -->
-                <div class="mt-16 pt-8 border-t border-slate-200">
-                    <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
-                        <span class="mr-2">🗓️</span> Trip Calendar: August 2026
-                    </h3>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="grid grid-cols-7 gap-2 text-center text-sm mb-4 border-b border-slate-100 pb-2">
-                            <div class="font-bold text-slate-400">Mon</div>
-                            <div class="font-bold text-slate-400">Tue</div>
-                            <div class="font-bold text-slate-400">Wed</div>
-                            <div class="font-bold text-slate-400">Thu</div>
-                            <div class="font-bold text-slate-400">Fri</div>
-                            <div class="font-bold text-blue-600">Sat</div>
-                            <div class="font-bold text-blue-600">Sun</div>
-                        </div>
-                        <div class="grid grid-cols-7 gap-2">
-                            <div class="p-2"></div><div class="p-2"></div><div class="p-2"></div><div class="p-2"></div><div class="p-2"></div>
-                            <div class="p-2 text-slate-300">1</div><div class="p-2 text-slate-300">2</div><div class="p-2 text-slate-300">3</div><div class="p-2 text-slate-300">4</div><div class="p-2 text-slate-300">5</div><div class="p-2 text-slate-300">6</div><div class="p-2 text-slate-300">7</div><div class="p-2 text-slate-300">8</div><div class="p-2 text-slate-300">9</div><div class="p-2 text-slate-300">10</div><div class="p-2 text-slate-300">11</div><div class="p-2 text-slate-300">12</div><div class="p-2 text-slate-300">13</div><div class="p-2 text-slate-300">14</div>
-
-                            <!-- THE TRIP -->
-                            <!-- Aug 15: Trapper -->
-                            <div class="p-1 min-h-[90px] bg-pink-50 border-2 border-pink-200 rounded-lg relative">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-pink-500">15</span>
-                                <div class="mt-6 text-[10px] font-bold text-pink-800 uppercase leading-tight">Start</div>
-                                <div class="text-[9px] text-pink-600 mt-1">🏠 Cabin</div>
-                            </div>
-
-                            <!-- Aug 16: Camping -->
-                            <div class="p-1 min-h-[90px] bg-amber-50 border-2 border-amber-200 rounded-lg relative">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-amber-500">16</span>
-                                <div class="mt-6 text-[10px] font-bold text-amber-800 uppercase leading-tight">PEI</div>
-                                <div class="text-[9px] text-amber-600 mt-1">⛺ Camp</div>
-                            </div>
-
-                            <!-- Aug 17: Camping -->
-                            <div class="p-1 min-h-[90px] bg-amber-50 border-2 border-amber-200 rounded-lg relative">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-amber-500">17</span>
-                                <div class="mt-6 text-[10px] font-bold text-amber-800 uppercase leading-tight">Beach</div>
-                                <div class="text-[9px] text-amber-600 mt-1">⛺ Camp</div>
-                            </div>
-
-                            <!-- Aug 18: Hotel -->
-                            <div class="p-1 min-h-[90px] bg-green-50 border-2 border-green-200 rounded-lg relative">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-green-500">18</span>
-                                <div class="mt-6 text-[10px] font-bold text-green-800 uppercase leading-tight">City</div>
-                                <div class="text-[9px] text-green-600 mt-1">🛏️ B&B</div>
-                            </div>
-
-                            <!-- Aug 19: Hotel -->
-                            <div class="p-1 min-h-[90px] bg-green-50 border-2 border-green-200 rounded-lg relative">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-green-500">19</span>
-                                <div class="mt-6 text-[10px] font-bold text-green-800 uppercase leading-tight">Explore</div>
-                                <div class="text-[9px] text-green-600 mt-1">🛏️ B&B</div>
-                            </div>
-
-                            <!-- Aug 20: FUNDY -->
-                            <div class="p-1 min-h-[90px] bg-teal-50 border-2 border-teal-200 rounded-lg relative">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-teal-500">20</span>
-                                <div class="mt-6 text-[10px] font-bold text-teal-800 uppercase leading-tight">Fundy</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Tides</div>
-                                <div class="text-[9px] text-teal-600 mt-1">🛏️ Alma</div>
-                            </div>
-
-                            <!-- Aug 21: RDL -->
-                            <div class="p-1 min-h-[90px] bg-blue-50 border-2 border-blue-200 rounded-lg relative">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-blue-500">21</span>
-                                <div class="mt-6 text-[10px] font-bold text-blue-800 uppercase leading-tight">Quebec</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">Settle In</div>
-                                <div class="text-[9px] text-blue-600 mt-1">🛏️ Riv-Loup</div>
-                            </div>
-
-                            <!-- Aug 22: Home -->
-                            <div class="p-1 min-h-[90px] bg-indigo-50 border-2 border-indigo-200 rounded-lg relative">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-indigo-500">22</span>
-                                <div class="mt-6 text-[10px] font-bold text-indigo-800 uppercase leading-tight">Home</div>
-                                <div class="text-[10px] text-slate-600 leading-tight">🐋 AM Whales</div>
-                                <div class="text-[9px] text-indigo-600 mt-1">🚗 PM Drive</div>
-                            </div>
-
-                            <!-- Aug 23: Rest -->
-                            <div class="p-1 min-h-[90px] bg-slate-50 border border-slate-200 rounded-lg relative text-opacity-50">
-                                <span class="absolute top-1 right-2 text-xs font-bold text-slate-400">23</span>
-                                <div class="mt-6 text-[10px] text-slate-400">Recovery</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </section>
 
             <!-- TAB: BUDGET -->
@@ -352,17 +263,18 @@
                 </div>
             </section>
 
-            <!-- TAB: ATTRACTIONS -->
+            <!-- TAB: ATTRACTIONS (Restored & Enhanced) -->
             <section id="content-attractions" class="hidden space-y-8 animate-fade-in">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Must-See Spots</h2>
-                        <p class="text-slate-600" id="attraction-subtitle">PEI & New Brunswick Highlights.</p>
+                        <h2 class="text-2xl font-bold text-slate-800">Wildlife & Nature Targets</h2>
+                        <p class="text-slate-600" id="attraction-subtitle">Your target species for this trip.</p>
                     </div>
                     <div class="flex space-x-2 mt-4 md:mt-0 flex-wrap gap-2">
                         <button onclick="renderAttractions('all')" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full">All</button>
-                        <button onclick="renderAttractions('pei')" class="px-4 py-2 text-sm bg-white border border-amber-200 text-amber-700 rounded-full font-bold">PEI</button>
-                        <button onclick="renderAttractions('nb')" class="px-4 py-2 text-sm bg-white border border-green-200 text-green-700 rounded-full font-bold">Bay of Fundy</button>
+                        <button onclick="renderAttractions('mammals')" class="px-4 py-2 text-sm bg-white border border-blue-200 text-blue-700 rounded-full font-bold">Whales & Foxes</button>
+                        <button onclick="renderAttractions('birds')" class="px-4 py-2 text-sm bg-white border border-amber-200 text-amber-700 rounded-full font-bold">Birding</button>
+                        <button onclick="renderAttractions('scenic')" class="px-4 py-2 text-sm bg-white border border-green-200 text-green-700 rounded-full font-bold">Landscapes</button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="attraction-grid"></div>
@@ -370,7 +282,6 @@
 
             <!-- TAB: LOGISTICS -->
             <section id="content-logistics" class="hidden space-y-8 animate-fade-in">
-                
                 <!-- CRITICAL BOOKING ALERT -->
                 <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl shadow-sm mb-8 animate-pulse-red">
                     <div class="flex items-start">
@@ -392,7 +303,7 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-bold text-slate-800 mb-2">Friday Evening</h4>
+                                <h4 class="font-bold text-slate-800 mb-2">Friday Evening (Aug 21)</h4>
                                 <ul class="text-sm text-slate-600 space-y-1 list-disc pl-4">
                                     <li><strong>Walk:</strong> <span class="text-blue-600 underline">Parc de la Pointe</span> is perfect for sunset dog walking.</li>
                                     <li><strong>Stay:</strong> Ensure hotel allows dogs to be left alone (crate usually required) for Sat AM.</li>
@@ -409,7 +320,7 @@
                     </div>
                 </div>
 
-                <!-- NIGHT 1 CONFIRMED -->
+                <!-- Night 1 Confirmed -->
                 <div class="bg-white rounded-2xl shadow-lg border border-green-100 mb-8 overflow-hidden">
                     <div class="bg-green-700 p-4 text-white flex justify-between items-center">
                         <h3 class="text-lg font-bold flex items-center"><span class="text-2xl mr-2">✅</span> Night 1: Trapper's Cabin</h3>
@@ -417,27 +328,13 @@
                     </div>
                     <div class="p-6">
                         <div class="flex items-center text-sm text-slate-700 mb-2">
-                            <span class="font-bold mr-2">Vehicle:</span> 2018 Kia Sportage (Confirmed OK for access).
+                            <span class="font-bold mr-2">Vehicle:</span> Kia Sportage (High clearance for access).
                         </div>
                         <div class="flex items-center text-sm text-slate-700">
                             <span class="font-bold mr-2">Prep:</span> Buy groceries in Grand Falls. No stores near cabin.
                         </div>
                     </div>
                 </div>
-
-                <!-- Bridge Info -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-3">🌉</span>
-                        <h3 class="text-xl font-bold text-slate-800">Bridge Logistics</h3>
-                    </div>
-                    <p class="text-sm text-slate-600 mb-4">Confederation Bridge toll is collected <strong>only when leaving PEI</strong>.</p>
-                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
-                        <span class="font-bold text-blue-900">Exit Toll</span>
-                        <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">~$50.25 (Car)</span>
-                    </div>
-                </div>
-
             </section>
         </main>
         
@@ -448,6 +345,7 @@
 
     <script>
         // --- ASSETS ---
+        // Using Unsplash Direct Links for high reliability
         const assets = {
             aunt: 'https://images.unsplash.com/photo-1542318859-99c08d984143?q=80&w=800&auto=format&fit=crop',
             anne: 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?q=80&w=800&auto=format&fit=crop', 
@@ -455,23 +353,30 @@
             basin: 'https://images.unsplash.com/photo-1476673160081-cf060971a4ae?q=80&w=800&auto=format&fit=crop', 
             hopewell: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=800&auto=format&fit=crop', 
             fundy: 'https://images.unsplash.com/photo-1443632864897-14973fa006cf?q=80&w=800&auto=format&fit=crop',
-            charlottetown: 'https://images.unsplash.com/photo-1555685812-4b943f3e99a0?q=80&w=800&auto=format&fit=crop'
+            charlottetown: 'https://images.unsplash.com/photo-1555685812-4b943f3e99a0?q=80&w=800&auto=format&fit=crop',
+            beluga: 'https://images.unsplash.com/photo-1568430462989-44163eb1752f?q=80&w=800&auto=format&fit=crop',
+            fox: 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?q=80&w=800&auto=format&fit=crop',
+            plover: 'https://images.unsplash.com/photo-1552353617-3913788a1834?q=80&w=800&auto=format&fit=crop',
+            seal: 'https://images.unsplash.com/photo-1563200767-17b070921869?q=80&w=800&auto=format&fit=crop',
+            falcon: 'https://images.unsplash.com/photo-1619623696803-b097b667232c?q=80&w=800&auto=format&fit=crop'
         };
 
         const attractions = [
-            { title: "Udit's Aunt", cat: "pei", loc: "PEI", img: assets.aunt, desc: "Family visit! The highlight of the trip." },
-            { title: "Stanhope Camp", cat: "pei", loc: "PEI National Park", img: assets.brackley, desc: "Your home for 2 nights. Beach fires and stars." },
-            { title: "Basin Head", cat: "pei", loc: "Eastern PEI", img: assets.basin, desc: "The Singing Sands. Don't miss jumping off the bridge." },
-            { title: "Charlottetown", cat: "pei", loc: "Victoria Row", img: assets.charlottetown, desc: "Historic waterfront, shopping, and Cows Ice Cream." },
-            { title: "Hopewell Rocks", cat: "nb", loc: "Bay of Fundy", img: assets.hopewell, desc: "Walk on the ocean floor. Highest tides in the world." },
-            { title: "Fundy Nat. Park", cat: "nb", loc: "Alma, NB", img: assets.fundy, desc: "Incredible waterfalls and hiking on the drive home." }
+            { title: "Beluga Whales", cat: "mammals", loc: "Rivière-du-Loup (QC)", img: assets.beluga, desc: "Saturday AM Boat Tour. White whales in the St. Lawrence!" },
+            { title: "Red Foxes", cat: "mammals", loc: "Stanhope (PEI)", img: assets.fox, desc: "PEI's famous red foxes roam the campground dunes." },
+            { title: "Grey Seals", cat: "mammals", loc: "Point Prim (PEI)", img: assets.seal, desc: "Hauled out on the rocks at low tide near the lighthouse." },
+            { title: "Piping Plovers", cat: "birds", loc: "Greenwich Dunes (PEI)", img: assets.plover, desc: "Endangered shorebirds nesting on the beaches." },
+            { title: "Peregrine Falcons", cat: "birds", loc: "Hopewell Rocks (NB)", img: assets.falcon, desc: "They nest on the flowerpot rocks. Watch them dive!" },
+            { title: "Basin Head", cat: "scenic", loc: "Eastern PEI", img: assets.basin, desc: "Singing Sands and the famous bridge jump." },
+            { title: "Hopewell Rocks", cat: "scenic", loc: "Bay of Fundy", img: assets.hopewell, desc: "Walk on the ocean floor at low tide." },
+            { title: "Brackley Beach", cat: "scenic", loc: "PEI National Park", img: assets.brackley, desc: "Massive dunes and warm water for swimming." }
         ];
 
         // --- MAP LOGIC ---
         let mapInstance = null;
         function initLeafletMap() {
             if (mapInstance) return;
-            mapInstance = L.map('map', { scrollWheelZoom: false }).setView([46.4, -65.5], 6);
+            mapInstance = L.map('map', { scrollWheelZoom: false }).setView([46.8, -66], 6);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap', subdomains: 'abcd', maxZoom: 19 }).addTo(mapInstance);
 
             const locs = {
@@ -496,10 +401,10 @@
             L.polyline([locs.rdl, locs.ottawa], {color: '#64748b', weight: 3, dashArray: '5, 10'}).addTo(mapInstance);
 
             L.marker(locs.ottawa).addTo(mapInstance).bindPopup("Ottawa");
-            L.marker(locs.trapper).addTo(mapInstance).bindPopup("Trapper's Cabin (Booked)");
-            L.marker(locs.stanhope).addTo(mapInstance).bindPopup("Stanhope Camp");
-            L.marker(locs.alma).addTo(mapInstance).bindPopup("Fundy/Alma");
-            L.marker(locs.rdl).addTo(mapInstance).bindPopup("Rivière-du-Loup (Whales Sat AM)");
+            L.marker(locs.trapper).addTo(mapInstance).bindPopup("Trapper's Cabin (Night 1)");
+            L.marker(locs.stanhope).addTo(mapInstance).bindPopup("Stanhope Camp (Nights 2-3)");
+            L.marker(locs.alma).addTo(mapInstance).bindPopup("Fundy/Alma (Night 6)");
+            L.marker(locs.rdl).addTo(mapInstance).bindPopup("Rivière-du-Loup (Night 7: Whales)");
         }
 
         // --- BUDGET ---
@@ -512,16 +417,16 @@
             // Fixed Costs
             const trapper = 116;
             const camping = 100; 
-            const whales = 200; // Approx $100/person for AML cruise
+            const whales = 200; 
             const fixedAccom = trapper + camping;
             
             // Variable Costs
             let km = 2850; 
-            let fuel = 9.5; // Sportage
+            let fuel = 9.5; 
             let gas = Math.round((km/100) * fuel * vals.gas);
             let bridge = 50.25; 
             
-            // Accom Remainder: 7 Nights Total - 1 (Cabin) - 2 (Camp) = 4 Nights variable (Ch'town x2, Alma x1, RDL x1)
+            // Accom Remainder
             let remDays = 4;
             let varAccom = remDays * vals.accom;
             
@@ -533,7 +438,6 @@
             document.getElementById('per-person-cost').innerText = '$' + Math.round(total/2).toLocaleString();
             
             if(budgetChartInstance) {
-                // Fun now includes Whales + Bridge
                 budgetChartInstance.data.datasets[0].data = [gas, fixedAccom + varAccom, vals.food*2*totalDays, bridge + whales + 150];
                 budgetChartInstance.update();
             }
@@ -559,15 +463,16 @@
                 const card = document.createElement('div');
                 card.className = "bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden";
                 
-                // Image with fallback pattern logic inline
+                // Fallback Logic
+                let fallback = 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=800&auto=format&fit=crop';
+                if(item.cat === 'mammals') fallback = 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?q=80&w=800&auto=format&fit=crop';
+                
                 card.innerHTML = `
                     <div class="h-48 overflow-hidden relative">
                         <img src="${item.img}" 
                              class="w-full h-full object-cover" 
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="img-fallback w-full h-full absolute inset-0 hidden">
-                            <span>Image Unavailable</span>
-                        </div>
+                             onerror="this.src='${fallback}'">
+                        <div class="absolute top-2 right-2 bg-white/90 text-xs font-bold px-2 py-1 rounded shadow uppercase">${item.cat}</div>
                     </div>
                     <div class="p-6">
                         <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
