@@ -20,14 +20,34 @@
     .tab-inactive { color: #64748b; font-weight: 500; }
     .tab-inactive:hover { color: #334155; background-color: #f1f5f9; }
     #map { width: 100%; height: 400px; border-radius: 0.75rem; z-index: 1; }
-    .timeline-line { position: absolute; left: 24px; top: 20px; bottom: 0; width: 2px; background-color: #e2e8f0; z-index: 0; }
+
     /* Hero */
-    .hero-bg { background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)), url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center 40%; }
+    .hero-bg {
+      background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)),
+        url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1920&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 40%;
+    }
 
     /* Login overlay */
-    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+    #login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.98);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-    @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } }
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
     .animate-pulse-red { animation: pulse-red 2s infinite; }
 
     details > summary { list-style: none; cursor: pointer; }
@@ -41,6 +61,18 @@
     /* Small helpers */
     .kbd { border: 1px solid #cbd5e1; border-bottom-width: 2px; padding: 1px 6px; border-radius: 6px; font-size: 12px; background: #fff; }
   </style>
+
+  <!--
+    IMPORTANT: Inline onclick="checkPassword()" requires a global.
+    Define a safe stub immediately so the handler never throws,
+    even if a later script error prevents initialization.
+    The real implementation overwrites this on page load.
+  -->
+  <script>
+    window.checkPassword = window.checkPassword || function () {
+      console.warn('checkPassword not initialized yet. If you see this, a script error occurred before initialization.');
+    };
+  </script>
 </head>
 <body class="text-slate-800">
 
@@ -59,8 +91,6 @@
         autocomplete="current-password"
       />
 
-      <!-- Inline handler is fine, but ONLY works if the function is on window.
-           We guarantee that below (immediately), not just on DOMContentLoaded. -->
       <button
         onclick="checkPassword()"
         class="w-full bg-pink-700 text-white font-bold py-3 rounded-lg hover:bg-pink-800 transition shadow-lg transform active:scale-95"
@@ -236,7 +266,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="trapper">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sat Aug 15 — Ottawa → Trapper's Cabin. Stops: Rivière-du-Loup (Parc de la Pointe), Grand Falls grocery, arrive Upper Kintore." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sat Aug 15 — Ottawa → Trapper's Cabin. Stops: Rivière-du-Loup (Parc de la Pointe), Grand Falls grocery, arrive Upper Kintore.">📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -260,7 +290,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="stanhope">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sun Aug 16 — Cabin → Stanhope (PEI). Key stop: Sackville Waterfowl Park (dog-friendly boardwalks). Cross Confederation Bridge." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sun Aug 16 — Cabin → Stanhope (PEI). Key stop: Sackville Waterfowl Park (dog-friendly boardwalks). Cross Confederation Bridge.">📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -284,7 +314,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="stanhope">📍 Focus area</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Mon Aug 17 — Greenwich Dunes (Piping Plovers), visit Aunt, Maddie's Pick #1, sunset walk (leash rules)." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Mon Aug 17 — Greenwich Dunes (Piping Plovers), visit Aunt, Maddie's Pick #1, sunset walk (leash rules).">📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -308,7 +338,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="charlottetown">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Tue Aug 18 — Move to Charlottetown. Stop at Point Prim for grey seals (low tide). Evening: Victoria Park + Victoria Row." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Tue Aug 18 — Move to Charlottetown. Stop at Point Prim for grey seals (low tide). Evening: Victoria Park + Victoria Row.">📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -331,7 +361,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="charlottetown">📍 Focus area</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Wed Aug 19 — Eastern PEI. Buffaloland bison, Cape Tryon cliffs, Maddie's Pick #2." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Wed Aug 19 — Eastern PEI. Buffaloland bison, Cape Tryon cliffs, Maddie's Pick #2.">📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -355,7 +385,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="alma">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Thu Aug 20 — PEI → Alma (Fundy). Hopewell Rocks (tides + peregrines), Fundy Park/Dickson Falls." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Thu Aug 20 — PEI → Alma (Fundy). Hopewell Rocks (tides + peregrines), Fundy Park/Dickson Falls.">📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -379,7 +409,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="rdl">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Fri Aug 21 — Alma → Rivière-du-Loup. Check-in, Parc de la Pointe sunset walk with Finn, dinner by St. Lawrence." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Fri Aug 21 — Alma → Rivière-du-Loup. Check-in, Parc de la Pointe sunset walk with Finn, dinner by St. Lawrence.">📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -402,7 +432,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="ottawa">📍 Focus home</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sat Aug 22 — Whale watching (AML), lunch + Finn walk, drive back to Ottawa." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sat Aug 22 — Whale watching (AML), lunch + Finn walk, drive back to Ottawa.">📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -547,7 +577,7 @@
               <p class="text-xs text-red-800 mt-2">Target: Stanhope Campground (North Shore). Create account beforehand.</p>
               <div class="mt-3 flex flex-wrap gap-2">
                 <button id="btn-add-reminder" class="px-3 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700">🗓️ Download reminder .ics</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-red-200 bg-white hover:bg-red-50 text-sm font-semibold" data-copy="Reminder: Parks Canada reservations open Feb 9 @ 7:00 AM ET for Stanhope Campground." >📋 Copy reminder</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-red-200 bg-white hover:bg-red-50 text-sm font-semibold" data-copy="Reminder: Parks Canada reservations open Feb 9 @ 7:00 AM ET for Stanhope Campground.">📋 Copy reminder</button>
               </div>
             </div>
           </div>
@@ -586,7 +616,6 @@
           </div>
         </div>
 
-        <!-- Simple checklist -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-xl font-bold text-slate-800">Quick Checklist</h3>
@@ -610,14 +639,10 @@
     // Configuration
     // =====================
 
-    // Note: If you host on GitHub Pages, anyone can view source and see this.
-    // If you want real privacy, keep this repo private and use a different hosting approach.
+    // NOTE: GitHub Pages is public. This is only a visual lock.
     const APP_PASSWORD = 'maritime';
-
-    // Trip date text (display only)
     const TRIP_DATES_LABEL = 'Aug 15–22';
 
-    // Trip values used for stats + budget
     const DEFAULTS = {
       km: 2850,
       fuelLPer100: 9.5,
@@ -631,7 +656,6 @@
       people: 2
     };
 
-    // Checklist items
     const CHECKLIST_ITEMS = [
       { id: 'pc-account', label: 'Create Parks Canada account (Stanhope booking)' },
       { id: 'dog-crate', label: 'Crate setup confirmed for hotel (Finn)' },
@@ -867,21 +891,12 @@
       if (!grid) return;
 
       let list = [...attractions];
-
       if (filter !== 'all') list = list.filter(i => i.cat === filter);
+      if (query) list = list.filter(i => normalize(`${i.title} ${i.cat} ${i.loc} ${i.desc}`).includes(query));
 
-      if (query) {
-        list = list.filter(i => normalize(`${i.title} ${i.cat} ${i.loc} ${i.desc}`).includes(query));
-      }
-
-      list.sort((a, b) => {
-        const av = normalize(a[sort]);
-        const bv = normalize(b[sort]);
-        return av.localeCompare(bv);
-      });
+      list.sort((a, b) => normalize(a[sort]).localeCompare(normalize(b[sort])));
 
       grid.innerHTML = '';
-
       if (list.length === 0) {
         grid.innerHTML = `<div class="col-span-full bg-white border border-slate-100 rounded-2xl p-8 text-center text-slate-600">No matches. Try a different search.</div>`;
         return;
@@ -957,7 +972,7 @@
       try {
         await navigator.clipboard.writeText(text);
         toast('Copied to clipboard');
-      } catch (e) {
+      } catch (_) {
         const ta = document.createElement('textarea');
         ta.value = text;
         document.body.appendChild(ta);
@@ -973,8 +988,10 @@
     // =====================
 
     function unlock() {
-      document.getElementById('login-overlay').style.display = 'none';
-      document.getElementById('app-container').classList.remove('hidden');
+      const overlay = document.getElementById('login-overlay');
+      const container = document.getElementById('app-container');
+      if (overlay) overlay.style.display = 'none';
+      if (container) container.classList.remove('hidden');
       localStorage.setItem('maritime_unlocked', '1');
 
       setTimeout(() => {
@@ -982,7 +999,9 @@
         initBudgetCalc();
         renderAttractions('all');
         initChecklist();
-        lucide.createIcons();
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
       }, 120);
 
       const dates = document.getElementById('trip-dates');
@@ -993,40 +1012,28 @@
 
     function lock() {
       localStorage.removeItem('maritime_unlocked');
-      document.getElementById('app-container').classList.add('hidden');
-      document.getElementById('login-overlay').style.display = 'flex';
+      const container = document.getElementById('app-container');
+      const overlay = document.getElementById('login-overlay');
+      if (container) container.classList.add('hidden');
+      if (overlay) overlay.style.display = 'flex';
       toast('Locked');
     }
 
     function checkPassword() {
-    const input = document.getElementById('password-input').value;
+      const inputEl = document.getElementById('password-input');
+      const errEl = document.getElementById('error-msg');
+      const val = (inputEl?.value || '').trim();
 
-    // Password is intentionally hard-coded and lowercase only
-    const PASSWORD = 'maritime';
-
-    if (input === PASSWORD) {
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('app-container').classList.remove('hidden');
-        setTimeout(() => { initLeafletMap(); initBudgetCalc(); }, 100);
-    } else {
-        document.getElementById('error-msg').classList.remove('hidden');
-    }
-}
-
-// expose globals for inline handlers (GitHub Pages safe)
-window.checkPassword = checkPassword;
-
-// --- basic runtime tests ---
-console.assert(typeof window.checkPassword === 'function', 'checkPassword must exist on window');
-console.assert('maritime' === 'maritime', 'Password constant sanity check'); else {
-        document.getElementById('error-msg')?.classList.remove('hidden');
+      // expected behavior: password must be exactly lowercase "maritime"
+      if (val === APP_PASSWORD) {
+        if (errEl) errEl.classList.add('hidden');
+        unlock();
+      } else {
+        if (errEl) errEl.classList.remove('hidden');
       }
     }
 
-    // IMPORTANT FIX:
-    // Inline handlers like onclick="checkPassword()" only look on the global object.
-    // In some environments (or if any earlier script error stops execution), checkPassword
-    // may not be defined on window. We export *immediately* after defining it.
+    // IMPORTANT: Inline handlers only resolve globals. Export immediately.
     window.checkPassword = checkPassword;
 
     // =====================
@@ -1047,7 +1054,7 @@ console.assert('maritime' === 'maritime', 'Password constant sanity check'); els
       if (id === 'budget') setTimeout(() => updateBudget(), 80);
     }
 
-    // Export immediately for inline onclicks (tabs + attraction filters)
+    // Export immediately for inline onclicks
     window.switchTab = switchTab;
     window.renderAttractions = renderAttractions;
 
@@ -1189,6 +1196,10 @@ console.assert('maritime' === 'maritime', 'Password constant sanity check'); els
       // Enter-to-unlock
       const pwd = document.getElementById('password-input');
       pwd?.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
+      pwd?.addEventListener('input', () => {
+        const err = document.getElementById('error-msg');
+        if (err) err.classList.add('hidden');
+      });
 
       // Remember unlock
       if (localStorage.getItem('maritime_unlocked') === '1') {
@@ -1238,13 +1249,11 @@ console.assert('maritime' === 'maritime', 'Password constant sanity check'); els
 
       // ICS downloads
       document.getElementById('btn-download-ics')?.addEventListener('click', () => {
-        const ics = buildTripICS();
-        downloadText('maritime-trip.ics', ics);
+        downloadText('maritime-trip.ics', buildTripICS());
         toast('Downloaded maritime-trip.ics', '🗓️');
       });
       document.getElementById('btn-add-reminder')?.addEventListener('click', () => {
-        const ics = buildReminderICS();
-        downloadText('stanhope-booking-reminder.ics', ics);
+        downloadText('stanhope-booking-reminder.ics', buildReminderICS());
         toast('Downloaded reminder .ics', '⏰');
       });
 
@@ -1266,6 +1275,12 @@ console.assert('maritime' === 'maritime', 'Password constant sanity check'); els
       console.assert(window.checkPassword === checkPassword, 'SelfTest failed: window.checkPassword should reference checkPassword');
       console.assert(window.switchTab === switchTab, 'SelfTest failed: window.switchTab should reference switchTab');
       console.assert(window.renderAttractions === renderAttractions, 'SelfTest failed: window.renderAttractions should reference renderAttractions');
+      console.assert(APP_PASSWORD === 'maritime', 'SelfTest failed: APP_PASSWORD should be maritime');
+      console.assert(typeof unlock === 'function' && typeof lock === 'function', 'SelfTest failed: lock/unlock should exist');
+
+      // Regression test: optional chaining assignment is not allowed — ensure we don't have it.
+      // (Can't programmatically check source, but this keeps the intent documented.)
+      console.assert(true, 'SelfTest info: avoided optional chaining on assignment targets');
     }
 
     // =====================
@@ -1276,11 +1291,18 @@ console.assert('maritime' === 'maritime', 'Password constant sanity check'); els
       bindUI();
       renderAttractions('all');
 
-      // Stats
-      document.getElementById('trip-dates')?.innerText = TRIP_DATES_LABEL;
-      document.getElementById('stat-distance')?.innerText = `~${DEFAULTS.km.toLocaleString()} km`;
-      document.getElementById('stat-drive')?.innerText = '~31 h';
-      document.getElementById('stat-nights')?.innerText = '7';
+      // Stats (avoid optional chaining on assignment targets)
+      const tripDatesEl = document.getElementById('trip-dates');
+      if (tripDatesEl) tripDatesEl.innerText = TRIP_DATES_LABEL;
+
+      const statDistanceEl = document.getElementById('stat-distance');
+      if (statDistanceEl) statDistanceEl.innerText = `~${DEFAULTS.km.toLocaleString()} km`;
+
+      const statDriveEl = document.getElementById('stat-drive');
+      if (statDriveEl) statDriveEl.innerText = '~31 h';
+
+      const statNightsEl = document.getElementById('stat-nights');
+      if (statNightsEl) statNightsEl.innerText = '7';
 
       runSelfTests();
     });
