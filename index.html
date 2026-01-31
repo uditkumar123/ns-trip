@@ -59,7 +59,8 @@
         autocomplete="current-password"
       />
 
-      <!-- Keep inline handler for simplicity; JS also exports to window for compatibility. -->
+      <!-- Inline handler is fine, but ONLY works if the function is on window.
+           We guarantee that below (immediately), not just on DOMContentLoaded. -->
       <button
         onclick="checkPassword()"
         class="w-full bg-pink-700 text-white font-bold py-3 rounded-lg hover:bg-pink-800 transition shadow-lg transform active:scale-95"
@@ -283,7 +284,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="stanhope">📍 Focus area</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Mon Aug 17 — Greenwich Dunes (Piping Plovers), visit Aunt, Maddie's Pick #1, sunset beach walk (leash rules)." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Mon Aug 17 — Greenwich Dunes (Piping Plovers), visit Aunt, Maddie's Pick #1, sunset walk (leash rules)." >📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -307,7 +308,7 @@
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
                 <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="charlottetown">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Tue Aug 18 — Move to Charlottetown. Stop at Point Prim Lighthouse for grey seals (low tide). Evening: Victoria Park + Victoria Row." >📋 Copy summary</button>
+                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Tue Aug 18 — Move to Charlottetown. Stop at Point Prim for grey seals (low tide). Evening: Victoria Park + Victoria Row." >📋 Copy summary</button>
               </div>
             </div>
           </details>
@@ -841,16 +842,11 @@
 
     let attractionFilter = 'all';
 
-    // Robust diacritic stripping:
-    // - Uses Unicode property escapes when available
-    // - Falls back to a BMP combining mark range if not supported
     function normalize(str) {
       const s = (str || '').toString().toLowerCase().normalize('NFD');
       try {
-        // Most modern browsers
         return s.replace(/\p{Diacritic}/gu, '');
       } catch (_) {
-        // Older engines
         return s.replace(/[\u0300-\u036f]/g, '');
       }
     }
@@ -872,15 +868,12 @@
 
       let list = [...attractions];
 
-      // Filter
       if (filter !== 'all') list = list.filter(i => i.cat === filter);
 
-      // Search
       if (query) {
         list = list.filter(i => normalize(`${i.title} ${i.cat} ${i.loc} ${i.desc}`).includes(query));
       }
 
-      // Sort
       list.sort((a, b) => {
         const av = normalize(a[sort]);
         const bv = normalize(b[sort]);
@@ -942,66 +935,6 @@
     }
 
     // =====================
-    // Password + lock
-    // =====================
-
-    function checkPassword() {
-      const input = document.getElementById('password-input');
-      const val = (input?.value || '').toLowerCase().trim();
-      if (val === APP_PASSWORD) {
-        unlock();
-      } else {
-        document.getElementById('error-msg')?.classList.remove('hidden');
-      }
-    }
-
-    function unlock() {
-      document.getElementById('login-overlay').style.display = 'none';
-      document.getElementById('app-container').classList.remove('hidden');
-      localStorage.setItem('maritime_unlocked', '1');
-
-      // Init features
-      setTimeout(() => {
-        initLeafletMap();
-        initBudgetCalc();
-        renderAttractions('all');
-        initChecklist();
-        lucide.createIcons();
-      }, 120);
-
-      // Update labels
-      const dates = document.getElementById('trip-dates');
-      if (dates) dates.innerText = TRIP_DATES_LABEL;
-
-      toast('Unlocked');
-    }
-
-    function lock() {
-      localStorage.removeItem('maritime_unlocked');
-      document.getElementById('app-container').classList.add('hidden');
-      document.getElementById('login-overlay').style.display = 'flex';
-      toast('Locked');
-    }
-
-    // =====================
-    // Tabs
-    // =====================
-
-    function switchTab(id) {
-      ['route', 'budget', 'attractions', 'logistics'].forEach(t => {
-        document.getElementById(`content-${t}`).classList.add('hidden');
-        document.getElementById(`tab-${t}`).classList.remove('tab-active');
-        document.getElementById(`tab-${t}`).classList.add('tab-inactive');
-      });
-
-      document.getElementById(`content-${id}`).classList.remove('hidden');
-      document.getElementById(`tab-${id}`).classList.add('tab-active');
-
-      if (id === 'route' && mapInstance) setTimeout(() => mapInstance.invalidateSize(), 120);
-      if (id === 'budget') setTimeout(() => updateBudget(), 80);
-    }
-
-    // =====================
     // Toast + clipboard
     // =====================
 
@@ -1025,7 +958,6 @@
         await navigator.clipboard.writeText(text);
         toast('Copied to clipboard');
       } catch (e) {
-        // Fallback
         const ta = document.createElement('textarea');
         ta.value = text;
         document.body.appendChild(ta);
@@ -1037,11 +969,93 @@
     }
 
     // =====================
+    // Password + lock
+    // =====================
+
+    function unlock() {
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('app-container').classList.remove('hidden');
+      localStorage.setItem('maritime_unlocked', '1');
+
+      setTimeout(() => {
+        initLeafletMap();
+        initBudgetCalc();
+        renderAttractions('all');
+        initChecklist();
+        lucide.createIcons();
+      }, 120);
+
+      const dates = document.getElementById('trip-dates');
+      if (dates) dates.innerText = TRIP_DATES_LABEL;
+
+      toast('Unlocked');
+    }
+
+    function lock() {
+      localStorage.removeItem('maritime_unlocked');
+      document.getElementById('app-container').classList.add('hidden');
+      document.getElementById('login-overlay').style.display = 'flex';
+      toast('Locked');
+    }
+
+    function checkPassword() {
+    const input = document.getElementById('password-input').value;
+
+    // Password is intentionally hard-coded and lowercase only
+    const PASSWORD = 'maritime';
+
+    if (input === PASSWORD) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('app-container').classList.remove('hidden');
+        setTimeout(() => { initLeafletMap(); initBudgetCalc(); }, 100);
+    } else {
+        document.getElementById('error-msg').classList.remove('hidden');
+    }
+}
+
+// expose globals for inline handlers (GitHub Pages safe)
+window.checkPassword = checkPassword;
+
+// --- basic runtime tests ---
+console.assert(typeof window.checkPassword === 'function', 'checkPassword must exist on window');
+console.assert('maritime' === 'maritime', 'Password constant sanity check'); else {
+        document.getElementById('error-msg')?.classList.remove('hidden');
+      }
+    }
+
+    // IMPORTANT FIX:
+    // Inline handlers like onclick="checkPassword()" only look on the global object.
+    // In some environments (or if any earlier script error stops execution), checkPassword
+    // may not be defined on window. We export *immediately* after defining it.
+    window.checkPassword = checkPassword;
+
+    // =====================
+    // Tabs
+    // =====================
+
+    function switchTab(id) {
+      ['route', 'budget', 'attractions', 'logistics'].forEach(t => {
+        document.getElementById(`content-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).classList.remove('tab-active');
+        document.getElementById(`tab-${t}`).classList.add('tab-inactive');
+      });
+
+      document.getElementById(`content-${id}`).classList.remove('hidden');
+      document.getElementById(`tab-${id}`).classList.add('tab-active');
+
+      if (id === 'route' && mapInstance) setTimeout(() => mapInstance.invalidateSize(), 120);
+      if (id === 'budget') setTimeout(() => updateBudget(), 80);
+    }
+
+    // Export immediately for inline onclicks (tabs + attraction filters)
+    window.switchTab = switchTab;
+    window.renderAttractions = renderAttractions;
+
+    // =====================
     // ICS generation
     // =====================
 
     function formatICSDateUTC(date) {
-      // YYYYMMDDTHHMMSSZ
       const pad = (n) => String(n).padStart(2, '0');
       return (
         date.getUTCFullYear() +
@@ -1067,16 +1081,15 @@
     }
 
     function buildTripICS() {
-      // These are sample timestamps. Adjust to your real year/time if needed.
       const now = new Date();
       const uidBase = 'maritime-trip-' + now.getTime();
 
       const events = [
         { summary: "Day 1 — Ottawa → Trapper's Cabin", start: '20260815T070000', end: '20260815T200000', desc: 'Drive day. Stops: Rivière-du-Loup (Parc de la Pointe), Grand Falls groceries.' },
-        { summary: 'Day 2 — Trapper\'s → Stanhope (PEI)', start: '20260816T090000', end: '20260816T190000', desc: 'Sackville Waterfowl Park. Cross Confederation Bridge. Camp in Stanhope.' },
+        { summary: "Day 2 — Trapper's → Stanhope (PEI)", start: '20260816T090000', end: '20260816T190000', desc: 'Sackville Waterfowl Park. Cross Confederation Bridge. Camp in Stanhope.' },
         { summary: 'Day 3 — Greenwich Dunes + family', start: '20260817T080000', end: '20260817T200000', desc: 'Greenwich boardwalks + Piping Plovers. Visit Aunt. Sunset walk.' },
         { summary: 'Day 4 — Point Prim seals + Charlottetown', start: '20260818T100000', end: '20260818T200000', desc: 'Pack up camp. Point Prim Lighthouse. Check in Charlottetown.' },
-        { summary: 'Day 5 — Bison + Cape Tryon', start: '20260819T100000', end: '20260819T190000', desc: "Buffaloland bison, Cape Tryon cliffs, Maddie\'s Pick." },
+        { summary: 'Day 5 — Bison + Cape Tryon', start: '20260819T100000', end: '20260819T190000', desc: "Buffaloland bison, Cape Tryon cliffs, Maddie's Pick." },
         { summary: 'Day 6 — Hopewell Rocks + Fundy (Alma)', start: '20260820T090000', end: '20260820T200000', desc: 'Hopewell Rocks (tide dependent), drive to Alma, Fundy Park.' },
         { summary: 'Day 7 — Alma → Rivière-du-Loup', start: '20260821T090000', end: '20260821T200000', desc: 'Drive, check-in, Parc de la Pointe walk, sunset dinner.' },
         { summary: 'Day 8 — Whale watching + home', start: '20260822T093000', end: '20260822T200000', desc: 'Whale tour (AML), lunch + Finn walk, drive to Ottawa.' }
@@ -1106,7 +1119,6 @@
     function buildReminderICS() {
       const now = new Date();
       const uid = 'stanhope-reminder-' + now.getTime();
-      // Feb 9, 2026 07:00 ET as floating time
       const start = '20260209T070000';
       const end = '20260209T073000';
 
@@ -1220,9 +1232,7 @@
       document.getElementById('attraction-sort')?.addEventListener('change', () => renderAttractions(attractionFilter));
 
       // Share/print/lock
-      document.getElementById('btn-share')?.addEventListener('click', () => {
-        copyText(window.location.href);
-      });
+      document.getElementById('btn-share')?.addEventListener('click', () => { copyText(window.location.href); });
       document.getElementById('btn-print')?.addEventListener('click', () => window.print());
       document.getElementById('btn-lock')?.addEventListener('click', lock);
 
@@ -1243,24 +1253,19 @@
     }
 
     // =====================
-    // Global exports (fixes: “checkPassword is not defined” in environments where inline handlers
-    // don't see script-scope functions, or when the script previously failed to parse.)
-    // =====================
-
-    function exportGlobals() {
-      window.checkPassword = checkPassword;
-      window.switchTab = switchTab;
-      window.renderAttractions = renderAttractions;
-    }
-
-    // =====================
-    // Tiny self-tests (do not affect UI; helps catch issues early)
+    // Self-tests
     // =====================
 
     function runSelfTests() {
+      // Existing tests (kept)
       console.assert(typeof window.checkPassword === 'function', 'SelfTest failed: checkPassword missing on window');
       console.assert(typeof window.switchTab === 'function', 'SelfTest failed: switchTab missing on window');
       console.assert(typeof window.renderAttractions === 'function', 'SelfTest failed: renderAttractions missing on window');
+
+      // New tests
+      console.assert(window.checkPassword === checkPassword, 'SelfTest failed: window.checkPassword should reference checkPassword');
+      console.assert(window.switchTab === switchTab, 'SelfTest failed: window.switchTab should reference switchTab');
+      console.assert(window.renderAttractions === renderAttractions, 'SelfTest failed: window.renderAttractions should reference renderAttractions');
     }
 
     // =====================
@@ -1268,9 +1273,7 @@
     // =====================
 
     document.addEventListener('DOMContentLoaded', () => {
-      exportGlobals();
       bindUI();
-      // Render attractions list early for quick tab switching after unlock
       renderAttractions('all');
 
       // Stats
