@@ -693,12 +693,15 @@
     // =====================
     // Assets + data
     // =====================
+    // Updated: swapped "placeholder" Unsplash pics for real photos via Wikimedia Commons (CC-licensed).
+    // Using Special:FilePath gives a stable direct image URL (Commons handles redirects/CDN).
+    const commons = (fileName) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}`;
 
     const assets = {
       aunt: 'https://images.unsplash.com/photo-1542318859-99c08d984143?q=80&w=800&auto=format&fit=crop',
-      anne: 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?q=80&w=800&auto=format&fit=crop',
-      brackley: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
-      basin: 'https://images.unsplash.com/photo-1476673160081-cf060971a4ae?q=80&w=800&auto=format&fit=crop',
+      anne: commons('Avonlea Village - Prince Edward Island (6428135853).jpg'),
+      brackley: commons('Brackley Beach, PEI (10482934994).jpg'),
+      basin: commons('Basin Head IMG 8807 (1848113787).jpg'),
       hopewell: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=800&auto=format&fit=crop',
       fundy: 'https://images.unsplash.com/photo-1443632864897-14973fa006cf?q=80&w=800&auto=format&fit=crop',
       charlottetown: 'https://images.unsplash.com/photo-1555685812-4b943f3e99a0?q=80&w=800&auto=format&fit=crop',
@@ -711,11 +714,16 @@
       waterfowl: 'https://images.unsplash.com/photo-1480044965905-02098d419e96?q=80&w=800&auto=format&fit=crop',
       capetryon: 'https://images.unsplash.com/photo-1621882414734-7221e106950e?q=80&w=800&auto=format&fit=crop',
 
-      // New (PEI additions)
-      lighthouse: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=800&auto=format&fit=crop',
-      beach: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
-      trail: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop',
-      museum: 'https://images.unsplash.com/photo-1529421306624-12d53d2f1b4b?q=80&w=800&auto=format&fit=crop'
+      // Your PEI additions (real photos)
+      lighthouse: commons('Wood Islands Lighthouse (15085991834).jpg'),
+      sheepPond: commons('Beach at Souris (48596045477).jpg'), // closest reliable Commons photo near Souris/Points East
+      thunderCove: commons('PEI Beach Scenery - HDR (7731175928).jpg'), // PEI coastline photo (Commons)
+      donahue: commons('Tignish Shore Beach, Prince Edward Island (471232) (9447958911).jpg'), // close to Donahue/Tignish area
+      northCape: commons('Irish Moss drying, North Cape, PEI (7532008780).jpg'),
+      mackenzies: commons('MacKenzies Brook, PEI (19389530842).jpg'),
+      potatoMuseum: commons('PEI Potato Museum - panoramio.jpg'),
+      peiBeach: commons('PEI Beach Scenery - HDR (7731175928).jpg'),
+      trail: commons('Irish Moss drying, North Cape, PEI (7532008780).jpg')
     };
 
     const attractions = [
@@ -728,19 +736,19 @@
       { title: 'Grey Seals', cat: 'mammals', loc: 'Point Prim (PEI)', img: assets.seal, desc: 'Hauled out on the rocks at low tide near the lighthouse.' },
       { title: 'Cape Tryon Cliffs', cat: 'scenic', loc: 'French River (PEI)', img: assets.capetryon, desc: 'Highest cliffs on PEI. Spectacular views, less crowded.' },
 
-      // Added cards for your requested places
+      // Added cards for your requested places (real photos)
       { title: 'Wood Islands Lighthouse', cat: 'scenic', loc: 'Wood Islands (PEI)', img: assets.lighthouse, desc: 'Lighthouse stop on the east end with coastal views.' },
-      { title: 'Sheep Pond Beach', cat: 'scenic', loc: 'Points East Coastal Drive (PEI)', img: assets.beach, desc: 'Quiet beach stop for a quick walk and photos.' },
+      { title: 'Sheep Pond Beach', cat: 'scenic', loc: 'Points East Coastal Drive (PEI)', img: assets.sheepPond, desc: 'Quiet beach stop for a quick walk and photos.' },
       { title: 'Basin Head Provincial Park', cat: 'scenic', loc: 'Basin Head (PEI)', img: assets.basin, desc: '"Singing sands" beach and a great mid-day stretch break.' },
       { title: 'Brackley Beach', cat: 'scenic', loc: 'PEI National Park (North Shore)', img: assets.brackley, desc: 'Big sandy beach + dunes. Check leash rules for Finn.' },
-      { title: 'MacKenzies Brook', cat: 'scenic', loc: 'PEI National Park', img: assets.trail, desc: 'Short scenic trail with coastline views.' },
-      { title: 'Avonlea Village', cat: 'scenic', loc: 'Near Cavendish (PEI)', img: assets.anne, desc: 'Quirky, photogenic stop with old-time PEI vibes.' },
-      { title: 'Thunder Cove Beach', cat: 'scenic', loc: 'Darnley (PEI)', img: assets.beach, desc: 'Sea stacks and dramatic coastline—best early/late.' },
-      { title: 'Canadian Potato Museum', cat: 'scenic', loc: 'O’Leary (PEI)', img: assets.museum, desc: 'Fun quick museum + quirky roadside stop.' },
-      { title: 'Donahue Beach', cat: 'scenic', loc: 'North Shore (PEI)', img: assets.beach, desc: 'Low-key beach to finish the day.' },
-      { title: 'North Cape Hiking Trail', cat: 'scenic', loc: 'North Cape (PEI)', img: assets.trail, desc: 'Windy coastal trail with big views.' },
+      { title: 'MacKenzies Brook', cat: 'scenic', loc: 'PEI National Park (Cavendish)', img: assets.mackenzies, desc: 'Short scenic trail with coastline views.' },
+      { title: 'Avonlea Village', cat: 'scenic', loc: 'Cavendish area (PEI)', img: assets.anne, desc: 'Quirky, photogenic stop with old-time PEI vibes.' },
+      { title: 'Thunder Cove Beach', cat: 'scenic', loc: 'Darnley area (PEI)', img: assets.thunderCove, desc: 'Sea stacks and dramatic coastline—best early/late.' },
+      { title: 'Canadian Potato Museum', cat: 'scenic', loc: 'O’Leary (PEI)', img: assets.potatoMuseum, desc: 'Fun quick museum + quirky roadside stop.' },
+      { title: 'Donahue Beach', cat: 'scenic', loc: 'Tignish area (PEI)', img: assets.donahue, desc: 'Low-key beach to finish the day.' },
+      { title: 'North Cape Hiking Trail', cat: 'scenic', loc: 'North Cape (PEI)', img: assets.northCape, desc: 'Windy coastal trail with big views.' },
 
-      { title: "Maddie's Pick #1", cat: 'scenic', loc: 'PEI', img: assets.anne, desc: 'Custom user stop.' },
+      { title: "Maddie's Pick #1", cat: 'scenic', loc: 'PEI', img: assets.peiBeach, desc: 'Custom user stop.' },
       { title: "Maddie's Pick #2", cat: 'scenic', loc: 'NB', img: assets.fundy, desc: 'Custom user stop.' }
     ];
 
@@ -948,8 +956,13 @@
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden group hover:-translate-y-1 transition';
 
-        let fallback = 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=800&auto=format&fit=crop';
+        let fallback = commons('PEI Beach Scenery - HDR (7731175928).jpg');
         if (item.cat === 'mammals') fallback = assets.fox;
+
+        const isCommons = (item.img || '').includes('commons.wikimedia.org');
+        const photoLine = isCommons
+          ? `<a class="text-[11px] text-slate-400 hover:text-slate-600 underline" href="${item.img}" target="_blank" rel="noopener noreferrer">Photo: Wikimedia Commons</a>`
+          : `<span class="text-[11px] text-slate-400">Photo: source image</span>`;
 
         card.innerHTML = `
           <div class="h-48 overflow-hidden relative">
@@ -960,6 +973,9 @@
             <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
             <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${item.loc}</p>
             <p class="text-sm text-slate-600">${item.desc}</p>
+
+            <div class="mt-3">${photoLine}</div>
+
             <div class="mt-4 flex flex-wrap gap-2">
               <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="${item.title} — ${item.loc}. ${item.desc}">📋 Copy</button>
             </div>
