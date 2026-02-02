@@ -62,12 +62,6 @@
     .kbd { border: 1px solid #cbd5e1; border-bottom-width: 2px; padding: 1px 6px; border-radius: 6px; font-size: 12px; background: #fff; }
   </style>
 
-  <!--
-    IMPORTANT: Inline onclick="checkPassword()" requires a global.
-    Define a safe stub immediately so the handler never throws,
-    even if a later script error prevents initialization.
-    The real implementation overwrites this on page load.
-  -->
   <script>
     window.checkPassword = window.checkPassword || function () {
       console.warn('checkPassword not initialized yet. If you see this, a script error occurred before initialization.');
@@ -76,7 +70,7 @@
 </head>
 <body class="text-slate-800">
 
-  <!-- PASSWORD OVERLAY (NOTE: GitHub Pages cannot be truly private; this is just a visual lock) -->
+  <!-- PASSWORD OVERLAY -->
   <div id="login-overlay" role="dialog" aria-modal="true" aria-label="Unlock itinerary">
     <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-4 border-pink-500/20">
       <div class="text-5xl mb-6">🔒</div>
@@ -187,6 +181,7 @@
         <button onclick="switchTab('route')" id="tab-route" class="tab-active py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">🗺️</span> Daily Itinerary</button>
         <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">💰</span> Budget</button>
         <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">🦅</span> Wildlife Spots</button>
+        <button onclick="switchTab('photographers')" id="tab-photographers" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📷</span> Engagement Photographers</button>
         <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📋</span> Logistics <span class="ml-2 bg-red-500 text-white text-[10px] px-1 rounded animate-pulse">!</span></button>
 
         <div class="ml-auto flex items-center gap-2 pr-2">
@@ -447,8 +442,6 @@
       <!-- TAB: BUDGET -->
       <section id="content-budget" class="hidden space-y-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-          <!-- Controls -->
           <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <h2 class="text-xl font-bold text-slate-800 mb-4">Cost Estimator</h2>
 
@@ -524,13 +517,11 @@
             </div>
           </div>
 
-          <!-- Visualization -->
           <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
             <div class="relative w-full max-w-[520px] mx-auto h-[360px]">
               <canvas id="budgetChart"></canvas>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -567,6 +558,53 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="attraction-grid"></div>
+
+        <div class="text-xs text-slate-400">
+          Some location images are sourced from Wikimedia Commons (CC licenses). If you want, I can add a “Photo credits” panel with attribution per image.
+        </div>
+      </section>
+
+      <!-- TAB: PHOTOGRAPHERS -->
+      <section id="content-photographers" class="hidden space-y-8">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-2">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800">Engagement Photographers (PEI)</h2>
+            <p class="text-slate-600">A short list of PEI photographers to contact for an engagement session during your mid-August trip (dog-friendly vibes encouraged).</p>
+          </div>
+          <div class="flex gap-2 mt-4 md:mt-0">
+            <button id="btn-copy-photographers" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full font-bold">📋 Copy list</button>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100">
+          <div class="flex flex-col md:flex-row gap-3 md:items-center">
+            <div class="flex-1">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Search photographers</label>
+              <input id="photographer-search" type="text" placeholder="Try: film, documentary, Charlottetown, elopement…" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition" />
+              <p class="text-xs text-slate-400 mt-1">Matches name, location, style, and notes.</p>
+            </div>
+            <div class="md:w-64">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Sort</label>
+              <select id="photographer-sort" class="w-full p-3 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-pink-500 outline-none transition">
+                <option value="name">Name (A–Z)</option>
+                <option value="base">Base/Area</option>
+                <option value="style">Style</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="photographer-grid"></div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-sm text-slate-700">
+          <div class="font-bold mb-1">Quick outreach tip</div>
+          Mention: dates (mid-Aug), location(s) you’ll be in (Stanhope / Charlottetown / North Shore), that you’re bringing Finn, and ask about:
+          <ul class="list-disc pl-5 mt-2 space-y-1">
+            <li>Dog policy + leash-friendly locations</li>
+            <li>Golden hour timing + backup rain plan</li>
+            <li>Turnaround time + package/price starting point</li>
+          </ul>
+        </div>
       </section>
 
       <!-- TAB: LOGISTICS -->
@@ -643,7 +681,6 @@
     // Configuration
     // =====================
 
-    // NOTE: GitHub Pages is public. This is only a visual lock.
     const APP_PASSWORD = 'maritime';
     const TRIP_DATES_LABEL = 'Aug 15–22';
 
@@ -669,23 +706,17 @@
       { id: 'hotel-dog', label: 'Confirm dog policy: left alone / fees' },
       { id: 'grocery', label: 'Grand Falls grocery list ready' },
       { id: 'ics', label: 'Calendar imported / events reviewed' },
-
-      // Packing / gear
       { id: 'paddleboard', label: "Maddie’s paddle board + pump + leash" },
       { id: 'cameras', label: 'Cameras + lenses + chargers + SD cards' },
       { id: 'drone', label: 'Drone + controller + batteries (check local rules)' },
       { id: 'finn-bed', label: 'Finn bed for back seat' },
       { id: 'finn-cage', label: 'Finn crate for trunk' },
-
-      // Camping
       { id: 'tent', label: 'Tent + poles + stakes + mallet' },
       { id: 'bbq', label: 'BBQ + lighter + propane' },
       { id: 'kitchenware', label: 'Camping kitchenware (pan, kettle, knife, cutting board)' },
       { id: 'cooler', label: 'Cooler + ice packs' },
       { id: 'camp-chairs', label: 'Camp chairs + small table' },
       { id: 'headlamps', label: 'Headlamps / flashlights' },
-
-      // Vehicle prep
       { id: 'roof-rack', label: 'Install roof rack on car' },
       { id: 'tie-downs', label: 'Straps / tie-downs for paddle board & gear' }
     ];
@@ -693,15 +724,15 @@
     // =====================
     // Assets + data
     // =====================
-    // Updated: swapped "placeholder" Unsplash pics for real photos via Wikimedia Commons (CC-licensed).
-    // Using Special:FilePath gives a stable direct image URL (Commons handles redirects/CDN).
-    const commons = (fileName) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}`;
+
+    // Helper: stable Commons image URL (resized by Commons)
+    const commons = (filename, width = 1200) =>
+      `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(filename)}?width=${width}`;
 
     const assets = {
+      // Existing / general
       aunt: 'https://images.unsplash.com/photo-1542318859-99c08d984143?q=80&w=800&auto=format&fit=crop',
-      anne: commons('Avonlea Village - Prince Edward Island (6428135853).jpg'),
-      brackley: commons('Brackley Beach, PEI (10482934994).jpg'),
-      basin: commons('Basin Head IMG 8807 (1848113787).jpg'),
+      anne: 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?q=80&w=800&auto=format&fit=crop',
       hopewell: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=800&auto=format&fit=crop',
       fundy: 'https://images.unsplash.com/photo-1443632864897-14973fa006cf?q=80&w=800&auto=format&fit=crop',
       charlottetown: 'https://images.unsplash.com/photo-1555685812-4b943f3e99a0?q=80&w=800&auto=format&fit=crop',
@@ -714,16 +745,18 @@
       waterfowl: 'https://images.unsplash.com/photo-1480044965905-02098d419e96?q=80&w=800&auto=format&fit=crop',
       capetryon: 'https://images.unsplash.com/photo-1621882414734-7221e106950e?q=80&w=800&auto=format&fit=crop',
 
-      // Your PEI additions (real photos)
-      lighthouse: commons('Wood Islands Lighthouse (15085991834).jpg'),
-      sheepPond: commons('Beach at Souris (48596045477).jpg'), // closest reliable Commons photo near Souris/Points East
-      thunderCove: commons('PEI Beach Scenery - HDR (7731175928).jpg'), // PEI coastline photo (Commons)
-      donahue: commons('Tignish Shore Beach, Prince Edward Island (471232) (9447958911).jpg'), // close to Donahue/Tignish area
-      northCape: commons('Irish Moss drying, North Cape, PEI (7532008780).jpg'),
-      mackenzies: commons('MacKenzies Brook, PEI (19389530842).jpg'),
-      potatoMuseum: commons('PEI Potato Museum - panoramio.jpg'),
-      peiBeach: commons('PEI Beach Scenery - HDR (7731175928).jpg'),
-      trail: commons('Irish Moss drying, North Cape, PEI (7532008780).jpg')
+      // Updated “actual” images (Commons)
+      lighthouse: commons('Wood Islands Lighthouse, Prince Edward Island (3665832692).jpg', 1400),
+      basin: commons('Basin Head Povincial Park (34092645).jpg', 1400),
+      brackley: commons('PEI National Park, Brackley Beach (33546251598).jpg', 1400),
+      trail: commons('North Cape Hiking Trail, Seacow Pond (471269) (9450759904).jpg', 1400),
+
+      // Keep these as-is (harder to find clean CC images quickly)
+      beach: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
+      museum: 'https://images.unsplash.com/photo-1529421306624-12d53d2f1b4b?q=80&w=800&auto=format&fit=crop',
+
+      // Photographer placeholder (neutral, no copyright issues)
+      photographer: 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?q=80&w=1200&auto=format&fit=crop'
     };
 
     const attractions = [
@@ -736,20 +769,110 @@
       { title: 'Grey Seals', cat: 'mammals', loc: 'Point Prim (PEI)', img: assets.seal, desc: 'Hauled out on the rocks at low tide near the lighthouse.' },
       { title: 'Cape Tryon Cliffs', cat: 'scenic', loc: 'French River (PEI)', img: assets.capetryon, desc: 'Highest cliffs on PEI. Spectacular views, less crowded.' },
 
-      // Added cards for your requested places (real photos)
       { title: 'Wood Islands Lighthouse', cat: 'scenic', loc: 'Wood Islands (PEI)', img: assets.lighthouse, desc: 'Lighthouse stop on the east end with coastal views.' },
-      { title: 'Sheep Pond Beach', cat: 'scenic', loc: 'Points East Coastal Drive (PEI)', img: assets.sheepPond, desc: 'Quiet beach stop for a quick walk and photos.' },
+      { title: 'Sheep Pond Beach', cat: 'scenic', loc: 'Points East Coastal Drive (PEI)', img: assets.beach, desc: 'Quiet beach stop for a quick walk and photos.' },
       { title: 'Basin Head Provincial Park', cat: 'scenic', loc: 'Basin Head (PEI)', img: assets.basin, desc: '"Singing sands" beach and a great mid-day stretch break.' },
       { title: 'Brackley Beach', cat: 'scenic', loc: 'PEI National Park (North Shore)', img: assets.brackley, desc: 'Big sandy beach + dunes. Check leash rules for Finn.' },
-      { title: 'MacKenzies Brook', cat: 'scenic', loc: 'PEI National Park (Cavendish)', img: assets.mackenzies, desc: 'Short scenic trail with coastline views.' },
-      { title: 'Avonlea Village', cat: 'scenic', loc: 'Cavendish area (PEI)', img: assets.anne, desc: 'Quirky, photogenic stop with old-time PEI vibes.' },
-      { title: 'Thunder Cove Beach', cat: 'scenic', loc: 'Darnley area (PEI)', img: assets.thunderCove, desc: 'Sea stacks and dramatic coastline—best early/late.' },
-      { title: 'Canadian Potato Museum', cat: 'scenic', loc: 'O’Leary (PEI)', img: assets.potatoMuseum, desc: 'Fun quick museum + quirky roadside stop.' },
-      { title: 'Donahue Beach', cat: 'scenic', loc: 'Tignish area (PEI)', img: assets.donahue, desc: 'Low-key beach to finish the day.' },
-      { title: 'North Cape Hiking Trail', cat: 'scenic', loc: 'North Cape (PEI)', img: assets.northCape, desc: 'Windy coastal trail with big views.' },
+      { title: 'MacKenzies Brook', cat: 'scenic', loc: 'PEI National Park', img: assets.trail, desc: 'Short scenic trail with coastline views.' },
+      { title: 'Avonlea Village', cat: 'scenic', loc: 'Near Cavendish (PEI)', img: assets.anne, desc: 'Quirky, photogenic stop with old-time PEI vibes.' },
+      { title: 'Thunder Cove Beach', cat: 'scenic', loc: 'Darnley (PEI)', img: assets.beach, desc: 'Sea stacks and dramatic coastline—best early/late.' },
+      { title: 'Canadian Potato Museum', cat: 'scenic', loc: 'O’Leary (PEI)', img: assets.museum, desc: 'Fun quick museum + quirky roadside stop.' },
+      { title: 'Donahue Beach', cat: 'scenic', loc: 'North Shore (PEI)', img: assets.beach, desc: 'Low-key beach to finish the day.' },
+      { title: 'North Cape Hiking Trail', cat: 'scenic', loc: 'North Cape (PEI)', img: assets.trail, desc: 'Windy coastal trail with big views.' }
+    ];
 
-      { title: "Maddie's Pick #1", cat: 'scenic', loc: 'PEI', img: assets.peiBeach, desc: 'Custom user stop.' },
-      { title: "Maddie's Pick #2", cat: 'scenic', loc: 'NB', img: assets.fundy, desc: 'Custom user stop.' }
+    // Engagement photographer directory (cards)
+    const photographers = [
+      {
+        name: 'White Canvas Photo',
+        base: 'Prince Edward Island',
+        style: 'Warm + timeless, natural light',
+        tags: 'wedding engagement intimate',
+        website: 'https://whitecanvasphoto.ca/',
+        instagram: 'https://www.instagram.com/whitecanvasphoto/',
+        notes: 'Intimate wedding & family photographer. Good fit if you want warm, romantic, minimal posing.'
+      },
+      {
+        name: 'Kassandra Knockwood Photography',
+        base: 'Prince Edward Island',
+        style: 'True-to-colour, candid + posed',
+        tags: 'wedding engagement couples lighthouse dunes',
+        website: 'https://www.kassandraknockwoodphotography.ca/',
+        instagram: 'https://www.instagram.com/kassandraknockwoodphotography/',
+        notes: 'Engagement + wedding focused. Great if you want PEI red shores / dunes / lighthouses.'
+      },
+      {
+        name: 'Maison Blanche Weddings',
+        base: 'Prince Edward Island',
+        style: 'Documentary, film + digital (duo)',
+        tags: 'wedding elopement couples documentary film',
+        website: 'https://www.maisonblancheweddings.com/',
+        instagram: '',
+        notes: 'Laid-back, unposed/documentary vibe. Film + digital coverage.'
+      },
+      {
+        name: 'Jenna Rachelle Photography',
+        base: 'Prince Edward Island',
+        style: 'Candid movement + landscapes',
+        tags: 'wedding elopement couple non-traditional',
+        website: 'https://jennarachelle.com/',
+        instagram: '',
+        notes: 'Great if you want “movement + landscape” couples photos (non-stiff posing).'
+      },
+      {
+        name: 'Michaela Bell Photography',
+        base: 'PEI + NB',
+        style: 'Movement, natural + emotive',
+        tags: 'wedding elopement small wedding couple',
+        website: 'https://www.michaelabellphoto.ca/home',
+        instagram: '',
+        notes: 'Specializes in small weddings/elopements; couples vibe fits engagement sessions well.'
+      },
+      {
+        name: 'Angela Rush Photography',
+        base: 'Prince Edward Island',
+        style: 'Candid + romantic storytelling',
+        tags: 'wedding elopement engagement candid romantic',
+        website: 'https://www.angelarushphotography.com/',
+        instagram: '',
+        notes: 'Storytelling approach with romantic/candid focus.'
+      },
+      {
+        name: 'Melissa Harding Photography',
+        base: 'Prince Edward Island',
+        style: 'Documentary couples + weddings',
+        tags: 'couples engagement documentary lifestyle',
+        website: 'https://melissahardingphotography.com/couples-gallery',
+        instagram: '',
+        notes: 'Couples gallery is a good preview for engagement session style.'
+      },
+      {
+        name: 'Nicole Anne Photography',
+        base: 'Prince Edward Island',
+        style: 'Wedding + couples (experienced)',
+        tags: 'wedding engagement pei',
+        website: 'https://nicoleanne.ca/',
+        instagram: 'https://www.instagram.com/nicoleannephoto/',
+        notes: 'PEI wedding photographer; strong local portfolio and blog examples.'
+      },
+      {
+        name: "Jane's Island Photography",
+        base: 'Prince Edward Island',
+        style: 'Wedding + elopement',
+        tags: 'wedding elopement engagement pei',
+        website: '',
+        instagram: 'https://www.instagram.com/janesislandphotography/',
+        notes: 'Instagram-first presence; check recent engagement posts and DM/inquire via profile.'
+      },
+      {
+        name: 'Pure + Lovely Photography',
+        base: 'French River, PEI',
+        style: 'Lifestyle (family/newborn)',
+        tags: 'lifestyle pei french river',
+        website: 'https://www.purelovelyphotography.com/',
+        instagram: '',
+        notes: 'Primarily family/newborn—still worth asking if they do couples/engagement mini-sessions.'
+      }
     ];
 
     // =====================
@@ -782,7 +905,6 @@
         maxZoom: 19
       }).addTo(mapInstance);
 
-      // Lines
       const line1 = L.polyline([locs.ottawa, [46.8, -71.2], locs.trapper], { color: '#db2777', weight: 5 });
       const line2 = L.polyline([locs.trapper, locs.bridge, locs.stanhope], { color: '#db2777', weight: 5 });
       const line3 = L.polyline([locs.charlottetown, locs.bridge, locs.alma], { color: '#059669', weight: 5 });
@@ -791,7 +913,6 @@
       mapLines = [line1, line2, line3, line4, line5];
       mapLines.forEach(l => l.addTo(mapInstance));
 
-      // Markers
       mapMarkers = [
         L.marker(locs.ottawa).bindPopup('Ottawa'),
         L.marker(locs.trapper).bindPopup("Trapper's Cabin (Night 1)"),
@@ -802,7 +923,6 @@
       ];
       mapMarkers.forEach(m => m.addTo(mapInstance));
 
-      // Fit route on first render
       setTimeout(() => fitRoute(), 150);
     }
 
@@ -851,17 +971,14 @@
       const fuel = parseFloat(document.getElementById('input-fuel')?.value || DEFAULTS.fuelLPer100);
       const km = parseFloat(document.getElementById('input-km')?.value || DEFAULTS.km);
 
-      // UI labels
       document.getElementById('val-accom').innerText = accom.toFixed(0);
       document.getElementById('val-food').innerText = food.toFixed(0);
       document.getElementById('val-gas').innerText = gasPrice.toFixed(2);
       document.getElementById('val-fuel').innerText = fuel.toFixed(1);
       document.getElementById('val-km').innerText = km.toFixed(0);
 
-      // Fixed
       const fixedAccom = DEFAULTS.trapper + DEFAULTS.camping;
 
-      // Variable
       const gas = Math.round((km / 100) * fuel * gasPrice);
       const varAccom = DEFAULTS.variableNights * accom;
       const foodTotal = food * DEFAULTS.people * DEFAULTS.tripDays;
@@ -877,7 +994,6 @@
         budgetChartInstance.update();
       }
 
-      // Stats
       document.getElementById('stat-distance').innerText = `~${Math.round(km).toLocaleString()} km`;
     }
 
@@ -956,13 +1072,8 @@
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden group hover:-translate-y-1 transition';
 
-        let fallback = commons('PEI Beach Scenery - HDR (7731175928).jpg');
+        let fallback = 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=800&auto=format&fit=crop';
         if (item.cat === 'mammals') fallback = assets.fox;
-
-        const isCommons = (item.img || '').includes('commons.wikimedia.org');
-        const photoLine = isCommons
-          ? `<a class="text-[11px] text-slate-400 hover:text-slate-600 underline" href="${item.img}" target="_blank" rel="noopener noreferrer">Photo: Wikimedia Commons</a>`
-          : `<span class="text-[11px] text-slate-400">Photo: source image</span>`;
 
         card.innerHTML = `
           <div class="h-48 overflow-hidden relative">
@@ -973,9 +1084,6 @@
             <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
             <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${item.loc}</p>
             <p class="text-sm text-slate-600">${item.desc}</p>
-
-            <div class="mt-3">${photoLine}</div>
-
             <div class="mt-4 flex flex-wrap gap-2">
               <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="${item.title} — ${item.loc}. ${item.desc}">📋 Copy</button>
             </div>
@@ -983,6 +1091,89 @@
         `;
         grid.appendChild(card);
       });
+    }
+
+    // =====================
+    // Photographers logic
+    // =====================
+
+    function getPhotographerQuery() {
+      return normalize(document.getElementById('photographer-search')?.value || '');
+    }
+
+    function getPhotographerSort() {
+      return document.getElementById('photographer-sort')?.value || 'name';
+    }
+
+    function buildPhotographerCopyList(list) {
+      return list.map(p => {
+        const links = [
+          p.website ? `Website: ${p.website}` : '',
+          p.instagram ? `IG: ${p.instagram}` : ''
+        ].filter(Boolean).join(' | ');
+        return `${p.name} — ${p.base} — ${p.style}\n${links}\nNotes: ${p.notes}`.trim();
+      }).join('\n\n');
+    }
+
+    function renderPhotographers() {
+      const grid = document.getElementById('photographer-grid');
+      const query = getPhotographerQuery();
+      const sort = getPhotographerSort();
+      if (!grid) return;
+
+      let list = [...photographers];
+      if (query) list = list.filter(p => normalize(`${p.name} ${p.base} ${p.style} ${p.tags} ${p.notes}`).includes(query));
+
+      list.sort((a, b) => normalize(a[sort]).localeCompare(normalize(b[sort])));
+
+      grid.innerHTML = '';
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="col-span-full bg-white border border-slate-100 rounded-2xl p-8 text-center text-slate-600">No matches. Try a different search.</div>`;
+        return;
+      }
+
+      list.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden group hover:-translate-y-1 transition';
+
+        const websiteBtn = p.website
+          ? `<a href="${p.website}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-lg bg-slate-800 text-white text-sm font-bold hover:bg-slate-900">Open website</a>`
+          : '';
+        const igBtn = p.instagram
+          ? `<a href="${p.instagram}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold">Instagram</a>`
+          : '';
+
+        const copyPayload = `${p.name} — ${p.base}. Style: ${p.style}. ${p.notes} ${p.website ? 'Website: ' + p.website + ' ' : ''}${p.instagram ? 'IG: ' + p.instagram : ''}`.trim();
+
+        card.innerHTML = `
+          <div class="h-44 overflow-hidden relative">
+            <img src="${assets.photographer}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" alt="${p.name}">
+            <div class="absolute top-2 left-2 bg-white/90 text-xs font-bold px-2 py-1 rounded shadow uppercase">Engagement</div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-lg font-bold text-slate-800">${p.name}</h3>
+            <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${p.base}</p>
+
+            <div class="text-sm text-slate-700">
+              <div><span class="font-bold text-slate-600">Style:</span> ${p.style}</div>
+              <div class="mt-2 text-slate-600">${p.notes}</div>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              ${websiteBtn}
+              ${igBtn}
+              <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="${copyPayload.replace(/"/g, '&quot;')}">📋 Copy</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Bind copy-list button
+      document.getElementById('btn-copy-photographers')?.addEventListener('click', () => {
+        const text = buildPhotographerCopyList(list);
+        copyText(text);
+      }, { once: true });
     }
 
     // =====================
@@ -1056,6 +1247,7 @@
         initLeafletMap();
         initBudgetCalc();
         renderAttractions('all');
+        renderPhotographers();
         initChecklist();
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
           window.lucide.createIcons();
@@ -1082,7 +1274,6 @@
       const errEl = document.getElementById('error-msg');
       const val = (inputEl?.value || '').trim();
 
-      // expected behavior: password must be exactly lowercase "maritime"
       if (val === APP_PASSWORD) {
         if (errEl) errEl.classList.add('hidden');
         unlock();
@@ -1091,7 +1282,6 @@
       }
     }
 
-    // IMPORTANT: Inline handlers only resolve globals. Export immediately.
     window.checkPassword = checkPassword;
 
     // =====================
@@ -1099,20 +1289,27 @@
     // =====================
 
     function switchTab(id) {
-      ['route', 'budget', 'attractions', 'logistics'].forEach(t => {
-        document.getElementById(`content-${t}`).classList.add('hidden');
-        document.getElementById(`tab-${t}`).classList.remove('tab-active');
-        document.getElementById(`tab-${t}`).classList.add('tab-inactive');
+      ['route', 'budget', 'attractions', 'photographers', 'logistics'].forEach(t => {
+        const content = document.getElementById(`content-${t}`);
+        const tab = document.getElementById(`tab-${t}`);
+        if (content) content.classList.add('hidden');
+        if (tab) {
+          tab.classList.remove('tab-active');
+          tab.classList.add('tab-inactive');
+        }
       });
 
-      document.getElementById(`content-${id}`).classList.remove('hidden');
-      document.getElementById(`tab-${id}`).classList.add('tab-active');
+      const activeContent = document.getElementById(`content-${id}`);
+      const activeTab = document.getElementById(`tab-${id}`);
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeTab) activeTab.classList.add('tab-active');
 
       if (id === 'route' && mapInstance) setTimeout(() => mapInstance.invalidateSize(), 120);
       if (id === 'budget') setTimeout(() => updateBudget(), 80);
+      if (id === 'attractions') setTimeout(() => renderAttractions(attractionFilter), 50);
+      if (id === 'photographers') setTimeout(() => renderPhotographers(), 50);
     }
 
-    // Export immediately for inline onclicks
     window.switchTab = switchTab;
     window.renderAttractions = renderAttractions;
 
@@ -1149,7 +1346,6 @@
       const now = new Date();
       const uidBase = 'maritime-trip-' + now.getTime();
 
-      // Updated to match the new schedule additions
       const events = [
         { summary: "Day 1 — Ottawa → Trapper's Cabin", start: '20260815T070000', end: '20260815T200000', desc: 'Drive day. Stops: Rivière-du-Loup (Parc de la Pointe), Grand Falls groceries.' },
         { summary: "Day 2 — Trapper's → Stanhope (PEI)", start: '20260816T090000', end: '20260816T190000', desc: 'Sackville Waterfowl Park. Cross Confederation Bridge. Camp in Stanhope.' },
@@ -1252,7 +1448,6 @@
     // =====================
 
     function bindUI() {
-      // Enter-to-unlock
       const pwd = document.getElementById('password-input');
       pwd?.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
       pwd?.addEventListener('input', () => {
@@ -1260,24 +1455,19 @@
         if (err) err.classList.add('hidden');
       });
 
-      // Remember unlock
       if (localStorage.getItem('maritime_unlocked') === '1') {
         unlock();
       }
 
-      // Map buttons
       document.getElementById('btn-fit')?.addEventListener('click', fitRoute);
       document.getElementById('btn-toggle-markers')?.addEventListener('click', toggleMarkers);
       document.getElementById('btn-toggle-lines')?.addEventListener('click', toggleLines);
 
-      // Itinerary search
       document.getElementById('itinerary-search')?.addEventListener('input', filterItinerary);
 
-      // Expand/collapse
       document.getElementById('btn-expand-all')?.addEventListener('click', () => expandAll(true));
       document.getElementById('btn-collapse-all')?.addEventListener('click', () => expandAll(false));
 
-      // Delegated copy + map focus buttons
       document.body.addEventListener('click', (e) => {
         const el = e.target;
         if (!(el instanceof HTMLElement)) return;
@@ -1297,9 +1487,12 @@
         }
       });
 
-      // Attractions search/sort
       document.getElementById('attraction-search')?.addEventListener('input', () => renderAttractions(attractionFilter));
       document.getElementById('attraction-sort')?.addEventListener('change', () => renderAttractions(attractionFilter));
+
+      // Photographers
+      document.getElementById('photographer-search')?.addEventListener('input', renderPhotographers);
+      document.getElementById('photographer-sort')?.addEventListener('change', renderPhotographers);
 
       // Share/print/lock
       document.getElementById('btn-share')?.addEventListener('click', () => { copyText(window.location.href); });
@@ -1316,7 +1509,6 @@
         toast('Downloaded reminder .ics', '⏰');
       });
 
-      // Checklist reset
       document.getElementById('btn-reset-checklist')?.addEventListener('click', resetChecklist);
     }
 
@@ -1334,8 +1526,7 @@
       console.assert(window.renderAttractions === renderAttractions, 'SelfTest failed: window.renderAttractions should reference renderAttractions');
       console.assert(APP_PASSWORD === 'maritime', 'SelfTest failed: APP_PASSWORD should be maritime');
       console.assert(typeof unlock === 'function' && typeof lock === 'function', 'SelfTest failed: lock/unlock should exist');
-
-      console.assert(true, 'SelfTest info: avoided optional chaining on assignment targets');
+      console.assert(typeof renderPhotographers === 'function', 'SelfTest failed: renderPhotographers should exist');
     }
 
     // =====================
@@ -1345,8 +1536,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       bindUI();
       renderAttractions('all');
+      renderPhotographers();
 
-      // Stats (avoid optional chaining on assignment targets)
       const tripDatesEl = document.getElementById('trip-dates');
       if (tripDatesEl) tripDatesEl.innerText = TRIP_DATES_LABEL;
 
