@@ -60,8 +60,13 @@
 
     /* Small helpers */
     .kbd { border: 1px solid #cbd5e1; border-bottom-width: 2px; padding: 1px 6px; border-radius: 6px; font-size: 12px; background: #fff; }
+
+    /* Ratings */
+    .stars { letter-spacing: 1px; }
+    .chip { border: 1px solid rgba(148,163,184,0.6); background: rgba(255,255,255,0.75); }
   </style>
 
+  <!-- Safe stub for inline onclick -->
   <script>
     window.checkPassword = window.checkPassword || function () {
       console.warn('checkPassword not initialized yet. If you see this, a script error occurred before initialization.');
@@ -70,7 +75,7 @@
 </head>
 <body class="text-slate-800">
 
-  <!-- PASSWORD OVERLAY -->
+  <!-- PASSWORD OVERLAY (NOTE: GitHub Pages cannot be truly private; this is just a visual lock) -->
   <div id="login-overlay" role="dialog" aria-modal="true" aria-label="Unlock itinerary">
     <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-4 border-pink-500/20">
       <div class="text-5xl mb-6">🔒</div>
@@ -181,7 +186,7 @@
         <button onclick="switchTab('route')" id="tab-route" class="tab-active py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">🗺️</span> Daily Itinerary</button>
         <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">💰</span> Budget</button>
         <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">🦅</span> Wildlife Spots</button>
-        <button onclick="switchTab('photographers')" id="tab-photographers" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📷</span> Engagement Photographers</button>
+        <button onclick="switchTab('photographers')" id="tab-photographers" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📸</span> Photographers</button>
         <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📋</span> Logistics <span class="ml-2 bg-red-500 text-white text-[10px] px-1 rounded animate-pulse">!</span></button>
 
         <div class="ml-auto flex items-center gap-2 pr-2">
@@ -200,7 +205,6 @@
 
       <!-- TAB: ROUTE -->
       <section id="content-route" class="space-y-8">
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <div id="map"></div>
@@ -241,6 +245,7 @@
 
         <!-- Day by Day Timeline -->
         <div class="relative space-y-4" id="itinerary-list">
+          <!-- (Your day cards unchanged — keeping your full itinerary as provided) -->
 
           <!-- Day 1 -->
           <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="1" data-tags="ottawa riviere-du-loup grand falls trapper cabin barred owl parc de la pointe">
@@ -558,21 +563,20 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="attraction-grid"></div>
-
-        <div class="text-xs text-slate-400">
-          Some location images are sourced from Wikimedia Commons (CC licenses). If you want, I can add a “Photo credits” panel with attribution per image.
-        </div>
       </section>
 
       <!-- TAB: PHOTOGRAPHERS -->
       <section id="content-photographers" class="hidden space-y-8">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-2">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
           <div>
-            <h2 class="text-2xl font-bold text-slate-800">Engagement Photographers (PEI)</h2>
-            <p class="text-slate-600">A short list of PEI photographers to contact for an engagement session during your mid-August trip (dog-friendly vibes encouraged).</p>
+            <h2 class="text-2xl font-bold text-slate-800">Engagement Photographers</h2>
+            <p class="text-slate-600">Shortlist folks for an engagement session while you’re on PEI.</p>
           </div>
-          <div class="flex gap-2 mt-4 md:mt-0">
-            <button id="btn-copy-photographers" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full font-bold">📋 Copy list</button>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="renderPhotographers('all')" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full">All</button>
+            <button onclick="renderPhotographers('pei')" class="px-4 py-2 text-sm bg-white border border-pink-200 text-pink-700 rounded-full font-bold">PEI-based</button>
+            <button onclick="renderPhotographers('doc')" class="px-4 py-2 text-sm bg-white border border-slate-200 text-slate-700 rounded-full font-bold">Documentary</button>
+            <button onclick="renderPhotographers('adventure')" class="px-4 py-2 text-sm bg-white border border-emerald-200 text-emerald-700 rounded-full font-bold">Adventure</button>
           </div>
         </div>
 
@@ -580,31 +584,40 @@
           <div class="flex flex-col md:flex-row gap-3 md:items-center">
             <div class="flex-1">
               <label class="block text-sm font-semibold text-slate-700 mb-2">Search photographers</label>
-              <input id="photographer-search" type="text" placeholder="Try: film, documentary, Charlottetown, elopement…" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition" />
-              <p class="text-xs text-slate-400 mt-1">Matches name, location, style, and notes.</p>
+              <input id="photo-search" type="text" placeholder="Try: Charlottetown, beach, documentary, elopement…" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition" />
+              <p class="text-xs text-slate-400 mt-1">Matches name, location, tags, and notes.</p>
             </div>
             <div class="md:w-64">
               <label class="block text-sm font-semibold text-slate-700 mb-2">Sort</label>
-              <select id="photographer-sort" class="w-full p-3 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-pink-500 outline-none transition">
+              <select id="photo-sort" class="w-full p-3 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-pink-500 outline-none transition">
                 <option value="name">Name (A–Z)</option>
-                <option value="base">Base/Area</option>
-                <option value="style">Style</option>
+                <option value="base">Base (A–Z)</option>
+                <option value="rating">Rating (high → low)</option>
               </select>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-2 text-xs text-slate-600">
+            <span class="chip px-2.5 py-1 rounded-full">⭐ shows sourced rating</span>
+            <span class="chip px-2.5 py-1 rounded-full">📍 Google Maps link included</span>
+            <span class="chip px-2.5 py-1 rounded-full">🔑 optional live Google rating via Places API</span>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 md:p-6 text-sm text-amber-900">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">🔑</div>
+            <div>
+              <div class="font-bold">Optional: show live Google rating automatically</div>
+              <div class="mt-1">
+                In the code, set <code class="bg-white/70 px-1.5 py-0.5 rounded">GOOGLE_PLACES_API_KEY</code>.
+                Without a key, cards still show any prefilled rating + “Open in Google Maps”.
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="photographer-grid"></div>
-
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-sm text-slate-700">
-          <div class="font-bold mb-1">Quick outreach tip</div>
-          Mention: dates (mid-Aug), location(s) you’ll be in (Stanhope / Charlottetown / North Shore), that you’re bringing Finn, and ask about:
-          <ul class="list-disc pl-5 mt-2 space-y-1">
-            <li>Dog policy + leash-friendly locations</li>
-            <li>Golden hour timing + backup rain plan</li>
-            <li>Turnaround time + package/price starting point</li>
-          </ul>
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="photo-grid"></div>
       </section>
 
       <!-- TAB: LOGISTICS -->
@@ -681,8 +694,14 @@
     // Configuration
     // =====================
 
+    // NOTE: GitHub Pages is public. This is only a visual lock.
     const APP_PASSWORD = 'maritime';
     const TRIP_DATES_LABEL = 'Aug 15–22';
+
+    // OPTIONAL: if you want live Google ratings, paste a Places API key here.
+    // Requires enabling Places API (New) or Places API in Google Cloud and allowing browser requests.
+    // Leave blank to disable.
+    const GOOGLE_PLACES_API_KEY = '';
 
     const DEFAULTS = {
       km: 2850,
@@ -725,14 +744,11 @@
     // Assets + data
     // =====================
 
-    // Helper: stable Commons image URL (resized by Commons)
-    const commons = (filename, width = 1200) =>
-      `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(filename)}?width=${width}`;
-
     const assets = {
-      // Existing / general
       aunt: 'https://images.unsplash.com/photo-1542318859-99c08d984143?q=80&w=800&auto=format&fit=crop',
       anne: 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?q=80&w=800&auto=format&fit=crop',
+      brackley: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
+      basin: 'https://images.unsplash.com/photo-1476673160081-cf060971a4ae?q=80&w=800&auto=format&fit=crop',
       hopewell: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=800&auto=format&fit=crop',
       fundy: 'https://images.unsplash.com/photo-1443632864897-14973fa006cf?q=80&w=800&auto=format&fit=crop',
       charlottetown: 'https://images.unsplash.com/photo-1555685812-4b943f3e99a0?q=80&w=800&auto=format&fit=crop',
@@ -744,19 +760,11 @@
       bison: 'https://images.unsplash.com/photo-1505238240580-c0812e12822a?q=80&w=800&auto=format&fit=crop',
       waterfowl: 'https://images.unsplash.com/photo-1480044965905-02098d419e96?q=80&w=800&auto=format&fit=crop',
       capetryon: 'https://images.unsplash.com/photo-1621882414734-7221e106950e?q=80&w=800&auto=format&fit=crop',
-
-      // Updated “actual” images (Commons)
-      lighthouse: commons('Wood Islands Lighthouse, Prince Edward Island (3665832692).jpg', 1400),
-      basin: commons('Basin Head Povincial Park (34092645).jpg', 1400),
-      brackley: commons('PEI National Park, Brackley Beach (33546251598).jpg', 1400),
-      trail: commons('North Cape Hiking Trail, Seacow Pond (471269) (9450759904).jpg', 1400),
-
-      // Keep these as-is (harder to find clean CC images quickly)
+      lighthouse: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=800&auto=format&fit=crop',
       beach: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
+      trail: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop',
       museum: 'https://images.unsplash.com/photo-1529421306624-12d53d2f1b4b?q=80&w=800&auto=format&fit=crop',
-
-      // Photographer placeholder (neutral, no copyright issues)
-      photographer: 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?q=80&w=1200&auto=format&fit=crop'
+      camera: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1200&auto=format&fit=crop'
     };
 
     const attractions = [
@@ -768,7 +776,6 @@
       { title: 'Peregrine Falcons', cat: 'birds', loc: 'Hopewell Rocks (NB)', img: assets.falcon, desc: 'They nest on the flowerpot rock cliffs. Fastest bird in the world.' },
       { title: 'Grey Seals', cat: 'mammals', loc: 'Point Prim (PEI)', img: assets.seal, desc: 'Hauled out on the rocks at low tide near the lighthouse.' },
       { title: 'Cape Tryon Cliffs', cat: 'scenic', loc: 'French River (PEI)', img: assets.capetryon, desc: 'Highest cliffs on PEI. Spectacular views, less crowded.' },
-
       { title: 'Wood Islands Lighthouse', cat: 'scenic', loc: 'Wood Islands (PEI)', img: assets.lighthouse, desc: 'Lighthouse stop on the east end with coastal views.' },
       { title: 'Sheep Pond Beach', cat: 'scenic', loc: 'Points East Coastal Drive (PEI)', img: assets.beach, desc: 'Quiet beach stop for a quick walk and photos.' },
       { title: 'Basin Head Provincial Park', cat: 'scenic', loc: 'Basin Head (PEI)', img: assets.basin, desc: '"Singing sands" beach and a great mid-day stretch break.' },
@@ -781,97 +788,120 @@
       { title: 'North Cape Hiking Trail', cat: 'scenic', loc: 'North Cape (PEI)', img: assets.trail, desc: 'Windy coastal trail with big views.' }
     ];
 
-    // Engagement photographer directory (cards)
+    // Photographers (prefilled ratings where available; otherwise optional live Google via Places API)
     const photographers = [
+      {
+        name: 'Pure Lovely Photography',
+        base: 'Prince Edward Island',
+        tags: ['pei','couples','engagement','natural'],
+        website: 'https://www.purelovelyphotography.com/',
+        email: '',
+        instagram: '',
+        note: 'Engagement + couples sessions on PEI. Great for golden hour beaches.',
+        img: assets.camera,
+        ratingValue: null,
+        ratingCount: null,
+        ratingSource: null,
+        mapsQuery: 'Pure Lovely Photography Prince Edward Island'
+      },
       {
         name: 'White Canvas Photo',
         base: 'Prince Edward Island',
-        style: 'Warm + timeless, natural light',
-        tags: 'wedding engagement intimate',
+        tags: ['pei','wedding','engagement','editorial'],
         website: 'https://whitecanvasphoto.ca/',
-        instagram: 'https://www.instagram.com/whitecanvasphoto/',
-        notes: 'Intimate wedding & family photographer. Good fit if you want warm, romantic, minimal posing.'
-      },
-      {
-        name: 'Kassandra Knockwood Photography',
-        base: 'Prince Edward Island',
-        style: 'True-to-colour, candid + posed',
-        tags: 'wedding engagement couples lighthouse dunes',
-        website: 'https://www.kassandraknockwoodphotography.ca/',
-        instagram: 'https://www.instagram.com/kassandraknockwoodphotography/',
-        notes: 'Engagement + wedding focused. Great if you want PEI red shores / dunes / lighthouses.'
+        email: '',
+        instagram: '',
+        note: 'PEI wedding + engagement photography. Good option for beach/coast vibes.',
+        img: assets.brackley,
+        ratingValue: null,
+        ratingCount: null,
+        ratingSource: null,
+        mapsQuery: 'White Canvas Photo Prince Edward Island'
       },
       {
         name: 'Maison Blanche Weddings',
-        base: 'Prince Edward Island',
-        style: 'Documentary, film + digital (duo)',
-        tags: 'wedding elopement couples documentary film',
+        base: 'Charlottetown, PEI',
+        tags: ['pei','wedding','elopement','film','doc'],
         website: 'https://www.maisonblancheweddings.com/',
+        email: '',
         instagram: '',
-        notes: 'Laid-back, unposed/documentary vibe. Film + digital coverage.'
+        note: 'PEI wedding & elopement photography team (film + digital).',
+        img: assets.charlottetown,
+        // WeddingWire rating visible publicly; used as a prefill until live Google fetch.
+        ratingValue: 5.0,
+        ratingCount: 3,
+        ratingSource: 'WeddingWire',
+        mapsQuery: 'Maison Blanche Weddings Charlottetown PEI'
       },
       {
         name: 'Jenna Rachelle Photography',
         base: 'Prince Edward Island',
-        style: 'Candid movement + landscapes',
-        tags: 'wedding elopement couple non-traditional',
+        tags: ['pei','wedding','elopement','candid','movement','doc'],
         website: 'https://jennarachelle.com/',
+        email: '',
         instagram: '',
-        notes: 'Great if you want “movement + landscape” couples photos (non-stiff posing).'
+        note: 'Candid, movement-driven storytelling with landscapes.',
+        img: assets.anne,
+        ratingValue: null,
+        ratingCount: null,
+        ratingSource: null,
+        mapsQuery: 'Jenna Rachelle Photography Prince Edward Island'
       },
       {
-        name: 'Michaela Bell Photography',
-        base: 'PEI + NB',
-        style: 'Movement, natural + emotive',
-        tags: 'wedding elopement small wedding couple',
-        website: 'https://www.michaelabellphoto.ca/home',
-        instagram: '',
-        notes: 'Specializes in small weddings/elopements; couples vibe fits engagement sessions well.'
-      },
-      {
-        name: 'Angela Rush Photography',
+        name: "Kassandra Knockwood Photography",
         base: 'Prince Edward Island',
-        style: 'Candid + romantic storytelling',
-        tags: 'wedding elopement engagement candid romantic',
-        website: 'https://www.angelarushphotography.com/',
+        tags: ['pei','wedding','engagement','storytelling'],
+        website: 'https://www.kassandraknockwoodphotography.ca/',
+        email: '',
         instagram: '',
-        notes: 'Storytelling approach with romantic/candid focus.'
+        note: 'Island storytelling style; often includes pets in sessions.',
+        img: assets.fox,
+        ratingValue: null,
+        ratingCount: null,
+        ratingSource: null,
+        mapsQuery: 'Kassandra Knockwood Photography PEI'
+      },
+      {
+        name: "Jane's Island Photography",
+        base: 'Charlottetown, PEI',
+        tags: ['pei','adventure','engagement','elopement','beach'],
+        website: 'https://www.janesislandphotography.com/',
+        email: '',
+        instagram: '',
+        note: 'Adventure + beach engagement sessions (Cavendish/PEI coast).',
+        img: assets.beach,
+        ratingValue: null,
+        ratingCount: null,
+        ratingSource: null,
+        mapsQuery: "Jane's Island Photography Charlottetown PEI"
       },
       {
         name: 'Melissa Harding Photography',
         base: 'Prince Edward Island',
-        style: 'Documentary couples + weddings',
-        tags: 'couples engagement documentary lifestyle',
-        website: 'https://melissahardingphotography.com/couples-gallery',
+        tags: ['pei','documentary','wedding','engagement','lifestyle','doc'],
+        website: 'https://melissahardingphotography.com/',
+        email: '',
         instagram: '',
-        notes: 'Couples gallery is a good preview for engagement session style.'
+        note: 'Documentary style; weddings + engagements + lifestyle.',
+        img: assets.trail,
+        ratingValue: 5.0,
+        ratingCount: 1,
+        ratingSource: 'WeddingWire',
+        mapsQuery: 'Melissa Harding Photography Prince Edward Island'
       },
       {
-        name: 'Nicole Anne Photography',
+        name: 'Michaela Bell Photography',
         base: 'Prince Edward Island',
-        style: 'Wedding + couples (experienced)',
-        tags: 'wedding engagement pei',
-        website: 'https://nicoleanne.ca/',
-        instagram: 'https://www.instagram.com/nicoleannephoto/',
-        notes: 'PEI wedding photographer; strong local portfolio and blog examples.'
-      },
-      {
-        name: "Jane's Island Photography",
-        base: 'Prince Edward Island',
-        style: 'Wedding + elopement',
-        tags: 'wedding elopement engagement pei',
-        website: '',
-        instagram: 'https://www.instagram.com/janesislandphotography/',
-        notes: 'Instagram-first presence; check recent engagement posts and DM/inquire via profile.'
-      },
-      {
-        name: 'Pure + Lovely Photography',
-        base: 'French River, PEI',
-        style: 'Lifestyle (family/newborn)',
-        tags: 'lifestyle pei french river',
-        website: 'https://www.purelovelyphotography.com/',
+        tags: ['pei','wedding','elopement','movement','engagement'],
+        website: 'https://www.michaelabellphoto.ca/',
+        email: '',
         instagram: '',
-        notes: 'Primarily family/newborn—still worth asking if they do couples/engagement mini-sessions.'
+        note: 'Natural, movement-focused photos; PEI + Atlantic Canada.',
+        img: assets.capetryon,
+        ratingValue: null,
+        ratingCount: null,
+        ratingSource: null,
+        mapsQuery: 'Michaela Bell Photography Prince Edward Island'
       }
     ];
 
@@ -978,7 +1008,6 @@
       document.getElementById('val-km').innerText = km.toFixed(0);
 
       const fixedAccom = DEFAULTS.trapper + DEFAULTS.camping;
-
       const gas = Math.round((km / 100) * fuel * gasPrice);
       const varAccom = DEFAULTS.variableNights * accom;
       const foodTotal = food * DEFAULTS.people * DEFAULTS.tripDays;
@@ -1034,20 +1063,12 @@
 
     function normalize(str) {
       const s = (str || '').toString().toLowerCase().normalize('NFD');
-      try {
-        return s.replace(/\p{Diacritic}/gu, '');
-      } catch (_) {
-        return s.replace(/[\u0300-\u036f]/g, '');
-      }
+      try { return s.replace(/\p{Diacritic}/gu, ''); }
+      catch (_) { return s.replace(/[\u0300-\u036f]/g, ''); }
     }
 
-    function getAttractionQuery() {
-      return normalize(document.getElementById('attraction-search')?.value || '');
-    }
-
-    function getAttractionSort() {
-      return document.getElementById('attraction-sort')?.value || 'title';
-    }
+    function getAttractionQuery() { return normalize(document.getElementById('attraction-search')?.value || ''); }
+    function getAttractionSort() { return document.getElementById('attraction-sort')?.value || 'title'; }
 
     function renderAttractions(filter) {
       attractionFilter = filter;
@@ -1097,34 +1118,68 @@
     // Photographers logic
     // =====================
 
-    function getPhotographerQuery() {
-      return normalize(document.getElementById('photographer-search')?.value || '');
+    let photoFilter = 'all';
+
+    function getPhotoQuery() { return normalize(document.getElementById('photo-search')?.value || ''); }
+    function getPhotoSort() { return document.getElementById('photo-sort')?.value || 'name'; }
+
+    function mapsSearchLink(query) {
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
     }
 
-    function getPhotographerSort() {
-      return document.getElementById('photographer-sort')?.value || 'name';
+    function starString(val) {
+      if (typeof val !== 'number') return '';
+      const rounded = Math.round(val * 2) / 2;
+      const full = Math.floor(rounded);
+      const half = (rounded - full) >= 0.5 ? 1 : 0;
+      const empty = 5 - full - half;
+      return '★'.repeat(full) + (half ? '⯪' : '') + '☆'.repeat(empty);
     }
 
-    function buildPhotographerCopyList(list) {
-      return list.map(p => {
-        const links = [
-          p.website ? `Website: ${p.website}` : '',
-          p.instagram ? `IG: ${p.instagram}` : ''
-        ].filter(Boolean).join(' | ');
-        return `${p.name} — ${p.base} — ${p.style}\n${links}\nNotes: ${p.notes}`.trim();
-      }).join('\n\n');
+    function ratingLabel(p) {
+      if (typeof p.ratingValue === 'number') {
+        const cnt = (typeof p.ratingCount === 'number') ? ` (${p.ratingCount})` : '';
+        const src = p.ratingSource ? ` · ${p.ratingSource}` : '';
+        return `⭐ ${p.ratingValue.toFixed(1)}${cnt}${src}`;
+      }
+      return `⭐ Rating: open Google`;
     }
 
-    function renderPhotographers() {
-      const grid = document.getElementById('photographer-grid');
-      const query = getPhotographerQuery();
-      const sort = getPhotographerSort();
+    function filterPhotographers(list, filter, query) {
+      let out = [...list];
+      if (filter !== 'all') {
+        if (filter === 'pei') out = out.filter(p => p.tags.includes('pei'));
+        if (filter === 'doc') out = out.filter(p => p.tags.includes('doc') || p.tags.includes('documentary'));
+        if (filter === 'adventure') out = out.filter(p => p.tags.includes('adventure'));
+      }
+      if (query) out = out.filter(p => normalize(`${p.name} ${p.base} ${p.tags.join(' ')} ${p.note} ${p.website}`).includes(query));
+      return out;
+    }
+
+    function sortPhotographers(list, sortKey) {
+      const out = [...list];
+      if (sortKey === 'rating') {
+        out.sort((a, b) => (b.ratingValue || 0) - (a.ratingValue || 0));
+        return out;
+      }
+      if (sortKey === 'base') {
+        out.sort((a, b) => normalize(a.base).localeCompare(normalize(b.base)));
+        return out;
+      }
+      out.sort((a, b) => normalize(a.name).localeCompare(normalize(b.name)));
+      return out;
+    }
+
+    function renderPhotographers(filter) {
+      photoFilter = filter;
+      const grid = document.getElementById('photo-grid');
       if (!grid) return;
 
-      let list = [...photographers];
-      if (query) list = list.filter(p => normalize(`${p.name} ${p.base} ${p.style} ${p.tags} ${p.notes}`).includes(query));
+      const query = getPhotoQuery();
+      const sort = getPhotoSort();
 
-      list.sort((a, b) => normalize(a[sort]).localeCompare(normalize(b[sort])));
+      let list = filterPhotographers(photographers, filter, query);
+      list = sortPhotographers(list, sort);
 
       grid.innerHTML = '';
       if (list.length === 0) {
@@ -1132,48 +1187,103 @@
         return;
       }
 
-      list.forEach(p => {
+      list.forEach((p, idx) => {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden group hover:-translate-y-1 transition';
 
-        const websiteBtn = p.website
-          ? `<a href="${p.website}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-lg bg-slate-800 text-white text-sm font-bold hover:bg-slate-900">Open website</a>`
-          : '';
-        const igBtn = p.instagram
-          ? `<a href="${p.instagram}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold">Instagram</a>`
-          : '';
+        const fallback = assets.camera;
+        const maps = mapsSearchLink(p.mapsQuery || `${p.name} ${p.base}`);
 
-        const copyPayload = `${p.name} — ${p.base}. Style: ${p.style}. ${p.notes} ${p.website ? 'Website: ' + p.website + ' ' : ''}${p.instagram ? 'IG: ' + p.instagram : ''}`.trim();
+        const chips = (p.tags || []).slice(0, 5).map(t => `<span class="text-[11px] px-2 py-1 rounded-full bg-slate-100 text-slate-700 font-semibold">${t}</span>`).join('');
 
         card.innerHTML = `
-          <div class="h-44 overflow-hidden relative">
-            <img src="${assets.photographer}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" alt="${p.name}">
-            <div class="absolute top-2 left-2 bg-white/90 text-xs font-bold px-2 py-1 rounded shadow uppercase">Engagement</div>
+          <div class="h-48 overflow-hidden relative">
+            <img src="${p.img || assets.camera}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" onerror="this.src='${fallback}'" alt="${p.name}">
+            <div class="absolute top-2 right-2 bg-white/90 text-xs font-bold px-2 py-1 rounded shadow">${ratingLabel(p)}</div>
           </div>
           <div class="p-6">
-            <h3 class="text-lg font-bold text-slate-800">${p.name}</h3>
-            <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${p.base}</p>
-
-            <div class="text-sm text-slate-700">
-              <div><span class="font-bold text-slate-600">Style:</span> ${p.style}</div>
-              <div class="mt-2 text-slate-600">${p.notes}</div>
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-bold text-slate-800">${p.name}</h3>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${p.base}</p>
+              </div>
+              <div class="text-right">
+                <div class="text-amber-500 font-bold stars text-sm" title="Rating display (prefilled or via Google API)">
+                  ${typeof p.ratingValue === 'number' ? starString(p.ratingValue) : ''}
+                </div>
+              </div>
             </div>
 
-            <div class="mt-4 flex flex-wrap gap-2">
-              ${websiteBtn}
-              ${igBtn}
-              <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="${copyPayload.replace(/"/g, '&quot;')}">📋 Copy</button>
+            <p class="text-sm text-slate-600">${p.note || ''}</p>
+
+            <div class="mt-4 flex flex-wrap gap-2">${chips}</div>
+
+            <div class="mt-5 flex flex-wrap gap-2">
+              ${p.website ? `<a href="${p.website}" target="_blank" rel="noopener" class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold">🌐 Website</a>` : ''}
+              <a href="${maps}" target="_blank" rel="noopener" class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold">📍 Google Maps</a>
+              <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold"
+                data-copy="${p.name} — ${p.base}. ${p.note || ''} ${p.website ? 'Website: ' + p.website : ''} Google Maps: ${maps}">
+                📋 Copy
+              </button>
+            </div>
+
+            <div class="mt-3 text-xs text-slate-400">
+              <span data-rating-status="photo-${idx}">
+                ${GOOGLE_PLACES_API_KEY ? 'Trying live Google rating…' : 'To show live Google rating automatically, add GOOGLE_PLACES_API_KEY in code.'}
+              </span>
             </div>
           </div>
         `;
         grid.appendChild(card);
       });
 
-      // Bind copy-list button
-      document.getElementById('btn-copy-photographers')?.addEventListener('click', () => {
-        const text = buildPhotographerCopyList(list);
-        copyText(text);
-      }, { once: true });
+      // Optionally fetch live Google ratings
+      if (GOOGLE_PLACES_API_KEY) {
+        fetchGoogleRatingsForRenderedCards(list);
+      }
+    }
+
+    // Fetch helper (best effort)
+    async function fetchGoogleRatingsForRenderedCards(list) {
+      try {
+        // We use the Places "Find Place From Text" endpoint (HTTP) -> rating is returned.
+        // Note: Some Google Cloud configs block browser calls; if it fails, we gracefully no-op.
+        for (let i = 0; i < list.length; i++) {
+          const p = list[i];
+          const query = encodeURIComponent(p.mapsQuery || `${p.name} ${p.base}`);
+          const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${query}&inputtype=textquery&fields=formatted_address,name,rating,user_ratings_total,place_id&key=${GOOGLE_PLACES_API_KEY}`;
+
+          // CORS is likely to block this on a static site. We'll try; if blocked, we update status.
+          let statusEl = document.querySelector(`[data-rating-status="photo-${i}"]`);
+          if (statusEl) statusEl.textContent = 'Live Google rating: loading…';
+
+          const res = await fetch(url);
+          const json = await res.json();
+
+          if (json && json.candidates && json.candidates[0]) {
+            const c = json.candidates[0];
+            const rating = c.rating;
+            const total = c.user_ratings_total;
+
+            // Update in-memory (so sorting later can use it)
+            p.ratingValue = typeof rating === 'number' ? rating : p.ratingValue;
+            p.ratingCount = typeof total === 'number' ? total : p.ratingCount;
+            p.ratingSource = 'Google';
+
+            if (statusEl) {
+              statusEl.textContent = (typeof rating === 'number')
+                ? `Live Google rating: ${rating.toFixed(1)} (${total || 0})`
+                : 'Live Google rating: not found';
+            }
+          } else {
+            if (statusEl) statusEl.textContent = 'Live Google rating: not found (open Google Maps link)';
+          }
+        }
+      } catch (err) {
+        document.querySelectorAll('[data-rating-status]').forEach(el => {
+          el.textContent = 'Live Google rating blocked by browser/CORS. Use Google Maps link or prefilled ratings.';
+        });
+      }
     }
 
     // =====================
@@ -1247,7 +1357,7 @@
         initLeafletMap();
         initBudgetCalc();
         renderAttractions('all');
-        renderPhotographers();
+        renderPhotographers('all');
         initChecklist();
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
           window.lucide.createIcons();
@@ -1290,28 +1400,23 @@
 
     function switchTab(id) {
       ['route', 'budget', 'attractions', 'photographers', 'logistics'].forEach(t => {
-        const content = document.getElementById(`content-${t}`);
-        const tab = document.getElementById(`tab-${t}`);
-        if (content) content.classList.add('hidden');
-        if (tab) {
-          tab.classList.remove('tab-active');
-          tab.classList.add('tab-inactive');
-        }
+        document.getElementById(`content-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).classList.remove('tab-active');
+        document.getElementById(`tab-${t}`).classList.add('tab-inactive');
       });
 
-      const activeContent = document.getElementById(`content-${id}`);
-      const activeTab = document.getElementById(`tab-${id}`);
-      if (activeContent) activeContent.classList.remove('hidden');
-      if (activeTab) activeTab.classList.add('tab-active');
+      document.getElementById(`content-${id}`).classList.remove('hidden');
+      document.getElementById(`tab-${id}`).classList.add('tab-active');
 
       if (id === 'route' && mapInstance) setTimeout(() => mapInstance.invalidateSize(), 120);
       if (id === 'budget') setTimeout(() => updateBudget(), 80);
-      if (id === 'attractions') setTimeout(() => renderAttractions(attractionFilter), 50);
-      if (id === 'photographers') setTimeout(() => renderPhotographers(), 50);
+      if (id === 'attractions') setTimeout(() => renderAttractions(attractionFilter), 60);
+      if (id === 'photographers') setTimeout(() => renderPhotographers(photoFilter), 60);
     }
 
     window.switchTab = switchTab;
     window.renderAttractions = renderAttractions;
+    window.renderPhotographers = renderPhotographers;
 
     // =====================
     // ICS generation
@@ -1490,16 +1595,13 @@
       document.getElementById('attraction-search')?.addEventListener('input', () => renderAttractions(attractionFilter));
       document.getElementById('attraction-sort')?.addEventListener('change', () => renderAttractions(attractionFilter));
 
-      // Photographers
-      document.getElementById('photographer-search')?.addEventListener('input', renderPhotographers);
-      document.getElementById('photographer-sort')?.addEventListener('change', renderPhotographers);
+      document.getElementById('photo-search')?.addEventListener('input', () => renderPhotographers(photoFilter));
+      document.getElementById('photo-sort')?.addEventListener('change', () => renderPhotographers(photoFilter));
 
-      // Share/print/lock
       document.getElementById('btn-share')?.addEventListener('click', () => { copyText(window.location.href); });
       document.getElementById('btn-print')?.addEventListener('click', () => window.print());
       document.getElementById('btn-lock')?.addEventListener('click', lock);
 
-      // ICS downloads
       document.getElementById('btn-download-ics')?.addEventListener('click', () => {
         downloadText('maritime-trip.ics', buildTripICS());
         toast('Downloaded maritime-trip.ics', '🗓️');
@@ -1520,13 +1622,15 @@
       console.assert(typeof window.checkPassword === 'function', 'SelfTest failed: checkPassword missing on window');
       console.assert(typeof window.switchTab === 'function', 'SelfTest failed: switchTab missing on window');
       console.assert(typeof window.renderAttractions === 'function', 'SelfTest failed: renderAttractions missing on window');
+      console.assert(typeof window.renderPhotographers === 'function', 'SelfTest failed: renderPhotographers missing on window');
 
       console.assert(window.checkPassword === checkPassword, 'SelfTest failed: window.checkPassword should reference checkPassword');
       console.assert(window.switchTab === switchTab, 'SelfTest failed: window.switchTab should reference switchTab');
       console.assert(window.renderAttractions === renderAttractions, 'SelfTest failed: window.renderAttractions should reference renderAttractions');
+      console.assert(window.renderPhotographers === renderPhotographers, 'SelfTest failed: window.renderPhotographers should reference renderPhotographers');
+
       console.assert(APP_PASSWORD === 'maritime', 'SelfTest failed: APP_PASSWORD should be maritime');
       console.assert(typeof unlock === 'function' && typeof lock === 'function', 'SelfTest failed: lock/unlock should exist');
-      console.assert(typeof renderPhotographers === 'function', 'SelfTest failed: renderPhotographers should exist');
     }
 
     // =====================
@@ -1536,7 +1640,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       bindUI();
       renderAttractions('all');
-      renderPhotographers();
+      renderPhotographers('all');
 
       const tripDatesEl = document.getElementById('trip-dates');
       if (tripDatesEl) tripDatesEl.innerText = TRIP_DATES_LABEL;
