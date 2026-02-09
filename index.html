@@ -100,7 +100,7 @@
         <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">🦅 Wildlife</button>
         <button onclick="switchTab('photographers')" id="tab-photographers" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">📸 Photo</button>
         <button onclick="switchTab('wishlist')" id="tab-wishlist" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">✨ Wishlist</button>
-        <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">📋 Logistics <span class="bg-red-500 w-2 h-2 rounded-full animate-pulse"></span></button>
+        <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">📋 Logistics</button>
         
         <div class="ml-auto flex items-center gap-2 pl-4">
             <button onclick="window.print()" class="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold">🖨️ Print</button>
@@ -158,12 +158,13 @@
             <div class="space-y-6">
                <div class="space-y-2 text-sm">
                  <div class="flex justify-between bg-green-50 p-2 rounded border border-green-200"><span class="font-bold text-green-800">Cabin (Fixed)</span><span>$116</span></div>
-                 <div class="flex justify-between bg-green-50 p-2 rounded border border-green-200"><span class="font-bold text-green-800">Camping (2 Nts)</span><span>~$100</span></div>
+                 <div class="flex justify-between bg-green-50 p-2 rounded border border-green-200"><span class="font-bold text-green-800">Camping (Fixed)</span><span>~$100</span></div>
                  <div class="flex justify-between bg-blue-50 p-2 rounded border border-blue-200"><span class="font-bold text-blue-800">Whales (2 Tix)</span><span>~$200</span></div>
                </div>
                <div>
                  <label class="text-xs font-bold text-slate-500 uppercase">Avg Cost Remaining Nights (4)</label>
                  <div class="flex items-center gap-2"><input type="range" id="input-accom" min="120" max="400" step="10" value="180" class="flex-1 accent-pink-600"><span id="val-accom" class="font-bold w-12 text-right">180</span></div>
+                 <p class="text-[10px] text-slate-400 mt-1">For Charlottetown, Alma, Riv-du-Loup hotels</p>
                </div>
                <div>
                  <label class="text-xs font-bold text-slate-500 uppercase">Food / Person / Day ($)</label>
@@ -214,15 +215,31 @@
                  <button onclick="localStorage.removeItem('maritime_wishlist'); initWishlist();" class="text-sm text-slate-500 hover:text-red-500">Reset</button>
              </div>
              <div class="grid grid-cols-1 gap-3" id="wishlist"></div>
-             <p class="text-xs text-slate-400 mt-4">Selections are saved automatically.</p>
           </div>
       </section>
 
       <!-- TAB: LOGISTICS -->
       <section id="content-logistics" class="hidden space-y-8">
-          <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl shadow-sm mb-8 animate-pulse-red">
-            <h3 class="text-xl font-bold text-red-700">CRITICAL: Stanhope Booking</h3>
-            <p class="text-sm text-red-900 mt-1 font-semibold">Parks Canada Reservations Open: <span class="underline">Feb 9 @ 7:00 AM ET</span>.</p>
+          
+          <!-- Confirmed Reservations -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="bg-white rounded-2xl shadow-md border-l-4 border-green-500 p-6 overflow-hidden">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-lg font-bold text-slate-800">Stanhope Campground</h3>
+                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold uppercase">Confirmed</span>
+                </div>
+                <p class="text-sm text-slate-600 font-mono bg-slate-50 p-2 rounded mb-2">Res #: INPC25-14657733B1</p>
+                <p class="text-xs text-slate-500">Aug 18-20 (2 Nights)</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border-l-4 border-green-500 p-6 overflow-hidden">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-lg font-bold text-slate-800">Trapper's Cabin</h3>
+                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold uppercase">Confirmed</span>
+                </div>
+                <p class="text-sm text-slate-600 mb-2">Aug 15 (1 Night)</p>
+                <p class="text-xs text-amber-600 font-bold">⚠️ Buy groceries in Grand Falls!</p>
+            </div>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -235,10 +252,13 @@
                 </ul>
             </div>
             
-            <div class="bg-white rounded-2xl shadow-lg border border-green-100 p-6">
-                <h3 class="text-lg font-bold flex items-center mb-2"><span class="text-2xl mr-2">✅</span> Trapper's Cabin Booked</h3>
-                <p class="text-sm text-slate-600">Access confirmed for Kia Sportage.</p>
-                <p class="text-sm text-amber-600 mt-2 font-bold">⚠️ Buy groceries in Grand Falls!</p>
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
+                <h3 class="text-lg font-bold flex items-center mb-4">Vehicle Check</h3>
+                <p class="text-sm text-slate-600"><strong>2018 Kia Sportage</strong></p>
+                <ul class="text-xs text-slate-500 mt-2 list-disc pl-4">
+                    <li>High clearance for Trapper's Cabin access road.</li>
+                    <li>Good for Cape Tryon dirt road.</li>
+                </ul>
             </div>
           </div>
       </section>
@@ -255,20 +275,21 @@
           bounds: [[45.4, -75.7], [46.8, -67.6]],
           schedule: [
              { time: "07:00", text: "Depart Ottawa. 417 East." },
-             { time: "12:30", text: "Lunch: Kamouraska (QC). 💎 Hidden Gem." },
-             { time: "16:00", text: "Grand Falls, NB: Grocery Run (IGA)." },
-             { time: "17:30", text: "Check-in: Trapper's Cabin (Booked)." }
+             { time: "12:30", text: "Lunch: Kamouraska (QC). 💎 Hidden Gem village. Visit Boulangerie Niemand." },
+             { time: "16:00", text: "Grand Falls, NB: Grocery Run (IGA). Last chance for supplies!" },
+             { time: "17:30", text: "Check-in: Trapper's Cabin (Booked). 🦉 Listen for Barred Owls." }
           ],
           images: ["https://images.unsplash.com/photo-1520110377263-47cb833c8709?q=80&w=600", "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=600"]
         },
-        { day: 2, date: "Sun, Aug 16", title: "Bridges & Boardwalks", route: "NB → Charlottetown", color: "bg-amber-500",
+        { day: 2, date: "Sun, Aug 16", title: "Bridges & City", route: "NB → Charlottetown", color: "bg-amber-500",
           gmap: "https://www.google.com/maps/dir/Upper+Kintore,+NB/Hartland,+NB/Sackville,+NB/Victoria,+PE/Charlottetown,+PE",
           bounds: [[46.7, -67.6], [46.2, -63.1]],
           schedule: [
-             { time: "10:30", text: "Hartland Covered Bridge. 💎 Photo." },
+             { time: "09:00", text: "Depart Cabin. Drive South." },
+             { time: "10:30", text: "Hartland Covered Bridge. 💎 Photo op." },
              { time: "13:00", text: "Sackville Waterfowl Park. ⭐ Finn Spot." },
-             { time: "16:00", text: "Victoria-by-the-Sea. 💎 Chocolates." },
-             { time: "17:30", text: "Check-in: Charlottetown B&B." }
+             { time: "16:00", text: "Victoria-by-the-Sea. Chocolates." },
+             { time: "17:30", text: "Check-in: Charlottetown Hotel/B&B (Pet Friendly)." }
           ],
           images: ["https://images.unsplash.com/photo-1544636906-89689405d4b9?q=80&w=600", "https://images.unsplash.com/photo-1555685812-4b943f3e99a0?q=80&w=600"]
         },
@@ -276,9 +297,10 @@
           gmap: "https://www.google.com/maps/dir/Charlottetown,+PE/Point+Prim+Lighthouse,+PE/Victoria+Park,+Charlottetown",
           bounds: [[46.0, -63.2], [46.3, -63.0]],
           schedule: [
-             { time: "10:30", text: "Point Prim Lighthouse. 🦭 Seals." },
+             { time: "09:00", text: "Coffee in Charlottetown." },
+             { time: "10:30", text: "Point Prim Lighthouse. 🦭 Grey Seals." },
              { time: "13:00", text: "Visit Udit's Aunt." },
-             { time: "18:00", text: "Victoria Park. Walk Finn on boardwalk." }
+             { time: "18:00", text: "Victoria Park Boardwalk walk with Finn." }
           ],
           images: ["https://images.unsplash.com/photo-1563200767-17b070921869?q=80&w=600", "https://images.unsplash.com/photo-1628795521798-8c10743b355d?q=80&w=600"]
         },
@@ -286,9 +308,10 @@
           gmap: "https://www.google.com/maps/dir/Charlottetown,+PE/Brackley+Beach,+PE/Stanhope+Campground,+PE",
           bounds: [[46.2, -63.2], [46.4, -63.0]],
           schedule: [
-             { time: "11:30", text: "Brackley Beach. ⭐ Wide sands." },
-             { time: "15:00", text: "Check-in: Stanhope Campground." },
-             { time: "18:00", text: "Campfire & Sunset. 🦊 Foxes." }
+             { time: "10:00", text: "Depart City. Grocery shop for camping." },
+             { time: "11:30", text: "Brackley Beach. ⭐ Wide sands for Finn." },
+             { time: "15:00", text: "Check-in: Stanhope Campground (Night 1)." },
+             { time: "18:00", text: "Campfire & Sunset. 🦊 Watch for Foxes." }
           ],
           images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600", "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?q=80&w=600"]
         },
@@ -296,10 +319,10 @@
           gmap: "https://www.google.com/maps/dir/Stanhope+Campground,+PE/Greenwich,+PE/French+River,+PE/Cape+Tryon,+PE/Stanhope,+PE",
           bounds: [[46.3, -63.5], [46.5, -62.6]],
           schedule: [
-             { time: "09:00", text: "Greenwich Dunes. 🦅 Plovers." },
+             { time: "09:00", text: "Greenwich Dunes. 🦅 Piping Plovers." },
              { time: "13:00", text: "French River. 💎 Photo Op." },
-             { time: "14:00", text: "Cape Tryon. 💎 Red Cliffs." },
-             { time: "19:00", text: "Campground Night 2." }
+             { time: "14:00", text: "Cape Tryon Lighthouse. 💎 Red Cliffs." },
+             { time: "19:00", text: "Stanhope Campground (Night 2)." }
           ],
           images: ["https://images.unsplash.com/photo-1552353617-3913788a1834?q=80&w=600", "https://images.unsplash.com/photo-1621882414734-7221e106950e?q=80&w=600"]
         },
@@ -307,10 +330,10 @@
           gmap: "https://www.google.com/maps/dir/Stanhope,+PE/Cape+Jourimain,+NB/Hopewell+Rocks,+NB/Mary's+Point,+NB/Alma,+NB",
           bounds: [[45.5, -65.0], [46.4, -63.0]],
           schedule: [
-             { time: "09:00", text: "Depart PEI (Bridge)." },
-             { time: "12:00", text: "Hopewell Rocks. 🦅 Falcons." },
+             { time: "09:00", text: "Pack up camp. Bridge ($50.25 Toll)." },
+             { time: "12:00", text: "Hopewell Rocks. 🦅 Peregrine Falcons." },
              { time: "14:00", text: "Mary's Point. 💎 Sandpipers." },
-             { time: "17:00", text: "Arrive Alma. Sticky Buns." }
+             { time: "17:00", text: "Arrive Alma (Fundy Park). Stay motel/cottage." }
           ],
           images: ["https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=600", "https://images.unsplash.com/photo-1452570053594-1b985d6ea890?q=80&w=600"]
         },
@@ -318,10 +341,10 @@
           gmap: "https://www.google.com/maps/dir/Alma,+NB/St+Martins,+NB/Rivière-du-Loup,+QC",
           bounds: [[45.3, -66.0], [47.8, -69.5]],
           schedule: [
-             { time: "09:00", text: "Dickson Falls Hike." },
-             { time: "12:00", text: "St. Martins Sea Caves. 💎" },
-             { time: "16:00", text: "RDL: Parc de la Pointe." },
-             { time: "19:00", text: "Sunset dinner." }
+             { time: "09:00", text: "Morning Hike: Dickson Falls." },
+             { time: "12:00", text: "St. Martins Sea Caves. 💎 Coastal drive." },
+             { time: "16:00", text: "RDL: Parc de la Pointe. Finn Walk." },
+             { time: "19:00", text: "Sunset dinner. Check-in Pet Friendly Hotel." }
           ],
           images: ["https://images.unsplash.com/photo-1518126084048-8df098492021?q=80&w=600", "https://images.unsplash.com/photo-1623942080373-c44402621b19?q=80&w=600"]
         },
@@ -329,7 +352,7 @@
           gmap: "https://www.google.com/maps/dir/Rivière-du-Loup,+QC/Ottawa,+ON",
           bounds: [[45.4, -75.7], [47.8, -69.5]],
           schedule: [
-             { time: "09:30", text: "AML Whale Cruise. 🐋" },
+             { time: "09:30", text: "AML Whale Cruise. 🐋 Belugas. (Finn in hotel)." },
              { time: "13:00", text: "Lunch & Walk Finn." },
              { time: "14:00", text: "Drive Home (6h)." },
              { time: "20:00", text: "Arrive Ottawa." }
@@ -501,27 +524,13 @@
 
         list.forEach(p => {
             const card = document.createElement('div');
-            card.className = "bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden group hover:-translate-y-1 transition";
-            
-            const ratingLabel = p.rating ? `${p.rating.value} ★` : '—';
-            const countLabel = (p.rating && p.rating.count) ? `(${p.rating.count})` : '';
-
+            card.className = "bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden p-4";
             card.innerHTML = `
-                <div class="h-48 overflow-hidden relative bg-slate-100">
-                    <img src="${p.img}" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" onerror="this.src='https://source.unsplash.com/900x600/?camera,wedding'">
-                    <div class="absolute top-2 right-2 bg-white/90 text-xs font-bold px-2 py-1 rounded shadow">${ratingLabel} ${countLabel}</div>
+                <div class="h-40 rounded-lg overflow-hidden mb-3 bg-slate-100">
+                    <img src="${p.img}" class="w-full h-full object-cover">
                 </div>
-                <div class="p-5">
-                    <h3 class="text-lg font-bold text-slate-800">${p.name}</h3>
-                    <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${p.area}</p>
-                    <p class="text-sm text-slate-600 mb-4">${p.style}</p>
-                    
-                    <div class="flex gap-2">
-                         <a href="${p.website}" target="_blank" class="flex-1 bg-slate-800 text-white text-center text-sm font-bold py-2 rounded-lg hover:bg-slate-900 transition">Website</a>
-                         <a href="${p.contact}" target="_blank" class="flex-1 border border-slate-200 text-slate-700 text-center text-sm font-bold py-2 rounded-lg hover:bg-slate-50 transition">Contact</a>
-                    </div>
-                    <div class="mt-2 text-[10px] text-slate-400 text-center">Source: ${p.rating.source}</div>
-                </div>
+                <h3 class="font-bold text-slate-800">${p.name}</h3>
+                <p class="text-xs text-slate-500">${p.style}</p>
             `;
             grid.appendChild(card);
         });
