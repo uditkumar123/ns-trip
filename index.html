@@ -16,26 +16,20 @@
 
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-    
     /* UI States */
     .tab-active { border-bottom: 3px solid #db2777; color: #be185d; font-weight: 700; background-color: rgba(219, 39, 119, 0.05); }
     .tab-inactive { color: #64748b; font-weight: 500; }
     .tab-inactive:hover { color: #334155; background-color: #f1f5f9; }
-    
-    /* Map */
     #map { width: 100%; height: 500px; border-radius: 0.75rem; z-index: 1; }
-    
-    /* Hero */
+
+    /* Visuals */
     .hero-bg {
       background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)),
       url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1920&auto=format&fit=crop');
       background-size: cover; background-position: center 40%;
     }
-    
-    /* Utils */
     .img-fallback { background: #fce7f3; display: flex; align-items: center; justify-content: center; color: #be185d; font-size: 0.75rem; font-weight: bold; }
-    #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; }
-
+    
     /* Animations */
     @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } 70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); } }
     .animate-pulse-red { animation: pulse-red 2s infinite; }
@@ -44,7 +38,7 @@
     details[open] summary ~ * { animation: slideDown 0.25s ease-in-out; }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Login Overlay */
+    /* Overlay */
     #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; }
   </style>
 </head>
@@ -55,43 +49,23 @@
     <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-4 border-pink-500/20">
       <div class="text-5xl mb-6">🔒</div>
       <h2 class="text-2xl font-bold text-slate-800 mb-2">Maritime Planner</h2>
-      <p class="text-sm text-slate-500 mb-6">Enter password to view itinerary.</p>
-      <input type="password" id="password-input" placeholder="Enter password" class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-pink-500 outline-none transition text-center text-lg">
-      <button onclick="checkPassword()" class="w-full bg-pink-700 text-white font-bold py-3 rounded-lg hover:bg-pink-800 transition shadow-lg transform active:scale-95">Unlock Plan</button>
+      <input type="password" id="password-input" placeholder="Enter password" class="w-full p-3 border border-slate-300 rounded-lg mb-4 text-center">
+      <button onclick="checkPassword()" class="w-full bg-pink-700 text-white font-bold py-3 rounded-lg hover:bg-pink-800 transition">Unlock Plan</button>
       <p id="error-msg" class="text-red-500 text-xs mt-3 hidden font-bold">Incorrect password.</p>
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="hidden">
-    <div class="bg-slate-900 text-white text-sm px-4 py-3 rounded-xl shadow-xl border border-white/10 flex items-center gap-2">
-      <span id="toast-icon">✅</span>
-      <span id="toast-text">Copied!</span>
-    </div>
-  </div>
-
-  <!-- MAIN APP CONTAINER -->
+  <!-- APP CONTAINER -->
   <div id="app-container" class="hidden max-w-7xl mx-auto min-h-screen flex flex-col bg-slate-50 shadow-2xl my-0 md:my-8 rounded-2xl overflow-hidden">
     
-    <!-- Hero Header -->
+    <!-- Hero -->
     <header class="hero-bg text-white p-8 md:p-12 shadow-lg">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The Nature Loop</h1>
           <p class="text-pink-100 text-xl font-light">Ottawa → PEI Wildlife → Fundy → RDL Whales → Ottawa</p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <span class="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full text-sm">
-              <span class="text-lg">📅</span>
-              <span id="trip-dates" class="font-semibold">Aug 15–22</span>
-            </span>
-            <button onclick="downloadTripICS()" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/15 px-3 py-1.5 rounded-full text-sm font-semibold transition" title="Download Calendar">
-               🗓️ Download .ics
-            </button>
-          </div>
         </div>
-
         <div class="bg-white/10 backdrop-blur-md px-6 py-4 rounded-xl border border-white/20">
-          <span class="block text-xs text-pink-200 uppercase tracking-widest font-bold mb-2">Trip Profile</span>
           <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
             <div class="flex items-center"><span class="text-xl mr-2">🐶</span><span class="font-bold">With Finn</span></div>
             <div class="flex items-center"><span class="text-xl mr-2">🦅</span><span class="font-bold">Nature Focus</span></div>
@@ -104,18 +78,13 @@
 
     <!-- Navigation -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm overflow-x-auto">
-      <div class="flex px-4 md:px-8 min-w-max items-center">
+      <div class="flex px-4 md:px-8 min-w-max">
         <button onclick="switchTab('route')" id="tab-route" class="tab-active py-5 px-6 transition-all flex items-center gap-2">🗺️ Itinerary</button>
         <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">💰 Budget</button>
         <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">🦅 Wildlife</button>
         <button onclick="switchTab('photographers')" id="tab-photographers" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">📸 Photo</button>
         <button onclick="switchTab('wishlist')" id="tab-wishlist" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">✨ Wishlist</button>
         <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">📋 Logistics <span class="bg-red-500 w-2 h-2 rounded-full animate-pulse"></span></button>
-        
-        <div class="ml-auto flex items-center gap-2 pl-4">
-            <button onclick="window.print()" class="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold">🖨️ Print</button>
-            <button onclick="location.reload()" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold" title="Lock page">🔒 Lock</button>
-        </div>
       </div>
     </nav>
 
@@ -124,13 +93,11 @@
       <!-- TAB: ROUTE -->
       <section id="content-route" class="space-y-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Map -->
           <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <div id="map"></div>
-            <div class="mt-4 text-xs text-slate-500 flex justify-between">
-                <span>Map shows full scenic loop: Ottawa → NB → PEI → Fundy → QC → Ottawa.</span>
-                <button onclick="initLeafletMap()" class="text-blue-600 hover:underline">Refresh Map</button>
-            </div>
           </div>
+          <!-- Trip Stats -->
           <aside class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center space-y-6">
             <div>
                <div class="text-xs text-slate-400 uppercase font-bold tracking-widest mb-1">Total Distance</div>
@@ -218,29 +185,22 @@
       <section id="content-wishlist" class="hidden space-y-8">
           <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
              <div class="flex justify-between items-center mb-4">
-                 <h2 class="text-2xl font-bold text-slate-800">Trip Wishlist</h2>
-                 <div class="flex gap-2">
-                    <button onclick="copyWishlist()" class="text-xs bg-slate-800 text-white px-3 py-1 rounded-full">Copy</button>
-                    <button onclick="localStorage.removeItem('maritime_wishlist'); initWishlist();" class="text-xs text-slate-500 hover:text-red-500">Reset</button>
-                 </div>
+                 <h2 class="text-2xl font-bold text-slate-800">Complete Trip Wishlist</h2>
+                 <button onclick="localStorage.removeItem('maritime_wishlist'); initWishlist();" class="text-sm text-slate-500 hover:text-red-500">Reset</button>
              </div>
-             <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="wishlist"></div>
+             <div class="grid grid-cols-1 gap-3" id="wishlist"></div>
+             <p class="text-xs text-slate-400 mt-4">Selections are saved automatically.</p>
           </div>
       </section>
 
       <!-- TAB: LOGISTICS -->
       <section id="content-logistics" class="hidden space-y-8">
           <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl shadow-sm mb-8 animate-pulse-red">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h3 class="text-xl font-bold text-red-700">CRITICAL: Stanhope Booking</h3>
-                    <p class="text-sm text-red-900 mt-1 font-semibold">Parks Canada Reservations Open: <span class="underline">Feb 9 @ 7:00 AM ET</span>.</p>
-                </div>
-                <button onclick="downloadReminderICS()" class="bg-red-600 text-white text-xs px-3 py-2 rounded-lg font-bold hover:bg-red-700">Add to Calendar</button>
-            </div>
+            <h3 class="text-xl font-bold text-red-700">CRITICAL: Stanhope Booking</h3>
+            <p class="text-sm text-red-900 mt-1 font-semibold">Parks Canada Reservations Open: <span class="underline">Feb 9 @ 7:00 AM ET</span>.</p>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-blue-50 border border-blue-200 rounded-2xl shadow-sm p-6">
                 <h3 class="text-xl font-bold text-blue-900 mb-4">🐶 Finn's Plan (RDL)</h3>
                 <ul class="text-sm text-slate-600 space-y-2 list-disc pl-4">
@@ -249,19 +209,12 @@
                     <li><strong>Saturday PM:</strong> Lunch walk before drive.</li>
                 </ul>
             </div>
+            
             <div class="bg-white rounded-2xl shadow-lg border border-green-100 p-6">
                 <h3 class="text-lg font-bold flex items-center mb-2"><span class="text-2xl mr-2">✅</span> Trapper's Cabin Booked</h3>
                 <p class="text-sm text-slate-600">Access confirmed for Kia Sportage.</p>
                 <p class="text-sm text-amber-600 mt-2 font-bold">⚠️ Buy groceries in Grand Falls!</p>
             </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-slate-800">Packing Checklist</h3>
-                <button onclick="localStorage.removeItem('maritime_checklist'); initChecklist();" class="text-xs text-slate-500 hover:text-red-500">Reset</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="checklist"></div>
           </div>
       </section>
 
@@ -412,37 +365,26 @@
     ];
 
     const WISHLIST_ITEMS = [
-      { id: 'wish-engage', label: 'Engagement photo shoot', emoji: '📸' },
-      { id: 'wish-camping', label: 'Camping at Stanhope', emoji: '⛺' },
+      { id: 'wish-trapper', label: 'Trapper\'s Cabin (Night 1)', emoji: '🏠' },
       { id: 'wish-bridge', label: 'Confederation Bridge', emoji: '🌉' },
-      { id: 'wish-whales', label: 'Beluga Whales', emoji: '🐋' },
-      { id: 'wish-trapper', label: 'Trapper\'s Cabin', emoji: '🏠' },
-      { id: 'wish-bison', label: 'See Bison', emoji: '🦬' },
-      { id: 'wish-cows', label: 'Cows Ice Cream', emoji: '🍦' }
-    ];
-    
-    const CHECKLIST_ITEMS = [
-      { id: 'pc-account', label: 'Create Parks Canada account (Stanhope booking)' },
-      { id: 'dog-crate', label: 'Crate setup confirmed for hotel (Finn)' },
-      { id: 'snacks', label: 'Road snacks + water stocked' },
-      { id: 'binoculars', label: 'Binoculars / camera batteries charged' },
-      { id: 'tide-check', label: 'Check Hopewell Rocks tide window' },
-      { id: 'hotel-dog', label: 'Confirm dog policy: left alone / fees' },
-      { id: 'grocery', label: 'Grand Falls grocery list ready' },
-      { id: 'ics', label: 'Calendar imported / events reviewed' },
-      { id: 'paddleboard', label: "Maddie’s paddle board + pump + leash" },
-      { id: 'cameras', label: 'Cameras + lenses + chargers + SD cards' },
-      { id: 'drone', label: 'Drone + controller + batteries (check local rules)' },
-      { id: 'finn-bed', label: 'Finn bed for back seat' },
-      { id: 'finn-cage', label: 'Finn crate for trunk' },
-      { id: 'tent', label: 'Tent + poles + stakes + mallet' },
-      { id: 'bbq', label: 'BBQ + lighter + propane' },
-      { id: 'kitchenware', label: 'Camping kitchenware (pan, kettle, knife, cutting board)' },
-      { id: 'cooler', label: 'Cooler + ice packs' },
-      { id: 'camp-chairs', label: 'Camp chairs + small table' },
-      { id: 'headlamps', label: 'Headlamps / flashlights' },
-      { id: 'roof-rack', label: 'Install roof rack on car' },
-      { id: 'tie-downs', label: 'Straps / tie-downs for paddle board & gear' }
+      { id: 'wish-sackville', label: 'Sackville Waterfowl Park (Finn Walk)', emoji: '🦆' },
+      { id: 'wish-camping', label: 'Camping at Stanhope (2 Nights)', emoji: '⛺' },
+      { id: 'wish-aunt', label: 'Visit Udit\'s Aunt', emoji: '❤️' },
+      { id: 'wish-brackley', label: 'Brackley Beach', emoji: '🏖️' },
+      { id: 'wish-plover', label: 'See Piping Plovers (Greenwich)', emoji: '🐦' },
+      { id: 'wish-cows', label: 'Cows Ice Cream', emoji: '🍦' },
+      { id: 'wish-basin', label: 'Basin Head Jump', emoji: '🌊' },
+      { id: 'wish-bison', label: 'See Bison (Buffaloland)', emoji: '🦬' },
+      { id: 'wish-french', label: 'French River Photo Op', emoji: '📸' },
+      { id: 'wish-tryon', label: 'Cape Tryon Cliffs', emoji: '⛰️' },
+      { id: 'wish-hopewell', label: 'Hopewell Rocks (Ocean Floor)', emoji: '🪨' },
+      { id: 'wish-marys', label: 'Mary\'s Point Sandpipers', emoji: '🦅' },
+      { id: 'wish-fundy', label: 'Fundy National Park Hike', emoji: '🌲' },
+      { id: 'wish-rdl', label: 'Sunset in Rivière-du-Loup', emoji: '🌅' },
+      { id: 'wish-whales', label: 'Beluga Whale Watching', emoji: '🐋' },
+      { id: 'wish-engage', label: 'Engagement Photo Shoot', emoji: '💍' },
+      { id: 'wish-maddie1', label: 'Maddie\'s Mystery Stop 1', emoji: '📍' },
+      { id: 'wish-maddie2', label: 'Maddie\'s Mystery Stop 2', emoji: '📍' }
     ];
 
     // --- RENDERERS ---
@@ -570,47 +512,6 @@
         saved[id] = !saved[id];
         localStorage.setItem('maritime_wishlist', JSON.stringify(saved));
     };
-    
-    function copyWishlist() {
-      const saved = JSON.parse(localStorage.getItem('maritime_wishlist') || '{}');
-      const done = [];
-      const todo = [];
-      WISHLIST_ITEMS.forEach(i => {
-        (saved[i.id] ? done : todo).push(`${i.emoji} ${i.label}`);
-      });
-      const text = `PEI Wishlist\n\nTo-do:\n- ${todo.join('\n- ')}\n\nDone:\n- ${done.length ? done.join('\n- ') : '(none yet)'}`;
-      navigator.clipboard.writeText(text);
-      document.getElementById('toast').classList.remove('hidden');
-      setTimeout(() => document.getElementById('toast').classList.add('hidden'), 2000);
-    }
-    
-    // Checklist Logic
-    function initChecklist() {
-      const host = document.getElementById('checklist');
-      if (!host) return;
-      const saved = JSON.parse(localStorage.getItem('maritime_checklist') || '{}');
-      host.innerHTML = '';
-      CHECKLIST_ITEMS.forEach(item => {
-        const checked = !!saved[item.id];
-        const card = document.createElement('label');
-        card.className = 'flex items-start gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer hover:bg-slate-100 transition';
-        card.innerHTML = `
-          <input type="checkbox" class="mt-1 h-5 w-5 accent-pink-600" ${checked ? 'checked' : ''} data-check="${item.id}" />
-          <div>
-            <div class="font-semibold text-slate-800">${item.label}</div>
-          </div>
-        `;
-        host.appendChild(card);
-      });
-      host.addEventListener('change', (e) => {
-        const t = e.target;
-        if (!(t instanceof HTMLInputElement)) return;
-        const key = t.getAttribute('data-check');
-        const next = JSON.parse(localStorage.getItem('maritime_checklist') || '{}');
-        next[key] = t.checked;
-        localStorage.setItem('maritime_checklist', JSON.stringify(next));
-      });
-    }
 
     // --- MAP ---
     let map;
@@ -629,36 +530,6 @@
 
         // Markers
         Object.entries(pts).forEach(([k,v]) => L.marker(v).addTo(map).bindPopup(k.toUpperCase()));
-    }
-    
-    // ICS DOWNLOAD
-    function formatICSDateUTC(date) {
-      const pad = (n) => String(n).padStart(2, '0');
-      return date.getUTCFullYear() + pad(date.getUTCMonth() + 1) + pad(date.getUTCDate()) + 'T' + pad(date.getUTCHours()) + pad(date.getUTCMinutes()) + '00Z';
-    }
-    function downloadTripICS() {
-      const now = new Date();
-      let ics = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Maritime Explorer//EN\n';
-      itineraryData.forEach((day, i) => {
-         // simplified event creation
-         ics += 'BEGIN:VEVENT\nDTSTART:202608' + (15+i) + 'T090000\nSUMMARY:' + day.title + '\nEND:VEVENT\n';
-      });
-      ics += 'END:VCALENDAR';
-      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'trip.ics';
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    }
-    
-    function downloadReminderICS() {
-       // Feb 9 7am
-       const ics = 'BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:20260209T070000\nSUMMARY:Book Stanhope Camping\nEND:VEVENT\nEND:VCALENDAR';
-       const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-       const a = document.createElement('a');
-       a.href = URL.createObjectURL(blob);
-       a.download = 'reminder.ics';
-       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
 
     // --- BUDGET ---
@@ -709,7 +580,6 @@
                 renderAttractions('all'); 
                 renderPhotographers();
                 initWishlist(); 
-                initChecklist();
             }, 100);
         } else {
             document.getElementById('error-msg').classList.remove('hidden');
@@ -721,7 +591,7 @@
         document.querySelectorAll('section[id^="content-"]').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('button[id^="tab-"]').forEach(el => el.className = 'tab-inactive py-5 px-6 transition-all flex items-center gap-2');
         document.getElementById(`content-${id}`).classList.remove('hidden');
-        document.getElementById(`tab-${id}`).className = 'tab-active py-5 px-6 transition-all flex items-center gap-2';
+        document.getElementById(`tab-${id}`).classList.add('tab-active py-5 px-6 transition-all flex items-center gap-2');
         if(id === 'route') setTimeout(() => map.invalidateSize(), 100);
     }
   </script>
