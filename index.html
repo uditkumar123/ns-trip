@@ -6,1649 +6,453 @@
   <meta name="referrer" content="no-referrer" />
   <title>Maritime Explorer: Nature & Finn Edition</title>
 
-  <!-- Tailwind + Chart.js + Leaflet + Lucide -->
+  <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    /* UI States */
     .tab-active { border-bottom: 3px solid #db2777; color: #be185d; font-weight: 700; background-color: rgba(219, 39, 119, 0.05); }
     .tab-inactive { color: #64748b; font-weight: 500; }
     .tab-inactive:hover { color: #334155; background-color: #f1f5f9; }
     #map { width: 100%; height: 400px; border-radius: 0.75rem; z-index: 1; }
 
-    /* Hero */
+    /* Visuals */
     .hero-bg {
       background-image: linear-gradient(rgba(190, 24, 93, 0.85), rgba(88, 28, 135, 0.8)),
-        url('https://source.unsplash.com/1920x900/?prince-edward-island,beach,dunes,dog');
-      background-size: cover;
-      background-position: center 40%;
+      url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1920&auto=format&fit=crop');
+      background-size: cover; background-position: center 40%;
     }
-
-    /* Login overlay */
-    #login-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.98);
-      z-index: 9999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    @keyframes pulse-red {
-      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
-    }
+    .img-fallback { background: #fce7f3; display: flex; align-items: center; justify-content: center; color: #be185d; font-size: 0.75rem; font-weight: bold; }
+    
+    /* Animations */
+    @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } 70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); } }
     .animate-pulse-red { animation: pulse-red 2s infinite; }
-
     details > summary { list-style: none; cursor: pointer; }
     details > summary::-webkit-details-marker { display: none; }
     details[open] summary ~ * { animation: slideDown 0.25s ease-in-out; }
-    @keyframes slideDown { 0% { opacity: 0; transform: translateY(-8px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Toast */
-    #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 10000; }
-
-    /* Small helpers */
-    .kbd { border: 1px solid #cbd5e1; border-bottom-width: 2px; padding: 1px 6px; border-radius: 6px; font-size: 12px; background: #fff; }
-
-    /* Small image strip inside day cards */
-    .day-img-strip {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .day-img {
-      height: 140px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid #e2e8f0;
-      background: #f1f5f9;
-    }
-    .day-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    /* Overlay */
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; }
   </style>
-
-  <script>
-    window.checkPassword = window.checkPassword || function () {
-      console.warn('checkPassword not initialized yet. If you see this, a script error occurred before initialization.');
-    };
-  </script>
 </head>
 <body class="text-slate-800">
 
-  <!-- PASSWORD OVERLAY (NOTE: GitHub Pages cannot be truly private; this is just a visual lock) -->
-  <div id="login-overlay" role="dialog" aria-modal="true" aria-label="Unlock itinerary">
+  <!-- PASSWORD OVERLAY -->
+  <div id="login-overlay">
     <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border-4 border-pink-500/20">
       <div class="text-5xl mb-6">🔒</div>
       <h2 class="text-2xl font-bold text-slate-800 mb-2">Maritime Planner</h2>
-      <p class="text-sm text-slate-500 mb-6">Enter password to view itinerary.</p>
-
-      <input
-        type="password"
-        id="password-input"
-        placeholder="Enter password"
-        class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-pink-500 outline-none transition text-center text-lg"
-        autocomplete="current-password"
-      />
-
-      <button
-        onclick="checkPassword()"
-        class="w-full bg-pink-700 text-white font-bold py-3 rounded-lg hover:bg-pink-800 transition shadow-lg transform active:scale-95"
-      >
-        Unlock Plan
-      </button>
-
+      <input type="password" id="password-input" placeholder="Enter password" class="w-full p-3 border border-slate-300 rounded-lg mb-4 text-center">
+      <button onclick="checkPassword()" class="w-full bg-pink-700 text-white font-bold py-3 rounded-lg hover:bg-pink-800 transition">Unlock Plan</button>
       <p id="error-msg" class="text-red-500 text-xs mt-3 hidden font-bold">Incorrect password.</p>
-      <p class="text-[11px] text-slate-400 mt-4">Tip: you can also press <span class="kbd">Enter</span>.</p>
     </div>
   </div>
 
-  <!-- TOAST -->
-  <div id="toast" class="hidden">
-    <div class="bg-slate-900 text-white text-sm px-4 py-3 rounded-xl shadow-xl border border-white/10 flex items-center gap-2">
-      <span id="toast-icon">✅</span>
-      <span id="toast-text">Copied!</span>
-    </div>
-  </div>
-
-  <!-- MAIN APP CONTAINER -->
+  <!-- APP CONTAINER -->
   <div id="app-container" class="hidden max-w-7xl mx-auto min-h-screen flex flex-col bg-slate-50 shadow-2xl my-0 md:my-8 rounded-2xl overflow-hidden">
-
-    <!-- Hero Header -->
+    
+    <!-- Hero -->
     <header class="hero-bg text-white p-8 md:p-12 shadow-lg">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-2">The Nature Loop</h1>
-          <p class="text-pink-100 text-xl font-light">Ottawa → PEI Wildlife → Fundy → Ottawa</p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <span class="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full text-sm">
-              <span class="text-lg">📅</span>
-              <span id="trip-dates" class="font-semibold">Aug 15–22</span>
-            </span>
-            <button
-              id="btn-download-ics"
-              class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/15 px-3 py-1.5 rounded-full text-sm font-semibold transition"
-              title="Download calendar file"
-            >
-              <span class="text-lg">🗓️</span>
-              Download .ics
-            </button>
-            <button
-              id="btn-share"
-              class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/15 px-3 py-1.5 rounded-full text-sm font-semibold transition"
-              title="Copy share link"
-            >
-              <span class="text-lg">🔗</span>
-              Copy link
-            </button>
-          </div>
-
-          <!-- Wishlist teaser -->
-          <div class="mt-6 bg-white/10 border border-white/15 rounded-2xl p-4 max-w-2xl">
-            <div class="text-xs text-pink-100/80 uppercase font-bold tracking-widest mb-2">PEI Wishlist highlights</div>
-            <div class="flex flex-wrap gap-2 text-sm">
-              <span class="bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">📸 Beach engagement shoot w/ Finn</span>
-              <span class="bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">🛻 Drive-in movie</span>
-              <span class="bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">🐦 See a Piping Plover</span>
-              <span class="bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">🍦 Cows Ice Cream</span>
-            </div>
-            <div class="mt-3 text-xs text-pink-100/80">Full list is in the ✨ Wishlist tab.</div>
-          </div>
+          <p class="text-pink-100 text-xl font-light">Ottawa → PEI Wildlife → Fundy → RDL Whales → Ottawa</p>
         </div>
-
         <div class="bg-white/10 backdrop-blur-md px-6 py-4 rounded-xl border border-white/20">
-          <span class="block text-xs text-pink-200 uppercase tracking-widest font-bold mb-2">Trip Profile</span>
-          <div class="grid grid-cols-2 gap-x-6 gap-y-2">
-            <div class="flex items-center"><span class="text-2xl mr-2">🐶</span><span class="font-bold">With Finn</span></div>
-            <div class="flex items-center"><span class="text-2xl mr-2">🦅</span><span class="font-bold">Nature Focus</span></div>
-            <div class="flex items-center"><span class="text-2xl mr-2">🚗</span><span class="font-bold">Road Trip</span></div>
-            <div class="flex items-center"><span class="text-2xl mr-2">🧭</span><span class="font-bold">Non-touristy</span></div>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+            <div class="flex items-center"><span class="text-xl mr-2">🐶</span><span class="font-bold">With Finn</span></div>
+            <div class="flex items-center"><span class="text-xl mr-2">🦅</span><span class="font-bold">Nature Focus</span></div>
+            <div class="flex items-center"><span class="text-xl mr-2">🚙</span><span class="font-bold">Kia Sportage</span></div>
+            <div class="flex items-center"><span class="text-xl mr-2">📅</span><span class="font-bold">Aug 15–22</span></div>
           </div>
         </div>
       </div>
-
-      <!-- Quick Stats Row -->
-      <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="bg-white/10 border border-white/15 rounded-xl p-4">
-          <div class="text-xs text-pink-100/80 uppercase font-bold tracking-widest">Distance</div>
-          <div id="stat-distance" class="text-2xl font-extrabold">~2,850 km</div>
-          <div class="text-xs text-pink-100/80">loop estimate</div>
-        </div>
-        <div class="bg-white/10 border border-white/15 rounded-xl p-4">
-          <div class="text-xs text-pink-100/80 uppercase font-bold tracking-widest">Drive Time</div>
-          <div id="stat-drive" class="text-2xl font-extrabold">~31 h</div>
-          <div class="text-xs text-pink-100/80">total</div>
-        </div>
-        <div class="bg-white/10 border border-white/15 rounded-xl p-4">
-          <div class="text-xs text-pink-100/80 uppercase font-bold tracking-widest">Night Stops</div>
-          <div id="stat-nights" class="text-2xl font-extrabold">7</div>
-          <div class="text-xs text-pink-100/80">sleep locations</div>
-        </div>
-        <div class="bg-white/10 border border-white/15 rounded-xl p-4">
-          <div class="text-xs text-pink-100/80 uppercase font-bold tracking-widest">Key Booking</div>
-          <div class="text-2xl font-extrabold">Feb 9</div>
-          <div class="text-xs text-pink-100/80">Parks Canada</div>
-        </div>
-      </div>
-
     </header>
 
     <!-- Navigation -->
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-      <div class="flex overflow-x-auto px-4 md:px-8 items-center">
-        <button onclick="switchTab('route')" id="tab-route" class="tab-active py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">🗺️</span> Daily Itinerary</button>
-        <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">💰</span> Budget</button>
-        <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">🦅</span> Wildlife Spots</button>
-        <button onclick="switchTab('photographers')" id="tab-photographers" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📸</span> Photographers</button>
-        <button onclick="switchTab('wishlist')" id="tab-wishlist" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">✨</span> Wishlist</button>
-        <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 whitespace-nowrap transition-all flex items-center"><span class="mr-2">📋</span> Logistics <span class="ml-2 bg-red-500 text-white text-[10px] px-1 rounded animate-pulse">!</span></button>
-
-        <div class="ml-auto flex items-center gap-2 pr-2">
-          <button id="btn-print" class="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold">
-            🖨️ Print
-          </button>
-          <button id="btn-lock" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold" title="Lock page">
-            🔒 Lock
-          </button>
-        </div>
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm overflow-x-auto">
+      <div class="flex px-4 md:px-8 min-w-max">
+        <button onclick="switchTab('route')" id="tab-route" class="tab-active py-5 px-6 transition-all flex items-center gap-2">🗺️ Itinerary</button>
+        <button onclick="switchTab('budget')" id="tab-budget" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">💰 Budget</button>
+        <button onclick="switchTab('attractions')" id="tab-attractions" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">🦅 Wildlife</button>
+        <button onclick="switchTab('photographers')" id="tab-photographers" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">📸 Photo</button>
+        <button onclick="switchTab('logistics')" id="tab-logistics" class="tab-inactive py-5 px-6 transition-all flex items-center gap-2">📋 Logistics <span class="bg-red-500 w-2 h-2 rounded-full animate-pulse"></span></button>
       </div>
     </nav>
 
-    <!-- Main Content Area -->
     <main class="flex-grow p-4 md:p-8">
 
       <!-- TAB: ROUTE -->
       <section id="content-route" class="space-y-8">
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Map -->
           <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <div id="map"></div>
-            <div class="mt-4 flex flex-wrap gap-2 text-sm">
-              <button id="btn-fit" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 font-semibold">🧭 Fit route</button>
-              <button id="btn-toggle-markers" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 font-semibold">📍 Toggle markers</button>
-              <button id="btn-toggle-lines" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 font-semibold">〰️ Toggle lines</button>
-              <span class="ml-auto text-slate-500">Tip: click markers for stops.</span>
-            </div>
           </div>
-
-          <aside class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h2 class="text-xl font-bold text-slate-800 mb-4">Trip Controls</h2>
-
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">Search itinerary</label>
-                <input id="itinerary-search" type="text" placeholder="Try: lighthouse, beach, museum, fox dunes…" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition" />
-                <p class="text-xs text-slate-400 mt-1">Filters the day cards below.</p>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <button id="btn-expand-all" class="px-3 py-2 rounded-lg bg-slate-800 text-white font-bold hover:bg-slate-900">Expand all</button>
-                <button id="btn-collapse-all" class="px-3 py-2 rounded-lg bg-white border border-slate-200 font-bold hover:bg-slate-50">Collapse</button>
-              </div>
-
-              <div class="border-t border-slate-100 pt-4">
-                <div class="text-xs text-slate-500 uppercase font-bold tracking-widest">Legend</div>
-                <div class="mt-2 space-y-2 text-sm">
-                  <div class="flex items-center gap-2"><span class="text-green-600 font-bold">🦅</span><span>Birding / wildlife</span></div>
-                  <div class="flex items-center gap-2"><span class="text-indigo-600 font-bold">⭐</span><span>Finn-friendly highlight</span></div>
-                  <div class="flex items-center gap-2"><span class="text-pink-600 font-bold">📍</span><span>Map stop / pin</span></div>
-                </div>
-              </div>
+          <!-- Trip Stats -->
+          <aside class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center space-y-6">
+            <div>
+               <div class="text-xs text-slate-400 uppercase font-bold tracking-widest mb-1">Total Distance</div>
+               <div class="text-3xl font-bold text-slate-800">~2,850 km</div>
+               <div class="text-xs text-slate-500">Avg 4.5h driving/day</div>
+            </div>
+            <div>
+               <div class="text-xs text-slate-400 uppercase font-bold tracking-widest mb-1">Return Strategy</div>
+               <div class="text-xl font-bold text-green-600">Relaxed Split</div>
+               <div class="text-xs text-slate-500">Overnight in Rivière-du-Loup</div>
+            </div>
+            <div>
+               <div class="text-xs text-slate-400 uppercase font-bold tracking-widest mb-1">Key Stops</div>
+               <ul class="text-sm space-y-1 text-slate-600">
+                  <li>• Trapper's Cabin (NB)</li>
+                  <li>• Stanhope Camp (PEI)</li>
+                  <li>• Alma/Fundy (NB)</li>
+                  <li>• RDL/Whales (QC)</li>
+               </ul>
             </div>
           </aside>
         </div>
 
-        <!-- Day by Day Timeline -->
-        <div class="relative space-y-4" id="itinerary-list">
-
-          <!-- Day 1 -->
-          <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="1" data-tags="ottawa riviere-du-loup grand falls trapper cabin barred owl parc de la pointe">
-            <summary class="flex items-center p-4 bg-slate-50 cursor-pointer select-none">
-              <div class="bg-pink-600 text-white font-bold w-12 h-12 rounded-lg flex items-center justify-center text-xl shadow-md z-10">1</div>
-              <div class="ml-4 flex-grow">
-                <h3 class="font-bold text-slate-800 text-lg">Sat, Aug 15: The Great Escape</h3>
-                <p class="text-sm text-slate-500">Ottawa → Trapper's Cabin (715 km)</p>
-              </div>
-              <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
-            </summary>
-            <div class="p-6 border-t border-slate-100">
-              <ul class="space-y-4 text-sm text-slate-700">
-                <li class="flex"><span class="font-bold w-20 text-slate-400">07:00</span><span>Depart Ottawa. Get on the 417 East.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">12:30</span><span><strong>Lunch in Rivière-du-Loup:</strong> Stop at <em>Parc de la Pointe</em>. <br><span class="text-green-600 font-bold text-xs">🦅 Birding:</span> Look for Eiders and Gulls near the marina.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">16:00</span><span><strong>Grand Falls, NB:</strong> Grocery Run (IGA). Last chance for supplies!</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">17:30</span><span><strong>Arrive Upper Kintore:</strong> Check into Trapper's Cabin (Booked). <br><span class="text-green-600 font-bold text-xs">🦉 Nature:</span> Listen for Barred Owls at dusk. Off-grid night.</span></li>
-              </ul>
-
-              <div class="day-img-strip">
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?ottawa,roadtrip" alt="Ottawa roadtrip" onerror="this.src='https://source.unsplash.com/900x600/?canada,highway'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?riviere-du-loup,st-lawrence-river" alt="Rivière-du-Loup" onerror="this.src='https://source.unsplash.com/900x600/?st-lawrence-river,quebec'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?cabin,forest,canada" alt="Cabin night" onerror="this.src='https://source.unsplash.com/900x600/?forest,cabin'"></div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="trapper">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sat Aug 15 — Ottawa → Trapper's Cabin. Stops: Rivière-du-Loup (Parc de la Pointe), Grand Falls grocery, arrive Upper Kintore.">📋 Copy summary</button>
-              </div>
-            </div>
-          </details>
-
-          <!-- Day 2 -->
-          <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="2" data-tags="sackville waterfowl park boardwalk confederation bridge stanhope campground fox dunes">
-            <summary class="flex items-center p-4 bg-slate-50 cursor-pointer select-none">
-              <div class="bg-amber-500 text-white font-bold w-12 h-12 rounded-lg flex items-center justify-center text-xl shadow-md z-10">2</div>
-              <div class="ml-4 flex-grow">
-                <h3 class="font-bold text-slate-800 text-lg">Sun, Aug 16: Marshes & Bridge</h3>
-                <p class="text-sm text-slate-500">NB → Stanhope, PEI (400 km)</p>
-              </div>
-              <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
-            </summary>
-            <div class="p-6 border-t border-slate-100">
-              <ul class="space-y-4 text-sm text-slate-700">
-                <li class="flex"><span class="font-bold w-20 text-slate-400">09:00</span><span>Depart Cabin. Drive South towards Moncton.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">13:00</span><span><strong>Sackville Waterfowl Park:</strong> Dog-friendly boardwalks. <br><span class="text-indigo-600 font-bold text-xs">⭐ Finn Spot:</span> Easy trails, lots of ducks!</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">15:00</span><span>Cross Confederation Bridge.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">17:00</span><span><strong>Camp Setup:</strong> Stanhope Campground. <br><span class="text-green-600 font-bold text-xs">🦊 Nature:</span> Watch for Red Foxes near the dunes.</span></li>
-              </ul>
-
-              <div class="day-img-strip">
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?marsh,boardwalk,birds" alt="Waterfowl park" onerror="this.src='https://source.unsplash.com/900x600/?wetlands,birds'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?confederation-bridge,pei" alt="Confederation Bridge" onerror="this.src='https://source.unsplash.com/900x600/?bridge,ocean'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?prince-edward-island,camping,dunes" alt="Stanhope camping" onerror="this.src='https://source.unsplash.com/900x600/?camping,dunes'"></div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="stanhope">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sun Aug 16 — Cabin → Stanhope (PEI). Key stop: Sackville Waterfowl Park (dog-friendly boardwalks). Cross Confederation Bridge. Camp in Stanhope.">📋 Copy summary</button>
-              </div>
-            </div>
-          </details>
-
-          <!-- Day 3 -->
-          <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="3" data-tags="greenwich dunes piping plovers national park beach auntie brackley mackenzies brook">
-            <summary class="flex items-center p-4 bg-slate-50 cursor-pointer select-none">
-              <div class="bg-amber-500 text-white font-bold w-12 h-12 rounded-lg flex items-center justify-center text-xl shadow-md z-10">3</div>
-              <div class="ml-4 flex-grow">
-                <h3 class="font-bold text-slate-800 text-lg">Mon, Aug 17: Beaches & Plovers</h3>
-                <p class="text-sm text-slate-500">Stanhope Area (Local driving)</p>
-              </div>
-              <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
-            </summary>
-            <div class="p-6 border-t border-slate-100">
-              <ul class="space-y-4 text-sm text-slate-700">
-                <li class="flex"><span class="font-bold w-20 text-slate-400">08:00</span><span><strong>Greenwich Dunes:</strong> Floating boardwalks. <br><span class="text-green-600 font-bold text-xs">🐦 Birding:</span> Piping Plovers (Endangered) nesting on beaches.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">12:00</span><span>Visit Udit's Aunt.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">15:30</span><span><strong>Brackley Beach (PEI National Park):</strong> Wide sandy beach + dunes. <br><span class="text-indigo-600 font-bold text-xs">⭐ Finn Spot:</span> Great walk (check dog rules + leash).</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">17:30</span><span><strong>MacKenzies Brook (PEI National Park):</strong> Short scenic trail + coastal views.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">19:00</span><span>Sunset beach walk back near Stanhope.</span></li>
-              </ul>
-
-              <div class="day-img-strip">
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?greenwich,prince-edward-island,dunes" alt="Greenwich Dunes" onerror="this.src='https://source.unsplash.com/900x600/?dunes,boardwalk'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?brackley,beach,pei" alt="Brackley Beach" onerror="this.src='https://source.unsplash.com/900x600/?pei,national-park,beach'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?coastal,trail,pei" alt="MacKenzies Brook" onerror="this.src='https://source.unsplash.com/900x600/?coastal,trail'"></div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="stanhope">📍 Focus area</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Mon Aug 17 — Greenwich Dunes (Piping Plovers), visit Aunt, Brackley Beach + MacKenzies Brook (PEI National Park), sunset walk.">📋 Copy summary</button>
-              </div>
-            </div>
-          </details>
-
-          <!-- Day 4 -->
-          <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="4" data-tags="wood islands lighthouse basin head sheep pond beach charlottetown">
-            <summary class="flex items-center p-4 bg-slate-50 cursor-pointer select-none">
-              <div class="bg-green-600 text-white font-bold w-12 h-12 rounded-lg flex items-center justify-center text-xl shadow-md z-10">4</div>
-              <div class="ml-4 flex-grow">
-                <h3 class="font-bold text-slate-800 text-lg">Tue, Aug 18: East End Beaches + City</h3>
-                <p class="text-sm text-slate-500">Stanhope → Charlottetown (scenic detours)</p>
-              </div>
-              <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
-            </summary>
-            <div class="p-6 border-t border-slate-100">
-              <ul class="space-y-4 text-sm text-slate-700">
-                <li class="flex"><span class="font-bold w-20 text-slate-400">09:00</span><span>Pack up camp. Drive across the island (east loop).</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">10:30</span><span><strong>Wood Islands Lighthouse:</strong> Classic lighthouse stop + coastal views.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">11:45</span><span><strong>Sheep Pond Beach:</strong> Quiet beach stop (quick walk).</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">13:00</span><span><strong>Basin Head Provincial Park:</strong> Famous "singing sands" beach. <br><span class="text-indigo-600 font-bold text-xs">⭐ Finn Spot:</span> Great for a long mid-day walk.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">16:00</span><span>Check into Charlottetown B&B. Shower!</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">18:00</span><span><strong>Victoria Park:</strong> Boardwalks. Dinner on Victoria Row.</span></li>
-              </ul>
-
-              <div class="day-img-strip">
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?wood-islands,lighthouse,pei" alt="Wood Islands Lighthouse" onerror="this.src='https://source.unsplash.com/900x600/?lighthouse,ocean'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?basin-head,pei,beach" alt="Basin Head" onerror="this.src='https://source.unsplash.com/900x600/?singing-sands,beach'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?charlottetown,prince-edward-island" alt="Charlottetown" onerror="this.src='https://source.unsplash.com/900x600/?coastal,town,canada'"></div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="charlottetown">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Tue Aug 18 — Pack up camp, Wood Islands Lighthouse, Sheep Pond Beach, Basin Head (Singing Sands), then Charlottetown check-in + Victoria Park/Victoria Row.">📋 Copy summary</button>
-              </div>
-            </div>
-          </details>
-
-          <!-- Day 5 -->
-          <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="5" data-tags="avonlea village potato museum antique farm machinery museum donahue beach anne of green gables musical">
-            <summary class="flex items-center p-4 bg-slate-50 cursor-pointer select-none">
-              <div class="bg-green-600 text-white font-bold w-12 h-12 rounded-lg flex items-center justify-center text-xl shadow-md z-10">5</div>
-              <div class="ml-4 flex-grow">
-                <h3 class="font-bold text-slate-800 text-lg">Wed, Aug 19: Village + Museum + Beach</h3>
-                <p class="text-sm text-slate-500">Central/North PEI Day Trip</p>
-              </div>
-              <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
-            </summary>
-            <div class="p-6 border-t border-slate-100">
-              <ul class="space-y-4 text-sm text-slate-700">
-                <li class="flex"><span class="font-bold w-20 text-slate-400">10:00</span><span><strong>Avonlea Village:</strong> Fun photo stop + old-timey PEI vibes.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">12:30</span><span><strong>Canadian Potato Museum & Antique Farm Machinery Museum:</strong> Quick museum + quirky roadside stop.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">15:30</span><span><strong>Donahue Beach:</strong> Low-key beach to finish the day.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">19:30</span><span><strong>Optional:</strong> Anne of Green Gables musical (if dates/tickets align).</span></li>
-              </ul>
-
-              <div class="day-img-strip">
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?cavendish,pei,village" alt="Avonlea/Cavendish" onerror="this.src='https://source.unsplash.com/900x600/?village,heritage'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?museum,prince-edward-island" alt="Museum" onerror="this.src='https://source.unsplash.com/900x600/?museum,exhibit'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?pei,beach,sunset" alt="Donahue Beach" onerror="this.src='https://source.unsplash.com/900x600/?quiet,beach'"></div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="charlottetown">📍 Focus area</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Wed Aug 19 — Avonlea Village, Canadian Potato Museum + Antique Farm Machinery, Donahue Beach (optional Anne musical).">📋 Copy summary</button>
-              </div>
-            </div>
-          </details>
-
-          <!-- Day 6 -->
-          <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="6" data-tags="thunder cove beach north cape hiking trail drive in movie brackley drive in">
-            <summary class="flex items-center p-4 bg-slate-50 cursor-pointer select-none">
-              <div class="bg-teal-600 text-white font-bold w-12 h-12 rounded-lg flex items-center justify-content-center text-xl shadow-md z-10">6</div>
-              <div class="ml-4 flex-grow">
-                <h3 class="font-bold text-slate-800 text-lg">Thu, Aug 20: North Shore Finale + Bridge</h3>
-                <p class="text-sm text-slate-500">North/West PEI → Alma, NB (Fundy)</p>
-              </div>
-              <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
-            </summary>
-            <div class="p-6 border-t border-slate-100">
-              <ul class="space-y-4 text-sm text-slate-700">
-                <li class="flex"><span class="font-bold w-20 text-slate-400">08:30</span><span><strong>Thunder Cove Beach:</strong> Sea stacks + dramatic coastline. Early = quieter.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">11:30</span><span><strong>North Cape Hiking Trail:</strong> Windy coastal trail, big views.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">14:30</span><span>Drive to Confederation Bridge + depart PEI.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">17:30</span><span>Arrive Alma. Stay at motel/cottage.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">18:30</span><span><strong>Fundy Park:</strong> Hike Dickson Falls (if time). Watch for moose at dusk.</span></li>
-              </ul>
-
-              <div class="day-img-strip">
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?thunder-cove,pei,sea-stacks" alt="Thunder Cove Beach" onerror="this.src='https://source.unsplash.com/900x600/?sea-stacks,beach'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?north-cape,pei,cliffs" alt="North Cape" onerror="this.src='https://source.unsplash.com/900x600/?coastal,cliffs'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?fundy,national-park,canada" alt="Fundy" onerror="this.src='https://source.unsplash.com/900x600/?waterfall,forest,canada'"></div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="alma">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Thu Aug 20 — Thunder Cove Beach, North Cape Hiking Trail, cross bridge, arrive Alma (Fundy), optional Dickson Falls.">📋 Copy summary</button>
-              </div>
-            </div>
-          </details>
-
-          <!-- Day 7 -->
-          <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="7" data-tags="riviere-du-loup parc de la pointe sunset st lawrence hotel dog">
-            <summary class="flex items-center p-4 bg-slate-50 cursor-pointer select-none">
-              <div class="bg-blue-600 text-white font-bold w-12 h-12 rounded-lg flex items-center justify-center text-xl shadow-md z-10">7</div>
-              <div class="ml-4 flex-grow">
-                <h3 class="font-bold text-slate-800 text-lg">Fri, Aug 21: French Sunset</h3>
-                <p class="text-sm text-slate-500">Alma → Rivière-du-Loup (4.5h Drive)</p>
-              </div>
-              <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
-            </summary>
-            <div class="p-6 border-t border-slate-100">
-              <ul class="space-y-4 text-sm text-slate-700">
-                <li class="flex"><span class="font-bold w-20 text-slate-400">09:00</span><span>Scenic drive through New Brunswick woods.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">14:00</span><span>Arrive Rivière-du-Loup. Check into pet-friendly hotel.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">16:00</span><span><strong>Parc de la Pointe:</strong> Long walk with Finn.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">19:00</span><span>Sunset dinner by the St. Lawrence River.</span></li>
-              </ul>
-
-              <div class="day-img-strip">
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?new-brunswick,forest,road" alt="NB road" onerror="this.src='https://source.unsplash.com/900x600/?forest,road'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?riviere-du-loup,quebec,river" alt="RDL river" onerror="this.src='https://source.unsplash.com/900x600/?quebec,river,sunset'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?sunset,river,canada" alt="Sunset" onerror="this.src='https://source.unsplash.com/900x600/?sunset,water'"></div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="rdl">📍 Focus stop</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Fri Aug 21 — Alma → Rivière-du-Loup. Check-in, Parc de la Pointe sunset walk with Finn, dinner by St. Lawrence.">📋 Copy summary</button>
-              </div>
-            </div>
-          </details>
-
-          <!-- Day 8 -->
-          <details class="day-card group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" data-day="8" data-tags="whale watching aml beluga minke ottawa drive home">
-            <summary class="flex items-center p-4 bg-slate-50 cursor-pointer select-none">
-              <div class="bg-slate-700 text-white font-bold w-12 h-12 rounded-lg flex items-center justify-center text-xl shadow-md z-10">8</div>
-              <div class="ml-4 flex-grow">
-                <h3 class="font-bold text-slate-800 text-lg">Sat, Aug 22: Whales & Home</h3>
-                <p class="text-sm text-slate-500">Rivière-du-Loup → Ottawa (6h Drive)</p>
-              </div>
-              <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
-            </summary>
-            <div class="p-6 border-t border-slate-100">
-              <ul class="space-y-4 text-sm text-slate-700">
-                <li class="flex"><span class="font-bold w-20 text-slate-400">09:30</span><span><strong>Whale Watching:</strong> 3.5h AML Cruise. <br><span class="text-green-600 font-bold text-xs">🐋 Wildlife:</span> Belugas and minke whales. Finn stays in hotel.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">13:00</span><span>Lunch & walk Finn.</span></li>
-                <li class="flex"><span class="font-bold w-20 text-slate-400">14:00</span><span>Drive home. Arrive Ottawa ~8pm.</span></li>
-              </ul>
-
-              <div class="day-img-strip">
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?beluga,whale" alt="Beluga" onerror="this.src='https://source.unsplash.com/900x600/?whale,ocean'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?st-lawrence-river,boat" alt="Boat" onerror="this.src='https://source.unsplash.com/900x600/?boat,river'"></div>
-                <div class="day-img"><img src="https://source.unsplash.com/900x600/?ottawa,night,city" alt="Ottawa" onerror="this.src='https://source.unsplash.com/900x600/?canada,city,night'"></div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="btn-map px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-focus="ottawa">📍 Focus home</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="Sat Aug 22 — Whale watching (AML), lunch + Finn walk, drive back to Ottawa.">📋 Copy summary</button>
-              </div>
-            </div>
-          </details>
-
+        <!-- Dynamic Timeline Container -->
+        <div id="timeline-container" class="relative space-y-4">
+           <!-- JavaScript will inject the days here -->
         </div>
       </section>
 
       <!-- TAB: BUDGET -->
       <section id="content-budget" class="hidden space-y-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-          <!-- Controls -->
           <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <h2 class="text-xl font-bold text-slate-800 mb-4">Cost Estimator</h2>
-
             <div class="space-y-6">
-              <div class="space-y-2">
-                <div class="bg-green-50 border border-green-200 rounded-lg p-3 flex justify-between items-center">
-                  <span class="text-xs font-bold text-green-800 uppercase">Night 1 (Cabin)</span>
-                  <span class="text-sm font-bold text-green-700">$116</span>
-                </div>
-                <div class="bg-green-50 border border-green-200 rounded-lg p-3 flex justify-between items-center">
-                  <span class="text-xs font-bold text-green-800 uppercase">Camping (2 Nts)</span>
-                  <span class="text-sm font-bold text-green-700">~$100</span>
-                </div>
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 flex justify-between items-center">
-                  <span class="text-xs font-bold text-blue-800 uppercase">Whale Cruise (2 Tix)</span>
-                  <span class="text-sm font-bold text-blue-700">~$200</span>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                  <span>Remaining 4 Nights (B&Bs)</span>
-                  <span class="text-pink-600 font-bold">$<span id="val-accom">180</span></span>
-                </label>
-                <input type="range" id="input-accom" min="120" max="400" step="10" value="180" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600" />
-                <p class="text-xs text-slate-400 mt-1">Charlottetown, Alma, Riv-du-Loup</p>
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                  <span>Food / Person / Day</span>
-                  <span class="text-pink-600 font-bold">$<span id="val-food">75</span></span>
-                </label>
-                <input type="range" id="input-food" min="40" max="200" step="5" value="75" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                  <span>Gas Price</span>
-                  <span class="text-pink-600 font-bold">$<span id="val-gas">1.65</span></span>
-                </label>
-                <input type="range" id="input-gas" min="1.30" max="2.20" step="0.05" value="1.65" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                  <span>Vehicle Fuel (L/100km)</span>
-                  <span class="text-pink-600 font-bold"><span id="val-fuel">9.5</span></span>
-                </label>
-                <input type="range" id="input-fuel" min="7" max="14" step="0.1" value="9.5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600" />
-                <p class="text-xs text-slate-400 mt-1">Tune if you swap cars or load changes.</p>
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2 flex justify-between">
-                  <span>Trip km (estimate)</span>
-                  <span class="text-pink-600 font-bold"><span id="val-km">2850</span> km</span>
-                </label>
-                <input type="range" id="input-km" min="2000" max="4000" step="50" value="2850" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink-600" />
-              </div>
+               <div class="space-y-2 text-sm">
+                 <div class="flex justify-between bg-green-50 p-2 rounded border border-green-200"><span class="font-bold text-green-800">Cabin (Fixed)</span><span>$116</span></div>
+                 <div class="flex justify-between bg-green-50 p-2 rounded border border-green-200"><span class="font-bold text-green-800">Camping (2 Nts)</span><span>~$100</span></div>
+                 <div class="flex justify-between bg-blue-50 p-2 rounded border border-blue-200"><span class="font-bold text-blue-800">Whales (2 Tix)</span><span>~$200</span></div>
+               </div>
+               <div>
+                 <label class="text-xs font-bold text-slate-500 uppercase">Avg Cost Remaining Nights (4)</label>
+                 <div class="flex items-center gap-2"><input type="range" id="input-accom" min="120" max="400" step="10" value="180" class="flex-1 accent-pink-600"><span id="val-accom" class="font-bold w-12 text-right">180</span></div>
+               </div>
+               <div>
+                 <label class="text-xs font-bold text-slate-500 uppercase">Gas Price ($/L)</label>
+                 <div class="flex items-center gap-2"><input type="range" id="input-gas" min="1.30" max="2.20" step="0.05" value="1.65" class="flex-1 accent-pink-600"><span id="val-gas" class="font-bold w-12 text-right">1.65</span></div>
+               </div>
             </div>
-
-            <div class="mt-8 pt-6 border-t border-slate-100">
-              <div class="flex justify-between items-end mb-2">
-                <span class="text-slate-600 font-medium">Total Cost</span>
-                <span id="total-cost" class="text-3xl font-bold text-slate-800">$0</span>
-              </div>
-              <div class="flex justify-between items-end bg-pink-50 p-3 rounded-lg">
-                <span class="text-pink-800 text-sm font-medium">Per Person</span>
-                <span id="per-person-cost" class="text-xl font-bold text-pink-700">$0</span>
-              </div>
-              <div class="mt-3 text-xs text-slate-400">Includes bridge + whale cruise. “Fun” is padded with a small misc buffer.</div>
+            <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                <div class="text-slate-500 text-sm">Estimated Total</div>
+                <div id="total-cost" class="text-4xl font-bold text-slate-800">$0</div>
             </div>
           </div>
-
-          <!-- Visualization -->
           <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
-            <div class="relative w-full max-w-[520px] mx-auto h-[360px]">
+            <div class="relative w-full max-w-[400px] mx-auto h-[300px]">
               <canvas id="budgetChart"></canvas>
             </div>
           </div>
-
         </div>
       </section>
 
       <!-- TAB: ATTRACTIONS -->
       <section id="content-attractions" class="hidden space-y-8">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-          <div>
-            <h2 class="text-2xl font-bold text-slate-800">Wildlife & Nature Targets</h2>
-            <p class="text-slate-600" id="attraction-subtitle">Your target species for this trip.</p>
-          </div>
-          <div class="flex space-x-2 mt-4 md:mt-0 flex-wrap gap-2">
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
             <button onclick="renderAttractions('all')" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full">All</button>
-            <button onclick="renderAttractions('mammals')" class="px-4 py-2 text-sm bg-white border border-blue-200 text-blue-700 rounded-full font-bold">Whales & Mammals</button>
-            <button onclick="renderAttractions('birds')" class="px-4 py-2 text-sm bg-white border border-amber-200 text-amber-700 rounded-full font-bold">Birding</button>
-            <button onclick="renderAttractions('scenic')" class="px-4 py-2 text-sm bg-white border border-green-200 text-green-700 rounded-full font-bold">Landscapes</button>
-          </div>
+            <button onclick="renderAttractions('hidden')" class="px-4 py-2 text-sm bg-white border border-pink-200 text-pink-700 rounded-full font-bold">💎 Hidden Gems</button>
+            <button onclick="renderAttractions('mammals')" class="px-4 py-2 text-sm bg-white border border-blue-200 text-blue-700 rounded-full font-bold">🐋 Mammals</button>
+            <button onclick="renderAttractions('birds')" class="px-4 py-2 text-sm bg-white border border-amber-200 text-amber-700 rounded-full font-bold">🦅 Birding</button>
         </div>
-
-        <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100">
-          <div class="flex flex-col md:flex-row gap-3 md:items-center">
-            <div class="flex-1">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Search wildlife spots</label>
-              <input id="attraction-search" type="text" placeholder="Try: plover, seal, cliffs…" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition" />
-            </div>
-            <div class="md:w-64">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Sort</label>
-              <select id="attraction-sort" class="w-full p-3 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-pink-500 outline-none transition">
-                <option value="title">Title (A–Z)</option>
-                <option value="cat">Category</option>
-                <option value="loc">Location</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="attraction-grid"></div>
       </section>
-
+      
       <!-- TAB: PHOTOGRAPHERS -->
       <section id="content-photographers" class="hidden space-y-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 class="text-2xl font-bold text-slate-800">Engagement Photographers (PEI)</h2>
-            <p class="text-slate-600">Shortlist for a beach shoot with Finn. Ratings shown with source + review count where available.</p>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button onclick="renderPhotographers('all')" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full">All</button>
-            <button onclick="renderPhotographers('charlottetown')" class="px-4 py-2 text-sm bg-white border border-slate-200 rounded-full font-bold">Charlottetown</button>
-            <button onclick="renderPhotographers('pei')" class="px-4 py-2 text-sm bg-white border border-slate-200 rounded-full font-bold">PEI-wide</button>
-          </div>
-        </div>
-
-        <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100">
-          <div class="flex flex-col md:flex-row gap-3 md:items-center">
-            <div class="flex-1">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Search photographers</label>
-              <input id="photo-search" type="text" placeholder="Try: beach, documentary, candid…" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none transition" />
-              <p class="text-xs text-slate-400 mt-1">Filters name + style + notes.</p>
-            </div>
-            <div class="md:w-64">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Sort</label>
-              <select id="photo-sort" class="w-full p-3 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-pink-500 outline-none transition">
-                <option value="rating">Rating (high → low)</option>
-                <option value="reviews">Review count</option>
-                <option value="name">Name (A–Z)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="photo-grid"></div>
-
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-sm text-slate-600">
-          <div class="font-bold text-slate-800 mb-2">Note on “Google ratings”</div>
-          <p>
-            Some vendors publish ratings on directories (e.g., WeddingWire) and some show Google reviews via third-party widgets.
-            In the cards below, we label the <strong>rating source</strong> explicitly so you know what you’re looking at.
-          </p>
-        </div>
-      </section>
-
-      <!-- TAB: WISHLIST -->
-      <section id="content-wishlist" class="hidden space-y-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 class="text-2xl font-bold text-slate-800">PEI Wishlist</h2>
-            <p class="text-slate-600">Your “must-do” list — easy to track and copy into messages.</p>
-          </div>
-          <div class="flex gap-2">
-            <button id="btn-copy-wishlist" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full font-bold">📋 Copy wishlist</button>
-            <button id="btn-reset-wishlist" class="px-4 py-2 text-sm bg-white border border-slate-200 rounded-full font-bold">Reset</button>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="wishlist"></div>
-          <p class="text-xs text-slate-400 mt-3">Wishlist progress is saved in your browser (localStorage).</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <a class="bg-white border border-slate-100 rounded-2xl p-5 hover:shadow-lg transition" href="https://www.cows.ca/" target="_blank" rel="noreferrer">
-            <div class="text-2xl">🍦</div>
-            <div class="font-bold mt-2">Cows Ice Cream</div>
-            <div class="text-sm text-slate-600">Open their site (locations + hours).</div>
-          </a>
-          <a class="bg-white border border-slate-100 rounded-2xl p-5 hover:shadow-lg transition" href="https://www.parkscanada.gc.ca/pn-np/pei-ipe/index" target="_blank" rel="noreferrer">
-            <div class="text-2xl">🏞️</div>
-            <div class="font-bold mt-2">PEI National Park</div>
-            <div class="text-sm text-slate-600">Rules for dogs, beaches, and trails.</div>
-          </a>
-          <a class="bg-white border border-slate-100 rounded-2xl p-5 hover:shadow-lg transition" href="https://www.brackleypei.com/details.php?did=6" target="_blank" rel="noreferrer">
-            <div class="text-2xl">🎬</div>
-            <div class="font-bold mt-2">Brackley Drive-In</div>
-            <div class="text-sm text-slate-600">Drive-in theatre info (seasonal).</div>
-          </a>
-        </div>
+         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">Engagement Photographers</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="photo-grid"></div>
+         </div>
       </section>
 
       <!-- TAB: LOGISTICS -->
       <section id="content-logistics" class="hidden space-y-8">
-
-        <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl shadow-sm mb-8 animate-pulse-red">
-          <div class="flex items-start">
-            <div class="text-3xl mr-4">⏰</div>
-            <div>
-              <h3 class="text-xl font-bold text-red-700">CRITICAL: Stanhope Booking</h3>
-              <p class="text-sm text-red-900 mt-1 font-semibold">Parks Canada Reservations Open: <span class="underline">Feb 9 @ 7:00 AM ET</span>.</p>
-              <p class="text-xs text-red-800 mt-2">Target: Stanhope Campground (North Shore). Create account beforehand.</p>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <button id="btn-add-reminder" class="px-3 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700">🗓️ Download reminder .ics</button>
-                <button class="btn-copy px-3 py-2 rounded-lg border border-red-200 bg-white hover:bg-red-50 text-sm font-semibold" data-copy="Reminder: Parks Canada reservations open Feb 9 @ 7:00 AM ET for Stanhope Campground.">📋 Copy reminder</button>
-              </div>
+          <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl shadow-sm mb-8 animate-pulse-red">
+            <h3 class="text-xl font-bold text-red-700">CRITICAL: Stanhope Booking</h3>
+            <p class="text-sm text-red-900 mt-1 font-semibold">Parks Canada Reservations Open: <span class="underline">Feb 9 @ 7:00 AM ET</span>.</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-blue-50 border border-blue-200 rounded-2xl shadow-sm p-6">
+                <h3 class="text-xl font-bold text-blue-900 mb-4">🐶 Finn's Plan (RDL)</h3>
+                <ul class="text-sm text-slate-600 space-y-2 list-disc pl-4">
+                    <li><strong>Friday PM:</strong> Walk at Parc de la Pointe.</li>
+                    <li><strong>Saturday AM:</strong> Leave in hotel crate during whale tour.</li>
+                    <li><strong>Saturday PM:</strong> Lunch walk before drive.</li>
+                </ul>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg border border-green-100 p-6">
+                <h3 class="text-lg font-bold flex items-center mb-2"><span class="text-2xl mr-2">✅</span> Trapper's Cabin Booked</h3>
+                <p class="text-sm text-slate-600">Access confirmed for Kia Sportage.</p>
+                <p class="text-sm text-amber-600 mt-2 font-bold">⚠️ Buy groceries in Grand Falls!</p>
             </div>
           </div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg border border-green-100 mb-8 overflow-hidden">
-          <div class="bg-green-700 p-4 text-white flex justify-between items-center">
-            <h3 class="text-lg font-bold flex items-center"><span class="text-2xl mr-2">✅</span> Night 1: Trapper's Cabin</h3>
-            <span class="bg-white/20 text-xs px-2 py-1 rounded uppercase font-bold">Booked</span>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center text-sm text-slate-700 mb-2"><span class="font-bold mr-2">Vehicle:</span> Kia Sportage (High clearance for access).</div>
-            <div class="flex items-center text-sm text-slate-700"><span class="font-bold mr-2">Prep:</span> Shop in Grand Falls.</div>
-          </div>
-        </div>
-
-        <div class="bg-blue-50 border border-blue-200 rounded-2xl shadow-sm mb-8 overflow-hidden">
-          <div class="p-6">
-            <div class="flex items-center mb-4"><span class="text-3xl mr-3">🐶</span><h3 class="text-xl font-bold text-blue-900">Finn's Logistics (Rivière-du-Loup)</h3></div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="bg-white p-4 rounded-lg shadow-sm">
-                <h4 class="font-bold text-slate-800 mb-2">Friday Evening</h4>
-                <ul class="text-sm text-slate-600 space-y-1 list-disc pl-4">
-                  <li><strong>Walk:</strong> <span class="text-blue-600 underline">Parc de la Pointe</span> is perfect for sunset dog walking.</li>
-                  <li><strong>Stay:</strong> Ensure hotel allows dogs to be left alone (crate usually required).</li>
-                </ul>
-              </div>
-              <div class="bg-white p-4 rounded-lg shadow-sm">
-                <h4 class="font-bold text-slate-800 mb-2">Saturday Morning</h4>
-                <ul class="text-sm text-slate-600 space-y-1 list-disc pl-4">
-                  <li><strong>Whale Tour:</strong> 9:30 AM – 1:00 PM.</li>
-                  <li><strong>Action:</strong> Walk Finn hard before 9am. Leave him settled in crate.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-slate-800">Quick Checklist</h3>
-            <button id="btn-reset-checklist" class="text-sm font-semibold text-slate-600 hover:text-slate-900">Reset</button>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="checklist"></div>
-          <p class="text-xs text-slate-400 mt-3">Checklist progress is saved in your browser (localStorage).</p>
-        </div>
-
       </section>
-    </main>
 
-    <footer class="bg-slate-800 text-slate-400 p-8 text-center text-sm">
-      <p>&copy; 2026 Maritime Trip Planner.</p>
-      <p class="text-xs text-slate-500 mt-2">Built as a single-file GitHub Pages site. Password overlay is a UX lock only.</p>
-    </footer>
+    </main>
+    <footer class="bg-slate-800 text-slate-400 p-8 text-center text-sm"><p>&copy; 2026 Maritime Trip Planner.</p></footer>
   </div>
 
   <script>
-    // =====================
-    // Configuration
-    // =====================
-
-    const APP_PASSWORD = 'maritime';
-    const TRIP_DATES_LABEL = 'Aug 15–22';
-
-    const DEFAULTS = {
-      km: 2850,
-      fuelLPer100: 9.5,
-      bridge: 50.25,
-      trapper: 116,
-      camping: 100,
-      whales: 200,
-      miscFunBuffer: 150,
-      variableNights: 4,
-      tripDays: 8,
-      people: 2
-    };
-
-    const CHECKLIST_ITEMS = [
-      { id: 'pc-account', label: 'Create Parks Canada account (Stanhope booking)' },
-      { id: 'dog-crate', label: 'Crate setup confirmed for hotel (Finn)' },
-      { id: 'snacks', label: 'Road snacks + water stocked' },
-      { id: 'binoculars', label: 'Binoculars / camera batteries charged' },
-      { id: 'tide-check', label: 'Check Hopewell Rocks tide window' },
-      { id: 'hotel-dog', label: 'Confirm dog policy: left alone / fees' },
-      { id: 'grocery', label: 'Grand Falls grocery list ready' },
-      { id: 'ics', label: 'Calendar imported / events reviewed' },
-      { id: 'paddleboard', label: "Maddie’s paddle board + pump + leash" },
-      { id: 'cameras', label: 'Cameras + lenses + chargers + SD cards' },
-      { id: 'drone', label: 'Drone + controller + batteries (check local rules)' },
-      { id: 'finn-bed', label: 'Finn bed for back seat' },
-      { id: 'finn-cage', label: 'Finn crate for trunk' },
-      { id: 'tent', label: 'Tent + poles + stakes + mallet' },
-      { id: 'bbq', label: 'BBQ + lighter + propane' },
-      { id: 'kitchenware', label: 'Camping kitchenware (pan, kettle, knife, cutting board)' },
-      { id: 'cooler', label: 'Cooler + ice packs' },
-      { id: 'camp-chairs', label: 'Camp chairs + small table' },
-      { id: 'headlamps', label: 'Headlamps / flashlights' },
-      { id: 'roof-rack', label: 'Install roof rack on car' },
-      { id: 'tie-downs', label: 'Straps / tie-downs for paddle board & gear' }
+    // --- DATA ---
+    const itineraryData = [
+        { day: 1, date: "Sat, Aug 15", title: "The Great Escape", route: "Ottawa → Trapper's Cabin", color: "bg-pink-600",
+          schedule: [
+             { time: "07:00", text: "Depart Ottawa. 417 East." },
+             { time: "12:30", text: "Lunch: Kamouraska (QC). 💎 Hidden Gem village." },
+             { time: "16:00", text: "Grand Falls, NB: Grocery Run (IGA)." },
+             { time: "17:30", text: "Check-in: Trapper's Cabin (Booked). 🦉 Owl listening." }
+          ],
+          images: ["https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?q=80&w=600", "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=600"]
+        },
+        { day: 2, date: "Sun, Aug 16", title: "Bridges & Boardwalks", route: "NB → Stanhope, PEI", color: "bg-amber-500",
+          schedule: [
+             { time: "10:30", text: "Hartland Covered Bridge. 💎 Hidden Gem." },
+             { time: "13:00", text: "Sackville Waterfowl Park. ⭐ Finn Spot." },
+             { time: "16:00", text: "Victoria-by-the-Sea. 💎 Chocolates." },
+             { time: "17:30", text: "Camp Setup: Stanhope. 🦊 Watch for Foxes." }
+          ],
+          images: ["https://images.unsplash.com/photo-1544636906-89689405d4b9?q=80&w=600", "https://images.unsplash.com/photo-1628795521798-8c10743b355d?q=80&w=600"]
+        },
+        { day: 3, date: "Mon, Aug 17", title: "Plovers & Auntie", route: "Stanhope Area", color: "bg-amber-500",
+          schedule: [
+             { time: "08:00", text: "Greenwich Dunes. 🦅 Piping Plovers." },
+             { time: "12:00", text: "Visit Udit's Aunt." },
+             { time: "15:30", text: "Brackley Beach. ⭐ Finn Spot." },
+             { time: "19:00", text: "Sunset beach walk." }
+          ],
+          images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600", "https://images.unsplash.com/photo-1552353617-3913788a1834?q=80&w=600"]
+        },
+        { day: 4, date: "Tue, Aug 18", title: "East End & City", route: "Stanhope → Charlottetown", color: "bg-green-600",
+          schedule: [
+             { time: "10:30", text: "Wood Islands Lighthouse." },
+             { time: "13:00", text: "Basin Head (Singing Sands). ⭐ Finn Spot." },
+             { time: "16:00", text: "Check-in Charlottetown B&B." },
+             { time: "18:00", text: "Victoria Park Boardwalk." }
+          ],
+          images: ["https://images.unsplash.com/photo-1476673160081-cf060971a4ae?q=80&w=600", "https://images.unsplash.com/photo-1555685812-4b943f3e99a0?q=80&w=600"]
+        },
+        { day: 5, date: "Wed, Aug 19", title: "Cliffs & Bison", route: "Central PEI Loop", color: "bg-green-600",
+          schedule: [
+             { time: "10:00", text: "Buffaloland (Montague). 🦬 See Bison." },
+             { time: "13:00", text: "French River. 💎 Photo Op." },
+             { time: "14:00", text: "Cape Tryon Lighthouse. 💎 Red Cliffs." },
+             { time: "19:00", text: "Dinner in Charlottetown." }
+          ],
+          images: ["https://images.unsplash.com/photo-1505238240580-c0812e12822a?q=80&w=600", "https://images.unsplash.com/photo-1621882414734-7221e106950e?q=80&w=600"]
+        },
+        { day: 6, date: "Thu, Aug 20", title: "Tides & Falcons", route: "PEI → Alma, NB", color: "bg-teal-600",
+          schedule: [
+             { time: "09:00", text: "Depart PEI (Bridge)." },
+             { time: "12:00", text: "Hopewell Rocks. 🦅 Peregrine Falcons." },
+             { time: "14:00", text: "Mary's Point. 💎 Sandpiper Migration." },
+             { time: "17:00", text: "Arrive Alma. Stay motel/cottage." }
+          ],
+          images: ["https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=600", "https://images.unsplash.com/photo-1452570053594-1b985d6ea890?q=80&w=600"]
+        },
+        { day: 7, date: "Fri, Aug 21", title: "French Sunset", route: "Alma → Rivière-du-Loup", color: "bg-blue-600",
+          schedule: [
+             { time: "09:00", text: "Scenic Drive NB Woods." },
+             { time: "14:00", text: "Arrive RDL. Check-in Pet Friendly Hotel." },
+             { time: "16:00", text: "Parc de la Pointe. Finn Walk." },
+             { time: "19:00", text: "Sunset Dinner by St. Lawrence." }
+          ],
+          images: ["https://images.unsplash.com/photo-1518126084048-8df098492021?q=80&w=600"]
+        },
+        { day: 8, date: "Sat, Aug 22", title: "Whales & Home", route: "RDL → Ottawa", color: "bg-slate-700",
+          schedule: [
+             { time: "09:30", text: "AML Whale Cruise. 🐋 Belugas. (Finn in hotel)." },
+             { time: "13:00", text: "Lunch & Walk Finn." },
+             { time: "14:00", text: "Drive Home (6h)." },
+             { time: "20:00", text: "Arrive Ottawa." }
+          ],
+          images: ["https://images.unsplash.com/photo-1568430462989-44163eb1752f?q=80&w=600"]
+        }
     ];
-
-    const WISHLIST_ITEMS = [
-      { id: 'wish-engage', label: 'Engagement photo shoot on beach with Finnie', emoji: '📸' },
-      { id: 'wish-camping', label: 'Camping', emoji: '⛺' },
-      { id: 'wish-drivein', label: 'Drive-in movie (Brackley Drive-In)', emoji: '🎬' },
-      { id: 'wish-bridge', label: 'Drive across Confederation Bridge', emoji: '🌉' },
-      { id: 'wish-ocean', label: 'Beach day + swim in the ocean', emoji: '🌊' },
-      { id: 'wish-cows', label: 'Cows ice cream', emoji: '🍦' },
-      { id: 'wish-plover', label: 'See a Piping Plover', emoji: '🐦' },
-      { id: 'wish-anne', label: 'Anne of Green Gables musical', emoji: '🎭' }
-    ];
-
-    // =====================
-    // Assets + data
-    // =====================
-
-    const assets = {
-      beluga: 'https://source.unsplash.com/900x600/?beluga,whale',
-      fox: 'https://source.unsplash.com/900x600/?red-fox,canada',
-      plover: 'https://source.unsplash.com/900x600/?piping-plover,bird',
-      waterfowl: 'https://source.unsplash.com/900x600/?wetlands,birds,boardwalk',
-      dunes: 'https://source.unsplash.com/900x600/?pei,dunes,beach',
-      lighthouse: 'https://source.unsplash.com/900x600/?pei,lighthouse,ocean',
-      trail: 'https://source.unsplash.com/900x600/?coastal,trail,canada',
-      museum: 'https://source.unsplash.com/900x600/?museum,exhibit',
-      charlottetown: 'https://source.unsplash.com/900x600/?charlottetown,prince-edward-island',
-      bridge: 'https://source.unsplash.com/900x600/?confederation-bridge,pei',
-      fundy: 'https://source.unsplash.com/900x600/?fundy,national-park,waterfall'
-    };
 
     const attractions = [
-      { title: 'Beluga Whales', cat: 'mammals', loc: 'Rivière-du-Loup (QC)', img: assets.beluga, desc: 'Saturday AM boat tour. White whales in the St. Lawrence!' },
-      { title: 'Red Foxes', cat: 'mammals', loc: 'Stanhope (PEI)', img: assets.fox, desc: "PEI's famous red foxes roam the campground dunes." },
-      { title: 'Sackville Waterfowl', cat: 'birds', loc: 'Sackville (NB)', img: assets.waterfowl, desc: 'World-class boardwalks through marshes. 100% dog-friendly!' },
-      { title: 'Piping Plovers', cat: 'birds', loc: 'Greenwich Dunes (PEI)', img: assets.plover, desc: 'Endangered shorebirds nesting on the beaches.' },
-      { title: 'Wood Islands Lighthouse', cat: 'scenic', loc: 'Wood Islands (PEI)', img: 'https://source.unsplash.com/900x600/?wood-islands,lighthouse,pei', desc: 'Lighthouse stop on the east end with coastal views.' },
-      { title: 'Basin Head Provincial Park', cat: 'scenic', loc: 'Basin Head (PEI)', img: 'https://source.unsplash.com/900x600/?basin-head,pei,beach', desc: '"Singing sands" beach and a great mid-day stretch break.' },
-      { title: 'Brackley Beach', cat: 'scenic', loc: 'PEI National Park (North Shore)', img: 'https://source.unsplash.com/900x600/?brackley,beach,pei', desc: 'Big sandy beach + dunes. Check leash rules for Finn.' },
-      { title: 'Thunder Cove Beach', cat: 'scenic', loc: 'Darnley (PEI)', img: 'https://source.unsplash.com/900x600/?thunder-cove,pei,sea-stacks', desc: 'Sea stacks and dramatic coastline—best early/late.' },
-      { title: 'North Cape Hiking Trail', cat: 'scenic', loc: 'North Cape (PEI)', img: 'https://source.unsplash.com/900x600/?north-cape,pei,cliffs', desc: 'Windy coastal trail with big views.' }
+        { title: 'Mary\'s Point', cat: 'hidden', loc: 'Shepody Bay', img: 'https://images.unsplash.com/photo-1452570053594-1b985d6ea890?q=80&w=600', desc: 'Massive Sandpiper migration.' },
+        { title: 'Kamouraska', cat: 'hidden', loc: 'Quebec', img: 'https://images.unsplash.com/photo-1520110377263-47cb833c8709?q=80&w=600', desc: 'Fairytale village lunch.' },
+        { title: 'Hartland Bridge', cat: 'hidden', loc: 'NB', img: 'https://images.unsplash.com/photo-1443632864897-14973fa006cf?q=80&w=600', desc: 'Longest covered bridge.' },
+        { title: 'French River', cat: 'hidden', loc: 'PEI', img: 'https://images.unsplash.com/photo-1518117621415-468205c6c21e?q=80&w=600', desc: 'Iconic fishing village.' },
+        { title: 'Beluga Whales', cat: 'mammals', loc: 'Rivière-du-Loup', img: 'https://images.unsplash.com/photo-1568430462989-44163eb1752f?q=80&w=600', desc: 'St. Lawrence giants.' },
+        { title: 'Red Foxes', cat: 'mammals', loc: 'Stanhope', img: 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?q=80&w=600', desc: 'Roaming the dunes.' },
+        { title: 'Piping Plovers', cat: 'birds', loc: 'Greenwich', img: 'https://images.unsplash.com/photo-1552353617-3913788a1834?q=80&w=600', desc: 'Endangered shorebirds.' },
+        { title: 'Sackville Waterfowl', cat: 'birds', loc: 'NB', img: 'https://images.unsplash.com/photo-1480044965905-02098d419e96?q=80&w=600', desc: 'Dog-friendly boardwalks.' },
+        { title: 'Bison Herd', cat: 'mammals', loc: 'Buffaloland', img: 'https://images.unsplash.com/photo-1505238240580-c0812e12822a?q=80&w=600', desc: 'Provincial park herd.' },
+        { title: 'Peregrine Falcons', cat: 'birds', loc: 'Hopewell', img: 'https://images.unsplash.com/photo-1619623696803-b097b667232c?q=80&w=600', desc: 'Nesting on cliffs.' }
     ];
 
-    // Photographers (ratings + sources)
-    // NOTE: We label rating source explicitly (WeddingWire vs Google Reviews via EventSource, etc.)
     const photographers = [
-      {
-        name: "Michaela Bell Photography",
-        area: "pei",
-        style: "Natural / movement / documentary vibe (great for beach + Finn)",
-        website: "https://www.michaelabellphoto.ca/",
-        contact: "https://www.michaelabellphoto.ca/contact/",
-        img: "https://source.unsplash.com/900x600/?couple,beach,engagement,dog",
-        rating: { value: 5.0, count: 0, source: "Website references Google reviews (open link on site)" }
-      },
-      {
-        name: "Diego Moura Photography (PEI listing)",
-        area: "charlottetown",
-        style: "Storytelling + candid + creative lighting",
-        website: "https://www.weddingwire.ca/wedding-photography/diego-moura-photography--e11288",
-        contact: "https://www.weddingwire.ca/wedding-photography/diego-moura-photography--e11288",
-        img: "https://source.unsplash.com/900x600/?engagement,coast,canada",
-        rating: { value: 4.9, count: 31, source: "WeddingWire" }
-      },
-      {
-        name: "Maison Blanche Weddings",
-        area: "charlottetown",
-        style: "Editorial + intimate moments + modern",
-        website: "https://www.weddingwire.ca/wedding-photography/maison-blanche-weddings--e20510",
-        contact: "https://www.weddingwire.ca/wedding-photography/maison-blanche-weddings--e20510",
-        img: "https://source.unsplash.com/900x600/?couple,portrait,film",
-        rating: { value: 5.0, count: 3, source: "WeddingWire" }
-      },
-      {
-        name: "Melissa Harding Photography",
-        area: "charlottetown",
-        style: "Classic wedding + couples, clean color",
-        website: "https://www.weddingwire.ca/wedding-photography/melissa-harding-photography--e22388",
-        contact: "https://www.weddingwire.ca/wedding-photography/melissa-harding-photography--e22388",
-        img: "https://source.unsplash.com/900x600/?couple,beach,sunset",
-        rating: { value: 5.0, count: 1, source: "WeddingWire" }
-      },
-      {
-        name: "Sandpiper Studios",
-        area: "pei",
-        style: "Warm + candid + romantic",
-        website: "https://www.weddingwire.ca/wedding-photography/sandpiper-studios--e35343",
-        contact: "https://www.weddingwire.ca/wedding-photography/sandpiper-studios--e35343",
-        img: "https://source.unsplash.com/900x600/?wedding,couple,coast",
-        rating: { value: 5.0, count: 1, source: "WeddingWire" }
-      }
+       { name: "Michaela Bell", style: "Natural / Documentary", img: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=600" },
+       { name: "Diego Moura", style: "Storytelling", img: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600" }
     ];
 
-    // =====================
-    // Map logic
-    // =====================
+    // --- RENDERERS ---
+    function renderTimeline() {
+        const container = document.getElementById('timeline-container');
+        let html = '<div class="absolute left-[26px] top-4 bottom-4 w-0.5 bg-slate-200"></div>';
+        
+        itineraryData.forEach((day, index) => {
+            let scheduleHtml = day.schedule.map(s => `
+                <li class="flex items-start">
+                    <span class="font-bold w-14 text-slate-400 text-xs shrink-0">${s.time}</span>
+                    <span class="text-sm text-slate-700">${s.text}</span>
+                </li>
+            `).join('');
 
-    let mapInstance = null;
-    let mapMarkers = [];
-    let mapLines = [];
-    let markersVisible = true;
-    let linesVisible = true;
+            let imagesHtml = day.images.map(url => `
+                <div class="h-24 rounded-lg overflow-hidden bg-slate-100">
+                    <img src="${url}" class="w-full h-full object-cover" onerror="this.style.display='none'">
+                </div>
+            `).join('');
 
-    const locs = {
-      ottawa: [45.4215, -75.6972],
-      trapper: [46.7, -67.6],
-      stanhope: [46.4, -63.1],
-      charlottetown: [46.2, -63.1],
-      alma: [45.6, -64.9],
-      rdl: [47.8, -69.5],
-      bridge: [46.2, -63.7]
-    };
-
-    function initLeafletMap() {
-      if (mapInstance) return;
-
-      mapInstance = L.map('map', { scrollWheelZoom: false }).setView([46.8, -66], 6);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap',
-        subdomains: 'abcd',
-        maxZoom: 19
-      }).addTo(mapInstance);
-
-      const line1 = L.polyline([locs.ottawa, [46.8, -71.2], locs.trapper], { color: '#db2777', weight: 5 });
-      const line2 = L.polyline([locs.trapper, locs.bridge, locs.stanhope], { color: '#db2777', weight: 5 });
-      const line3 = L.polyline([locs.charlottetown, locs.bridge, locs.alma], { color: '#059669', weight: 5 });
-      const line4 = L.polyline([locs.alma, locs.rdl], { color: '#059669', weight: 5 });
-      const line5 = L.polyline([locs.rdl, locs.ottawa], { color: '#64748b', weight: 3, dashArray: '5, 10' });
-      mapLines = [line1, line2, line3, line4, line5];
-      mapLines.forEach(l => l.addTo(mapInstance));
-
-      mapMarkers = [
-        L.marker(locs.ottawa).bindPopup('Ottawa'),
-        L.marker(locs.trapper).bindPopup("Trapper's Cabin (Night 1)"),
-        L.marker(locs.stanhope).bindPopup('Stanhope Camp (Nights 2-3)'),
-        L.marker(locs.charlottetown).bindPopup('Charlottetown (Nights 4-5)'),
-        L.marker(locs.alma).bindPopup('Fundy/Alma (Night 6)'),
-        L.marker(locs.rdl).bindPopup('Rivière-du-Loup (Night 7)')
-      ];
-      mapMarkers.forEach(m => m.addTo(mapInstance));
-
-      setTimeout(() => fitRoute(), 150);
-    }
-
-    function fitRoute() {
-      if (!mapInstance || mapLines.length === 0) return;
-      const group = L.featureGroup([...mapLines, ...mapMarkers]);
-      mapInstance.fitBounds(group.getBounds().pad(0.15));
-    }
-
-    function toggleMarkers() {
-      if (!mapInstance) return;
-      markersVisible = !markersVisible;
-      mapMarkers.forEach(m => {
-        if (markersVisible) m.addTo(mapInstance);
-        else mapInstance.removeLayer(m);
-      });
-      toast(markersVisible ? '📍 Markers on' : '📍 Markers off');
-    }
-
-    function toggleLines() {
-      if (!mapInstance) return;
-      linesVisible = !linesVisible;
-      mapLines.forEach(l => {
-        if (linesVisible) l.addTo(mapInstance);
-        else mapInstance.removeLayer(l);
-      });
-      toast(linesVisible ? '〰️ Route lines on' : '〰️ Route lines off');
-    }
-
-    function focusStop(key) {
-      if (!mapInstance || !locs[key]) return;
-      mapInstance.setView(locs[key], key === 'ottawa' ? 8 : 9, { animate: true });
-      toast('📍 Centered on stop');
-    }
-
-    // =====================
-    // Budget logic
-    // =====================
-
-    let budgetChartInstance = null;
-
-    function updateBudget() {
-      const accom = parseFloat(document.getElementById('input-accom')?.value || '0');
-      const food = parseFloat(document.getElementById('input-food')?.value || '0');
-      const gasPrice = parseFloat(document.getElementById('input-gas')?.value || '0');
-      const fuel = parseFloat(document.getElementById('input-fuel')?.value || DEFAULTS.fuelLPer100);
-      const km = parseFloat(document.getElementById('input-km')?.value || DEFAULTS.km);
-
-      document.getElementById('val-accom').innerText = accom.toFixed(0);
-      document.getElementById('val-food').innerText = food.toFixed(0);
-      document.getElementById('val-gas').innerText = gasPrice.toFixed(2);
-      document.getElementById('val-fuel').innerText = fuel.toFixed(1);
-      document.getElementById('val-km').innerText = km.toFixed(0);
-
-      const fixedAccom = DEFAULTS.trapper + DEFAULTS.camping;
-      const gas = Math.round((km / 100) * fuel * gasPrice);
-      const varAccom = DEFAULTS.variableNights * accom;
-      const foodTotal = food * DEFAULTS.people * DEFAULTS.tripDays;
-      const fun = DEFAULTS.bridge + DEFAULTS.whales + DEFAULTS.miscFunBuffer;
-      const total = gas + fixedAccom + varAccom + foodTotal + fun;
-
-      document.getElementById('total-cost').innerText = '$' + total.toLocaleString();
-      document.getElementById('per-person-cost').innerText = '$' + Math.round(total / DEFAULTS.people).toLocaleString();
-
-      if (budgetChartInstance) {
-        budgetChartInstance.data.datasets[0].data = [gas, fixedAccom + varAccom, foodTotal, fun];
-        budgetChartInstance.update();
-      }
-
-      document.getElementById('stat-distance').innerText = `~${Math.round(km).toLocaleString()} km`;
-    }
-
-    function initBudgetCalc() {
-      const canvas = document.getElementById('budgetChart');
-      if (!canvas) return;
-
-      const ctx = canvas.getContext('2d');
-      budgetChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Transport', 'Stay', 'Food', 'Fun'],
-          datasets: [{
-            data: [1, 1, 1, 1],
-            backgroundColor: ['#0891b2', '#f59e0b', '#10b981', '#6366f1']
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '70%'
-        }
-      });
-
-      ['accom', 'food', 'gas', 'fuel', 'km'].forEach(id => {
-        const el = document.getElementById(`input-${id}`);
-        if (el) el.addEventListener('input', updateBudget);
-      });
-
-      updateBudget();
-    }
-
-    // =====================
-    // Attractions logic
-    // =====================
-
-    let attractionFilter = 'all';
-
-    function normalize(str) {
-      const s = (str || '').toString().toLowerCase().normalize('NFD');
-      try { return s.replace(/\p{Diacritic}/gu, ''); }
-      catch (_) { return s.replace(/[\u0300-\u036f]/g, ''); }
-    }
-
-    function getAttractionQuery() {
-      return normalize(document.getElementById('attraction-search')?.value || '');
-    }
-
-    function getAttractionSort() {
-      return document.getElementById('attraction-sort')?.value || 'title';
+            html += `
+                <details class="group bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative z-10" ${index===0 ? 'open' : ''}>
+                    <summary class="flex items-center p-4 bg-slate-50 cursor-pointer list-none hover:bg-slate-100 transition">
+                        <div class="${day.color} text-white font-bold w-10 h-10 rounded-lg flex items-center justify-center text-lg shadow-md shrink-0 z-10">${day.day}</div>
+                        <div class="ml-4 flex-grow">
+                            <h3 class="font-bold text-slate-800">${day.date}: ${day.title}</h3>
+                            <p class="text-xs text-slate-500">${day.route}</p>
+                        </div>
+                        <div class="text-slate-400 transform group-open:rotate-180 transition-transform">▼</div>
+                    </summary>
+                    <div class="p-5 border-t border-slate-100">
+                        <ul class="space-y-3 mb-4">${scheduleHtml}</ul>
+                        <div class="grid grid-cols-2 gap-2">${imagesHtml}</div>
+                    </div>
+                </details>
+            `;
+        });
+        container.innerHTML = html;
     }
 
     function renderAttractions(filter) {
-      attractionFilter = filter;
-      const grid = document.getElementById('attraction-grid');
-      const query = getAttractionQuery();
-      const sort = getAttractionSort();
-      if (!grid) return;
-
-      let list = [...attractions];
-      if (filter !== 'all') list = list.filter(i => i.cat === filter);
-      if (query) list = list.filter(i => normalize(`${i.title} ${i.cat} ${i.loc} ${i.desc}`).includes(query));
-
-      list.sort((a, b) => normalize(a[sort]).localeCompare(normalize(b[sort])));
-
-      grid.innerHTML = '';
-      if (list.length === 0) {
-        grid.innerHTML = `<div class="col-span-full bg-white border border-slate-100 rounded-2xl p-8 text-center text-slate-600">No matches. Try a different search.</div>`;
-        return;
-      }
-
-      list.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden group hover:-translate-y-1 transition';
-
-        let fallback = 'https://source.unsplash.com/900x600/?prince-edward-island,beach';
-        if (item.cat === 'mammals') fallback = assets.fox;
-
-        card.innerHTML = `
-          <div class="h-48 overflow-hidden relative">
-            <img src="${item.img}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" onerror="this.src='${fallback}'" alt="${item.title}">
-            <div class="absolute top-2 right-2 bg-white/90 text-xs font-bold px-2 py-1 rounded shadow uppercase">${item.cat}</div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
-            <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${item.loc}</p>
-            <p class="text-sm text-slate-600">${item.desc}</p>
-            <div class="mt-4 flex flex-wrap gap-2">
-              <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="${item.title} — ${item.loc}. ${item.desc}">📋 Copy</button>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
+        const grid = document.getElementById('attraction-grid');
+        grid.innerHTML = '';
+        attractions.forEach(item => {
+            if(filter !== 'all' && item.cat !== filter) return;
+            const card = document.createElement('div');
+            card.className = "bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden group hover:-translate-y-1 transition";
+            card.innerHTML = `
+                <div class="h-40 overflow-hidden relative">
+                    <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.parentNode.classList.add('img-fallback'); this.style.display='none'; this.parentNode.innerText='Image Unavailable'">
+                    <div class="absolute top-2 right-2 bg-slate-800/80 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">${item.cat}</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-slate-800">${item.title}</h3>
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${item.loc}</p>
+                    <p class="text-xs text-slate-600">${item.desc}</p>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
     }
 
-    // =====================
-    // Photographers logic
-    // =====================
-
-    let photoFilter = 'all';
-
-    function getPhotoQuery() {
-      return normalize(document.getElementById('photo-search')?.value || '');
+    function renderPhotographers() {
+        const grid = document.getElementById('photo-grid');
+        grid.innerHTML = '';
+        photographers.forEach(p => {
+            const card = document.createElement('div');
+            card.className = "bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden p-4";
+            card.innerHTML = `
+                <div class="h-40 rounded-lg overflow-hidden mb-3 bg-slate-100">
+                    <img src="${p.img}" class="w-full h-full object-cover">
+                </div>
+                <h3 class="font-bold text-slate-800">${p.name}</h3>
+                <p class="text-xs text-slate-500">${p.style}</p>
+            `;
+            grid.appendChild(card);
+        });
     }
 
-    function getPhotoSort() {
-      return document.getElementById('photo-sort')?.value || 'rating';
+    // --- MAP ---
+    let map;
+    function initMap() {
+        if(map) return;
+        map = L.map('map', {scrollWheelZoom:false}).setView([46.8, -67], 6);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap', maxZoom: 19 }).addTo(map);
+
+        const pts = { ottawa:[45.4,-75.7], trapper:[46.7,-67.6], stanhope:[46.4,-63.1], alma:[45.6,-64.9], rdl:[47.8,-69.5] };
+        
+        // Polylines
+        L.polyline([pts.ottawa, [46.8,-71.2], pts.trapper], {color:'#db2777', weight:4}).addTo(map);
+        L.polyline([pts.trapper, pts.stanhope], {color:'#f59e0b', weight:4}).addTo(map);
+        L.polyline([pts.stanhope, pts.alma, pts.rdl], {color:'#10b981', weight:4}).addTo(map);
+        L.polyline([pts.rdl, pts.ottawa], {color:'#3b82f6', weight:4, dashArray:'5,5'}).addTo(map);
+
+        // Markers
+        Object.entries(pts).forEach(([k,v]) => L.marker(v).addTo(map).bindPopup(k.toUpperCase()));
     }
 
-    function renderPhotographers(filter) {
-      photoFilter = filter;
-      const grid = document.getElementById('photo-grid');
-      if (!grid) return;
+    // --- BUDGET ---
+    let budgetChart;
+    function updateBudget() {
+        const accom = parseFloat(document.getElementById('input-accom').value);
+        const food = parseFloat(document.getElementById('input-food').value);
+        const gas = parseFloat(document.getElementById('input-gas').value);
+        
+        const fixed = 116 + 100 + 200; // Cabin + Camp + Whales
+        const varAccom = 4 * accom;
+        const dist = 2850; 
+        const fuel = Math.round((dist/100)*9.5*gas);
+        const bridge = 50;
+        const total = fixed + varAccom + fuel + bridge + (food*2*8);
 
-      const query = getPhotoQuery();
-      const sort = getPhotoSort();
+        document.getElementById('total-cost').innerText = '$' + total.toLocaleString();
+        document.getElementById('val-accom').innerText = accom;
+        document.getElementById('val-gas').innerText = gas;
 
-      let list = [...photographers];
-      if (filter !== 'all') list = list.filter(p => p.area === filter);
-      if (query) list = list.filter(p => normalize(`${p.name} ${p.style} ${p.area}`).includes(query));
-
-      if (sort === 'rating') {
-        list.sort((a, b) => (b.rating.value || 0) - (a.rating.value || 0));
-      } else if (sort === 'reviews') {
-        list.sort((a, b) => (b.rating.count || 0) - (a.rating.count || 0));
-      } else {
-        list.sort((a, b) => normalize(a.name).localeCompare(normalize(b.name)));
-      }
-
-      grid.innerHTML = '';
-      if (list.length === 0) {
-        grid.innerHTML = `<div class="col-span-full bg-white border border-slate-100 rounded-2xl p-8 text-center text-slate-600">No matches. Try a different search.</div>`;
-        return;
-      }
-
-      list.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden group hover:-translate-y-1 transition';
-
-        const ratingLabel = (p.rating && typeof p.rating.value === 'number')
-          ? `${p.rating.value.toFixed(1)} ★`
-          : '—';
-        const countLabel = (p.rating && p.rating.count) ? `(${p.rating.count})` : '';
-        const sourceLabel = p.rating?.source ? p.rating.source : 'Rating source';
-
-        card.innerHTML = `
-          <div class="h-48 overflow-hidden relative">
-            <img src="${p.img}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" onerror="this.src='https://source.unsplash.com/900x600/?couple,beach,engagement'" alt="${p.name}">
-            <div class="absolute top-2 left-2 bg-white/90 text-xs font-bold px-2 py-1 rounded shadow">${ratingLabel} ${countLabel}</div>
-            <div class="absolute top-2 right-2 bg-white/90 text-[11px] font-bold px-2 py-1 rounded shadow">${sourceLabel}</div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold text-slate-800">${p.name}</h3>
-            <p class="text-xs font-bold text-slate-400 uppercase mb-2">📍 ${p.area === 'charlottetown' ? 'Charlottetown' : 'PEI-wide'}</p>
-            <p class="text-sm text-slate-600">${p.style}</p>
-
-            <div class="mt-4 flex flex-wrap gap-2">
-              <a class="px-3 py-2 rounded-lg bg-slate-800 text-white text-sm font-semibold hover:bg-slate-900" href="${p.website}" target="_blank" rel="noreferrer">Open</a>
-              <a class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" href="${p.contact}" target="_blank" rel="noreferrer">Contact</a>
-              <button class="btn-copy px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-semibold" data-copy="${p.name} — ${p.website} — Rating: ${ratingLabel} ${countLabel} (${sourceLabel}). Notes: ${p.style}">📋 Copy</button>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    // =====================
-    // Itinerary helpers
-    // =====================
-
-    function expandAll(open) {
-      document.querySelectorAll('details.day-card').forEach(d => { d.open = open; });
-    }
-
-    function filterItinerary() {
-      const q = normalize(document.getElementById('itinerary-search')?.value || '');
-      const cards = document.querySelectorAll('details.day-card');
-      let visible = 0;
-      cards.forEach(card => {
-        const tags = normalize(card.getAttribute('data-tags') || '');
-        const content = normalize(card.innerText || '');
-        const match = !q || tags.includes(q) || content.includes(q);
-        card.classList.toggle('hidden', !match);
-        if (match) visible++;
-      });
-      toast(q ? `Showing ${visible} day(s)` : 'Itinerary reset');
-    }
-
-    // =====================
-    // Toast + clipboard
-    // =====================
-
-    let toastTimer = null;
-    function toast(msg, icon = '✅') {
-      const el = document.getElementById('toast');
-      const t = document.getElementById('toast-text');
-      const i = document.getElementById('toast-icon');
-      if (!el || !t || !i) return;
-
-      i.textContent = icon;
-      t.textContent = msg;
-      el.classList.remove('hidden');
-
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.add('hidden'), 2200);
-    }
-
-    async function copyText(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        toast('Copied to clipboard');
-      } catch (_) {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        toast('Copied (fallback)');
-      }
-    }
-
-    // =====================
-    // Password + lock
-    // =====================
-
-    function unlock() {
-      const overlay = document.getElementById('login-overlay');
-      const container = document.getElementById('app-container');
-      if (overlay) overlay.style.display = 'none';
-      if (container) container.classList.remove('hidden');
-      localStorage.setItem('maritime_unlocked', '1');
-
-      setTimeout(() => {
-        initLeafletMap();
-        initBudgetCalc();
-        renderAttractions('all');
-        renderPhotographers('all');
-        initChecklist();
-        initWishlist();
-        if (window.lucide && typeof window.lucide.createIcons === 'function') {
-          window.lucide.createIcons();
+        if(budgetChart) {
+            budgetChart.data.datasets[0].data = [fuel, fixed+varAccom, food*2*8, bridge+200];
+            budgetChart.update();
         }
-      }, 120);
-
-      const dates = document.getElementById('trip-dates');
-      if (dates) dates.innerText = TRIP_DATES_LABEL;
-
-      toast('Unlocked');
     }
 
-    function lock() {
-      localStorage.removeItem('maritime_unlocked');
-      const container = document.getElementById('app-container');
-      const overlay = document.getElementById('login-overlay');
-      if (container) container.classList.add('hidden');
-      if (overlay) overlay.style.display = 'flex';
-      toast('Locked');
+    function initBudget() {
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        budgetChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: ['Gas', 'Stay', 'Food', 'Fun'], datasets:[{ data:[1,1,1,1], backgroundColor:['#3b82f6','#f59e0b','#10b981','#6366f1'] }] },
+            options: { responsive:true, cutout:'70%', plugins:{legend:{position:'bottom'}} }
+        });
+        ['accom','food','gas'].forEach(id => document.getElementById('input-'+id).addEventListener('input', updateBudget));
+        updateBudget();
     }
 
+    // --- CORE ---
     function checkPassword() {
-      const inputEl = document.getElementById('password-input');
-      const errEl = document.getElementById('error-msg');
-      const val = (inputEl?.value || '').trim();
-
-      if (val === APP_PASSWORD) {
-        if (errEl) errEl.classList.add('hidden');
-        unlock();
-      } else {
-        if (errEl) errEl.classList.remove('hidden');
-      }
-    }
-
-    window.checkPassword = checkPassword;
-
-    // =====================
-    // Tabs
-    // =====================
-
-    function switchTab(id) {
-      ['route', 'budget', 'attractions', 'photographers', 'wishlist', 'logistics'].forEach(t => {
-        document.getElementById(`content-${t}`).classList.add('hidden');
-        document.getElementById(`tab-${t}`).classList.remove('tab-active');
-        document.getElementById(`tab-${t}`).classList.add('tab-inactive');
-      });
-
-      document.getElementById(`content-${id}`).classList.remove('hidden');
-      document.getElementById(`tab-${id}`).classList.add('tab-active');
-
-      if (id === 'route' && mapInstance) setTimeout(() => mapInstance.invalidateSize(), 120);
-      if (id === 'budget') setTimeout(() => updateBudget(), 80);
-      if (id === 'photographers') setTimeout(() => renderPhotographers(photoFilter), 50);
-      if (id === 'wishlist') setTimeout(() => initWishlist(), 50);
-    }
-
-    window.switchTab = switchTab;
-    window.renderAttractions = renderAttractions;
-    window.renderPhotographers = renderPhotographers;
-
-    // =====================
-    // ICS generation
-    // =====================
-
-    function formatICSDateUTC(date) {
-      const pad = (n) => String(n).padStart(2, '0');
-      return (
-        date.getUTCFullYear() +
-        pad(date.getUTCMonth() + 1) +
-        pad(date.getUTCDate()) +
-        'T' +
-        pad(date.getUTCHours()) +
-        pad(date.getUTCMinutes()) +
-        '00Z'
-      );
-    }
-
-    function downloadText(filename, text) {
-      const blob = new Blob([text], { type: 'text/calendar;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function buildTripICS() {
-      const now = new Date();
-      const uidBase = 'maritime-trip-' + now.getTime();
-
-      const events = [
-        { summary: "Day 1 — Ottawa → Trapper's Cabin", start: '20260815T070000', end: '20260815T200000', desc: 'Drive day. Stops: Rivière-du-Loup (Parc de la Pointe), Grand Falls groceries.' },
-        { summary: "Day 2 — Trapper's → Stanhope (PEI)", start: '20260816T090000', end: '20260816T190000', desc: 'Sackville Waterfowl Park. Cross Confederation Bridge. Camp in Stanhope.' },
-        { summary: 'Day 3 — Greenwich + Brackley + MacKenzies Brook', start: '20260817T080000', end: '20260817T200000', desc: 'Greenwich Dunes boardwalks + Piping Plovers, visit Aunt, Brackley Beach + MacKenzies Brook.' },
-        { summary: 'Day 4 — Wood Islands + Sheep Pond + Basin Head → Charlottetown', start: '20260818T090000', end: '20260818T200000', desc: 'Pack up camp. Wood Islands Lighthouse, Sheep Pond Beach, Basin Head (Singing Sands), then Charlottetown check-in.' },
-        { summary: 'Day 5 — Avonlea + Potato Museum + Donahue Beach', start: '20260819T100000', end: '20260819T190000', desc: 'Avonlea Village, Canadian Potato Museum & Antique Farm Machinery Museum, Donahue Beach (optional Anne musical).'},
-        { summary: 'Day 6 — Thunder Cove + North Cape → Alma (Fundy)', start: '20260820T083000', end: '20260820T203000', desc: 'Thunder Cove Beach, North Cape Hiking Trail, cross bridge, arrive Alma, optional Dickson Falls.' },
-        { summary: 'Day 7 — Alma → Rivière-du-Loup', start: '20260821T090000', end: '20260821T200000', desc: 'Drive, check-in, Parc de la Pointe walk, sunset dinner.' },
-        { summary: 'Day 8 — Whale watching + home', start: '20260822T093000', end: '20260822T200000', desc: 'Whale tour (AML), lunch + Finn walk, drive to Ottawa.' }
-      ];
-
-      let ics = '';
-      ics += 'BEGIN:VCALENDAR\n';
-      ics += 'VERSION:2.0\n';
-      ics += 'PRODID:-//Maritime Explorer//EN\n';
-      ics += 'CALSCALE:GREGORIAN\n';
-
-      events.forEach((e, idx) => {
-        ics += 'BEGIN:VEVENT\n';
-        ics += `UID:${uidBase}-${idx}@maritime\n`;
-        ics += `DTSTAMP:${formatICSDateUTC(new Date())}\n`;
-        ics += `DTSTART:${e.start}\n`;
-        ics += `DTEND:${e.end}\n`;
-        ics += `SUMMARY:${e.summary.replace(/\n/g, ' ')}\n`;
-        ics += `DESCRIPTION:${e.desc.replace(/\n/g, ' ')}\n`;
-        ics += 'END:VEVENT\n';
-      });
-
-      ics += 'END:VCALENDAR\n';
-      return ics;
-    }
-
-    function buildReminderICS() {
-      const now = new Date();
-      const uid = 'stanhope-reminder-' + now.getTime();
-      const start = '20260209T070000';
-      const end = '20260209T073000';
-
-      let ics = '';
-      ics += 'BEGIN:VCALENDAR\n';
-      ics += 'VERSION:2.0\n';
-      ics += 'PRODID:-//Maritime Explorer//EN\n';
-      ics += 'CALSCALE:GREGORIAN\n';
-      ics += 'BEGIN:VEVENT\n';
-      ics += `UID:${uid}@maritime\n`;
-      ics += `DTSTAMP:${formatICSDateUTC(new Date())}\n`;
-      ics += `DTSTART:${start}\n`;
-      ics += `DTEND:${end}\n`;
-      ics += 'SUMMARY:Parks Canada booking opens — Stanhope\n';
-      ics += 'DESCRIPTION:Reservations open at 7:00 AM ET. Be logged in, payment ready.\n';
-      ics += 'END:VEVENT\n';
-      ics += 'END:VCALENDAR\n';
-      return ics;
-    }
-
-    // =====================
-    // Checklist
-    // =====================
-
-    function initChecklist() {
-      const host = document.getElementById('checklist');
-      if (!host) return;
-
-      const saved = JSON.parse(localStorage.getItem('maritime_checklist') || '{}');
-
-      host.innerHTML = '';
-      CHECKLIST_ITEMS.forEach(item => {
-        const checked = !!saved[item.id];
-        const card = document.createElement('label');
-        card.className = 'flex items-start gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer hover:bg-slate-100 transition';
-        card.innerHTML = `
-          <input type="checkbox" class="mt-1 h-5 w-5 accent-pink-600" ${checked ? 'checked' : ''} data-check="${item.id}" />
-          <div>
-            <div class="font-semibold text-slate-800">${item.label}</div>
-            <div class="text-xs text-slate-500">Tap to toggle</div>
-          </div>
-        `;
-        host.appendChild(card);
-      });
-
-      host.addEventListener('change', (e) => {
-        const t = e.target;
-        if (!(t instanceof HTMLInputElement)) return;
-        const key = t.getAttribute('data-check');
-        if (!key) return;
-        const next = JSON.parse(localStorage.getItem('maritime_checklist') || '{}');
-        next[key] = t.checked;
-        localStorage.setItem('maritime_checklist', JSON.stringify(next));
-      });
-    }
-
-    function resetChecklist() {
-      localStorage.removeItem('maritime_checklist');
-      initChecklist();
-      toast('Checklist reset');
-    }
-
-    // =====================
-    // Wishlist
-    // =====================
-
-    function initWishlist() {
-      const host = document.getElementById('wishlist');
-      if (!host) return;
-
-      const saved = JSON.parse(localStorage.getItem('maritime_wishlist') || '{}');
-
-      host.innerHTML = '';
-      WISHLIST_ITEMS.forEach(item => {
-        const checked = !!saved[item.id];
-        const card = document.createElement('label');
-        card.className = 'flex items-start gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer hover:bg-slate-100 transition';
-        card.innerHTML = `
-          <input type="checkbox" class="mt-1 h-5 w-5 accent-pink-600" ${checked ? 'checked' : ''} data-wish="${item.id}" />
-          <div>
-            <div class="font-semibold text-slate-800">${item.emoji} ${item.label}</div>
-            <div class="text-xs text-slate-500">Tap to toggle</div>
-          </div>
-        `;
-        host.appendChild(card);
-      });
-
-      host.addEventListener('change', (e) => {
-        const t = e.target;
-        if (!(t instanceof HTMLInputElement)) return;
-        const key = t.getAttribute('data-wish');
-        if (!key) return;
-        const next = JSON.parse(localStorage.getItem('maritime_wishlist') || '{}');
-        next[key] = t.checked;
-        localStorage.setItem('maritime_wishlist', JSON.stringify(next));
-      });
-    }
-
-    function resetWishlist() {
-      localStorage.removeItem('maritime_wishlist');
-      initWishlist();
-      toast('Wishlist reset');
-    }
-
-    function copyWishlist() {
-      const saved = JSON.parse(localStorage.getItem('maritime_wishlist') || '{}');
-      const done = [];
-      const todo = [];
-      WISHLIST_ITEMS.forEach(i => {
-        (saved[i.id] ? done : todo).push(`${i.emoji} ${i.label}`);
-      });
-
-      const text =
-        `PEI Wishlist\n\nTo-do:\n- ${todo.join('\n- ')}\n\nDone:\n- ${done.length ? done.join('\n- ') : '(none yet)'}`;
-      copyText(text);
-    }
-
-    // =====================
-    // Event bindings
-    // =====================
-
-    function bindUI() {
-      const pwd = document.getElementById('password-input');
-      pwd?.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
-      pwd?.addEventListener('input', () => {
-        const err = document.getElementById('error-msg');
-        if (err) err.classList.add('hidden');
-      });
-
-      if (localStorage.getItem('maritime_unlocked') === '1') {
-        unlock();
-      }
-
-      document.getElementById('btn-fit')?.addEventListener('click', fitRoute);
-      document.getElementById('btn-toggle-markers')?.addEventListener('click', toggleMarkers);
-      document.getElementById('btn-toggle-lines')?.addEventListener('click', toggleLines);
-
-      document.getElementById('itinerary-search')?.addEventListener('input', filterItinerary);
-      document.getElementById('btn-expand-all')?.addEventListener('click', () => expandAll(true));
-      document.getElementById('btn-collapse-all')?.addEventListener('click', () => expandAll(false));
-
-      document.body.addEventListener('click', (e) => {
-        const el = e.target;
-        if (!(el instanceof HTMLElement)) return;
-
-        const copyBtn = el.closest('.btn-copy');
-        if (copyBtn) {
-          const text = copyBtn.getAttribute('data-copy') || '';
-          copyText(text);
-          return;
+        if(document.getElementById('password-input').value.toLowerCase() === 'maritime') {
+            document.getElementById('login-overlay').style.display='none';
+            document.getElementById('app-container').classList.remove('hidden');
+            setTimeout(() => { initMap(); initBudget(); renderTimeline(); renderAttractions('all'); renderPhotographers(); }, 100);
+        } else {
+            document.getElementById('error-msg').classList.remove('hidden');
         }
-
-        const mapBtn = el.closest('.btn-map');
-        if (mapBtn) {
-          const key = mapBtn.getAttribute('data-focus');
-          if (key) focusStop(key);
-          return;
-        }
-      });
-
-      document.getElementById('attraction-search')?.addEventListener('input', () => renderAttractions(attractionFilter));
-      document.getElementById('attraction-sort')?.addEventListener('change', () => renderAttractions(attractionFilter));
-
-      document.getElementById('photo-search')?.addEventListener('input', () => renderPhotographers(photoFilter));
-      document.getElementById('photo-sort')?.addEventListener('change', () => renderPhotographers(photoFilter));
-
-      document.getElementById('btn-share')?.addEventListener('click', () => { copyText(window.location.href); });
-      document.getElementById('btn-print')?.addEventListener('click', () => window.print());
-      document.getElementById('btn-lock')?.addEventListener('click', lock);
-
-      document.getElementById('btn-download-ics')?.addEventListener('click', () => {
-        downloadText('maritime-trip.ics', buildTripICS());
-        toast('Downloaded maritime-trip.ics', '🗓️');
-      });
-      document.getElementById('btn-add-reminder')?.addEventListener('click', () => {
-        downloadText('stanhope-booking-reminder.ics', buildReminderICS());
-        toast('Downloaded reminder .ics', '⏰');
-      });
-
-      document.getElementById('btn-reset-checklist')?.addEventListener('click', resetChecklist);
-
-      document.getElementById('btn-copy-wishlist')?.addEventListener('click', copyWishlist);
-      document.getElementById('btn-reset-wishlist')?.addEventListener('click', resetWishlist);
     }
+    document.getElementById('password-input').addEventListener('keypress', e => e.key==='Enter' && checkPassword());
 
-    // =====================
-    // Self-tests
-    // =====================
-
-    function runSelfTests() {
-      console.assert(typeof window.checkPassword === 'function', 'SelfTest failed: checkPassword missing on window');
-      console.assert(typeof window.switchTab === 'function', 'SelfTest failed: switchTab missing on window');
-      console.assert(typeof window.renderAttractions === 'function', 'SelfTest failed: renderAttractions missing on window');
-      console.assert(typeof window.renderPhotographers === 'function', 'SelfTest failed: renderPhotographers missing on window');
-      console.assert(APP_PASSWORD === 'maritime', 'SelfTest failed: APP_PASSWORD should be maritime');
-      console.assert(typeof unlock === 'function' && typeof lock === 'function', 'SelfTest failed: lock/unlock should exist');
-      console.assert(true, 'SelfTest info: avoided optional chaining on assignment targets');
+    window.switchTab = (id) => {
+        document.querySelectorAll('section[id^="content-"]').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('button[id^="tab-"]').forEach(el => el.className = 'tab-inactive py-5 px-6 transition-all flex items-center gap-2');
+        document.getElementById(`content-${id}`).classList.remove('hidden');
+        document.getElementById(`tab-${id}`).className = 'tab-active py-5 px-6 transition-all flex items-center gap-2';
+        if(id === 'route') setTimeout(() => map.invalidateSize(), 100);
     }
-
-    // =====================
-    // Boot
-    // =====================
-
-    document.addEventListener('DOMContentLoaded', () => {
-      bindUI();
-      renderAttractions('all');
-      renderPhotographers('all');
-      initWishlist();
-
-      const tripDatesEl = document.getElementById('trip-dates');
-      if (tripDatesEl) tripDatesEl.innerText = TRIP_DATES_LABEL;
-
-      const statDistanceEl = document.getElementById('stat-distance');
-      if (statDistanceEl) statDistanceEl.innerText = `~${DEFAULTS.km.toLocaleString()} km`;
-
-      const statDriveEl = document.getElementById('stat-drive');
-      if (statDriveEl) statDriveEl.innerText = '~31 h';
-
-      const statNightsEl = document.getElementById('stat-nights');
-      if (statNightsEl) statNightsEl.innerText = '7';
-
-      runSelfTests();
-    });
   </script>
 </body>
 </html>
