@@ -56,7 +56,7 @@
   </div>
 
   <!-- TOAST -->
-  <div id="toast" class="hidden">
+  <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[9998]">
     <div class="bg-slate-900 text-white text-sm px-4 py-3 rounded-xl shadow-xl border border-white/10 flex items-center gap-2">
       <span id="toast-icon">✅</span>
       <span id="toast-text">Copied!</span>
@@ -179,6 +179,7 @@
                 <div class="text-slate-500 text-sm">Estimated Total</div>
                 <div id="total-cost" class="text-4xl font-bold text-slate-800">$0</div>
             </div>
+            <div id="budget-breakdown" class="mt-4 space-y-1.5 text-xs"></div>
           </div>
           <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
             <div class="relative w-full max-w-[400px] mx-auto h-[300px]">
@@ -190,11 +191,11 @@
 
       <!-- TAB: ATTRACTIONS -->
       <section id="content-attractions" class="hidden space-y-8">
-        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-            <button onclick="renderAttractions('all')" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full">All</button>
-            <button onclick="renderAttractions('hidden')" class="px-4 py-2 text-sm bg-white border border-pink-200 text-pink-700 rounded-full font-bold">💎 Hidden Gems</button>
-            <button onclick="renderAttractions('mammals')" class="px-4 py-2 text-sm bg-white border border-blue-200 text-blue-700 rounded-full font-bold">🐋 Mammals</button>
-            <button onclick="renderAttractions('birds')" class="px-4 py-2 text-sm bg-white border border-amber-200 text-amber-700 rounded-full font-bold">🦅 Birding</button>
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="attraction-filters">
+            <button onclick="renderAttractions('all')" data-filter="all" class="px-4 py-2 text-sm bg-slate-800 text-white rounded-full transition">All</button>
+            <button onclick="renderAttractions('hidden')" data-filter="hidden" class="px-4 py-2 text-sm bg-white border border-pink-200 text-pink-700 rounded-full font-bold transition">💎 Hidden Gems</button>
+            <button onclick="renderAttractions('mammals')" data-filter="mammals" class="px-4 py-2 text-sm bg-white border border-blue-200 text-blue-700 rounded-full font-bold transition">🐋 Mammals</button>
+            <button onclick="renderAttractions('birds')" data-filter="birds" class="px-4 py-2 text-sm bg-white border border-amber-200 text-amber-700 rounded-full font-bold transition">🦅 Birding</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="attraction-grid"></div>
       </section>
@@ -202,8 +203,12 @@
       <!-- TAB: PHOTOGRAPHERS -->
       <section id="content-photographers" class="hidden space-y-8">
          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h2 class="text-2xl font-bold text-slate-800 mb-4">Engagement Photographers</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="photo-grid"></div>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <h2 class="text-2xl font-bold text-slate-800">Engagement Photographers</h2>
+              <input id="photo-search" type="text" placeholder="Search name or style…" oninput="renderPhotographers()"
+                class="w-full sm:w-64 px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="photo-grid"></div>
          </div>
       </section>
 
@@ -213,6 +218,15 @@
              <div class="flex justify-between items-center mb-4">
                  <h2 class="text-2xl font-bold text-slate-800">Complete Trip Wishlist</h2>
                  <button onclick="localStorage.removeItem('maritime_wishlist'); initWishlist();" class="text-sm text-slate-500 hover:text-red-500">Reset</button>
+             </div>
+             <div class="mb-5">
+               <div class="flex justify-between text-sm mb-1">
+                 <span class="font-semibold text-slate-600">Progress</span>
+                 <span id="wish-progress-text" class="font-bold text-pink-600">0 / 9 completed</span>
+               </div>
+               <div class="w-full bg-slate-100 rounded-full h-2.5">
+                 <div id="wish-progress-bar" class="bg-pink-500 h-2.5 rounded-full transition-all duration-500" style="width:0%"></div>
+               </div>
              </div>
              <div class="grid grid-cols-1 gap-3" id="wishlist"></div>
           </div>
@@ -228,7 +242,10 @@
                     <h3 class="text-lg font-bold text-slate-800">Stanhope Campground</h3>
                     <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold uppercase">Confirmed</span>
                 </div>
-                <p class="text-sm text-slate-600 font-mono bg-slate-50 p-2 rounded mb-2">Res #: INPC25-14657733B1</p>
+                <p class="text-sm text-slate-600 font-mono bg-slate-50 p-2 rounded mb-2 flex items-center justify-between gap-2">
+                    <span>Res #: INPC25-14657733B1</span>
+                    <button onclick="copyText('INPC25-14657733B1')" class="text-xs text-slate-400 hover:text-pink-500 shrink-0" title="Copy">📋</button>
+                </p>
                 <p class="text-xs text-slate-500">Aug 18-20 (2 Nights)</p>
             </div>
 
@@ -403,7 +420,7 @@
          style: "Editorial + Intimate + Modern", 
          website: "https://www.weddingwire.ca/wedding-photography/maison-blanche-weddings--e20510", 
          contact: "https://www.weddingwire.ca/wedding-photography/maison-blanche-weddings--e20510",
-         img: "https://source.unsplash.com/900x600/?couple,portrait,film",
+         img: "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=600",
          rating: { value: 5.0, count: 3, source: "WeddingWire" }
        },
        { 
@@ -412,7 +429,7 @@
          style: "Classic + Clean Color", 
          website: "https://www.weddingwire.ca/wedding-photography/melissa-harding-photography--e22388", 
          contact: "https://www.weddingwire.ca/wedding-photography/melissa-harding-photography--e22388",
-         img: "https://source.unsplash.com/900x600/?couple,beach,sunset",
+         img: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600",
          rating: { value: 5.0, count: 1, source: "WeddingWire" }
        },
        { 
@@ -421,7 +438,7 @@
          style: "Warm + Candid + Romantic", 
          website: "https://www.weddingwire.ca/wedding-photography/sandpiper-studios--e35343", 
          contact: "https://www.weddingwire.ca/wedding-photography/sandpiper-studios--e35343",
-         img: "https://source.unsplash.com/900x600/?wedding,couple,coast",
+         img: "https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=600",
          rating: { value: 5.0, count: 1, source: "WeddingWire" }
        }
     ];
@@ -487,6 +504,10 @@
     }
 
     function renderAttractions(filter) {
+        document.querySelectorAll('#attraction-filters [data-filter]').forEach(btn => {
+            btn.classList.toggle('opacity-40', btn.dataset.filter !== filter);
+            btn.classList.toggle('scale-95', btn.dataset.filter !== filter);
+        });
         const grid = document.getElementById('attraction-grid');
         grid.innerHTML = '';
         attractions.forEach(item => {
@@ -511,36 +532,68 @@
     function renderPhotographers() {
         const grid = document.getElementById('photo-grid');
         if (!grid) return;
-        
-        // Filter logic: simplistic name search
+
         const q = document.getElementById('photo-search')?.value.toLowerCase() || '';
-        const list = photographers.filter(p => p.name.toLowerCase().includes(q) || p.style.toLowerCase().includes(q));
+        const list = photographers.filter(p =>
+            p.name.toLowerCase().includes(q) ||
+            p.style.toLowerCase().includes(q) ||
+            p.area.toLowerCase().includes(q)
+        );
 
         grid.innerHTML = '';
         if (list.length === 0) {
-            grid.innerHTML = `<div class="col-span-full text-center text-slate-400 p-4">No photographers found.</div>`;
+            grid.innerHTML = `<div class="col-span-full text-center text-slate-400 p-8">No photographers found.</div>`;
             return;
         }
 
         list.forEach(p => {
+            const fullStars = Math.floor(p.rating.value);
+            const stars = '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
+            const reviewText = p.rating.count > 0 ? ` (${p.rating.count})` : '';
             const card = document.createElement('div');
-            card.className = "bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden p-4";
+            card.className = "bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden flex flex-col group hover:-translate-y-1 transition duration-200";
             card.innerHTML = `
-                <div class="h-40 rounded-lg overflow-hidden mb-3 bg-slate-100">
-                    <img src="${p.img}" class="w-full h-full object-cover">
+                <div class="h-44 overflow-hidden bg-slate-100 shrink-0">
+                    <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.parentNode.innerHTML='<div class=\\'w-full h-full flex items-center justify-center text-slate-400 text-sm\\'>📷 Unavailable</div>'">
                 </div>
-                <h3 class="font-bold text-slate-800">${p.name}</h3>
-                <p class="text-xs text-slate-500">${p.style}</p>
+                <div class="p-4 flex flex-col flex-grow">
+                    <h3 class="font-bold text-slate-800 leading-tight">${p.name}</h3>
+                    <p class="text-xs font-semibold text-pink-500 mt-0.5 mb-1">📍 ${p.area}</p>
+                    <p class="text-xs text-slate-500 flex-grow">${p.style}</p>
+                    <div class="flex items-center gap-1 mt-2 mb-3">
+                        <span class="text-amber-400 text-sm">${stars}</span>
+                        <span class="text-xs text-slate-500">${p.rating.value.toFixed(1)}${reviewText}</span>
+                        <span class="text-[10px] text-slate-400 ml-1">· ${p.rating.source}</span>
+                    </div>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="${p.website}" target="_blank" rel="noopener"
+                           class="flex-1 text-center px-3 py-2 bg-pink-50 text-pink-700 text-xs font-bold rounded-lg hover:bg-pink-100 transition border border-pink-100">Portfolio</a>
+                        <a href="${p.contact}" target="_blank" rel="noopener"
+                           class="flex-1 text-center px-3 py-2 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-100 transition border border-slate-200">Contact</a>
+                    </div>
+                </div>
             `;
             grid.appendChild(card);
         });
     }
 
+    function updateWishlistProgress() {
+        const saved = JSON.parse(localStorage.getItem('maritime_wishlist') || '{}');
+        const count = WISHLIST_ITEMS.filter(i => !!saved[i.id]).length;
+        const total = WISHLIST_ITEMS.length;
+        const pct = Math.round((count / total) * 100);
+        const textEl = document.getElementById('wish-progress-text');
+        const barEl = document.getElementById('wish-progress-bar');
+        if (textEl) textEl.textContent = `${count} / ${total} completed`;
+        if (barEl) barEl.style.width = pct + '%';
+    }
+
     function initWishlist() {
         const host = document.getElementById('wishlist');
         host.innerHTML = '';
+        const saved = JSON.parse(localStorage.getItem('maritime_wishlist') || '{}');
         WISHLIST_ITEMS.forEach(item => {
-            const saved = JSON.parse(localStorage.getItem('maritime_wishlist') || '{}');
             const checked = !!saved[item.id];
             const card = document.createElement('label');
             card.className = 'flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer hover:bg-slate-100 transition';
@@ -550,12 +603,14 @@
             `;
             host.appendChild(card);
         });
+        updateWishlistProgress();
     }
-    
+
     window.toggleWish = (id) => {
         const saved = JSON.parse(localStorage.getItem('maritime_wishlist') || '{}');
         saved[id] = !saved[id];
         localStorage.setItem('maritime_wishlist', JSON.stringify(saved));
+        updateWishlistProgress();
     };
 
     // --- MAP ---
@@ -608,6 +663,22 @@
         document.getElementById('val-food').innerText = food;
         document.getElementById('val-gas').innerText = gas;
 
+        const lines = [
+            { label: '⛽ Gas (~2,850 km)', val: fuel, color: 'bg-blue-400' },
+            { label: '🏠 Cabin + Camp (fixed)', val: 116 + 100, color: 'bg-amber-400' },
+            { label: '🛏️ Hotels × 4 nights', val: varAccom, color: 'bg-orange-400' },
+            { label: '🐋 Whales + 🌉 Bridge', val: 200 + bridge, color: 'bg-indigo-400' },
+            { label: '🍽️ Food (2 ppl × 8 days)', val: food * 2 * 8, color: 'bg-green-400' },
+        ];
+        document.getElementById('budget-breakdown').innerHTML = lines.map(l => `
+            <div class="flex items-center justify-between py-1 border-b border-slate-50">
+                <span class="flex items-center gap-2 text-slate-600">
+                    <span class="w-2 h-2 rounded-full ${l.color} inline-block shrink-0"></span>${l.label}
+                </span>
+                <span class="font-bold text-slate-700">$${l.val.toLocaleString()}</span>
+            </div>
+        `).join('');
+
         if(budgetChart) {
             budgetChart.data.datasets[0].data = [fuel, fixed+varAccom, food*2*8, bridge+200];
             budgetChart.update();
@@ -624,6 +695,21 @@
         ['accom','food','gas'].forEach(id => document.getElementById('input-'+id).addEventListener('input', updateBudget));
         updateBudget();
     }
+
+    // --- UTILITIES ---
+    let toastTimer;
+    function showToast(msg, icon = '✅') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-text').textContent = msg;
+        document.getElementById('toast-icon').textContent = icon;
+        toast.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.add('hidden'), 2200);
+    }
+
+    window.copyText = (text) => {
+        navigator.clipboard.writeText(text).then(() => showToast('Copied!', '📋'));
+    };
 
     // --- CORE ---
     function checkPassword() {
